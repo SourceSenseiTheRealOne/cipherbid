@@ -1,0 +1,36 @@
+# Dependencies and builds
+node_modules/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+target/
+contracts/target/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+
+# Private/reproducible agent state
+.hermes/
+.codegraph/
+.prism-history.md
+
+# Wallet, bid, and recovery material
+*.recovery.json
+*.cipherbid-recovery
+wallets/
+keystores/
+sessions/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
