@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { createStore } from '@starknet-io/get-starknet-discovery'
 import { browserWalletDependencies } from './browserWalletDependencies'
 import { connectPrivacyWallet, type PrivacyWalletConnection } from './walletConnection'
@@ -18,6 +18,8 @@ type WalletConnectPanelProps = Readonly<{
   connect?: (wallet: unknown, provider: unknown) => Promise<PrivacyWalletConnection>
   onConnected: () => void
 }>
+
+const EMPTY_WALLETS: readonly unknown[] = []
 
 function createBrowserDiscovery(): WalletDiscovery {
   const store = createStore({ eip1193Adapters: [] })
@@ -49,14 +51,26 @@ export function WalletConnectPanel({
   onConnected,
 }: WalletConnectPanelProps) {
   const [discovery] = useState(createDiscovery)
-  const [wallets, setWallets] = useState<readonly unknown[]>(() => discovery.getWallets().filter(isPickable))
+  const [walletSnapshot] = useState(() => {
+    let current = discovery.getWallets()
+    return {
+      getSnapshot: () => current,
+      subscribe: (onStoreChange: () => void) =>
+        discovery.subscribe((nextWallets) => {
+          current = nextWallets
+          onStoreChange()
+        }),
+    }
+  })
+  const discoveredWallets = useSyncExternalStore(
+    walletSnapshot.subscribe,
+    walletSnapshot.getSnapshot,
+    () => EMPTY_WALLETS,
+  )
+  const wallets = discoveredWallets.filter(isPickable)
   const status = useWalletStore((state) => state.status)
   const address = useWalletStore((state) => state.address)
   const error = useWalletStore((state) => state.error)
-
-  useEffect(() => {
-    return discovery.subscribe((nextWallets) => setWallets(nextWallets.filter(isPickable)))
-  }, [discovery])
 
   async function selectWallet(wallet: unknown) {
     useWalletStore.getState().beginConnection()
