@@ -16,8 +16,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@starknet-io/get-starknet-discovery": "6.0.3",
-    "@starknet-io/get-starknet-wallet-standard": "6.0.3",
+    "@starknet-io/get-starknet-discovery": "6.0.2",
+    "@starknet-io/get-starknet-wallet-standard": "6.0.2",
     "@starknet-io/types-js": "0.10.3",
     "next": "16.3.2",
     "react": "19.2.8",
@@ -47,6 +47,9 @@
   },
   "pnpm": {
     "overrides": {
+      "@starknet-io/get-starknet-virtual-wallet": "6.0.2",
+      "@starknet-io/get-starknet-wallet-standard": "6.0.2",
+      "@starknet-io/types-js": "0.10.3",
       "postcss": "8.5.26"
     }
   },

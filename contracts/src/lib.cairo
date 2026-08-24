@@ -1,3 +1,4 @@
+pub mod commitment;
 use starknet::ContractAddress;
 
 #[derive(Copy, Drop, Serde)]
@@ -22,6 +23,7 @@ pub trait IAuctionIngressSpike<TContractState> {
     ) -> Span<OpenNoteDeposit>;
 
     fn get_spike_state(self: @TContractState) -> (u8, u64, felt252, felt252);
+    fn get_cap(self: @TContractState) -> u128;
 }
 
 #[starknet::contract]
@@ -33,6 +35,7 @@ mod AuctionIngressSpike {
     #[storage]
     struct Storage {
         pool: ContractAddress,
+        cap: u128,
         last_operation: u8,
         last_auction_id: u64,
         last_a: felt252,
@@ -40,8 +43,10 @@ mod AuctionIngressSpike {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, pool: ContractAddress) {
+    fn constructor(ref self: ContractState, pool: ContractAddress, cap: u128) {
+        assert(cap != 0, 'ZERO_CAP');
         self.pool.write(pool);
+        self.cap.write(cap);
     }
 
     #[abi(embed_v0)]
@@ -78,6 +83,10 @@ mod AuctionIngressSpike {
                 self.last_a.read(),
                 self.last_b.read(),
             )
+        }
+
+        fn get_cap(self: @ContractState) -> u128 {
+            self.cap.read()
         }
     }
 }
