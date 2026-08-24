@@ -12,6 +12,8 @@ describe('AuctionBidPreview', () => {
     expect(screen.getByText('Design preview')).toBeInTheDocument()
     expect(screen.getByText(maliciousRouteId)).toBeInTheDocument()
     expect(document.querySelector('script')).toBeNull()
+    const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' })
+    expect(within(breadcrumb).getByText('Auction')).toBeInTheDocument()
     expect(screen.getByLabelText('Bid amount')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()
     expect(screen.queryByText(/connect wallet/i)).not.toBeInTheDocument()
@@ -29,6 +31,8 @@ describe('AuctionBidPreview', () => {
 
     expect(screen.getAllByText('Awaiting chain data').length).toBeGreaterThanOrEqual(3)
     expect(screen.getByText('Awaiting deployment')).toBeInTheDocument()
+    expect(screen.getByText('0x0254a6b2997ef52e9f830ce1f543f6b29768295e8d17e2267d672c552cfe0d91')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'NFT lot' })).toBeInTheDocument()
   })
 
   it('explains the Vickrey lifecycle and privacy boundary honestly', () => {
@@ -42,6 +46,17 @@ describe('AuctionBidPreview', () => {
     expect(privacy).toHaveAttribute('id', 'privacy')
     expect(within(privacy).getByText('Private before reveal')).toBeInTheDocument()
     expect(within(privacy).getByText('Public by design')).toBeInTheDocument()
+    expect(within(privacy).getByText(/bidder-to-action link/i)).toBeInTheDocument()
+    expect(within(privacy).queryByText(/which shielded note/i)).not.toBeInTheDocument()
     expect(within(privacy).getByText(/deposits, withdrawals, timing/i)).toBeInTheDocument()
+  })
+
+  it('includes an explicitly illustrative second-price clearing chart', () => {
+    render(<AuctionBidPreview auctionId="design-preview" />)
+
+    expect(screen.getByRole('img', { name: 'Illustrative second-price clearing chart' })).toBeInTheDocument()
+    expect(screen.getByText('Illustration — not chain data')).toBeInTheDocument()
+    expect(screen.getByText('Winning bid')).toBeInTheDocument()
+    expect(screen.getByText('Second price')).toBeInTheDocument()
   })
 })

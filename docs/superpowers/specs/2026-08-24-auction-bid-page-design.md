@@ -79,11 +79,18 @@ The main header contains:
    - Reveal window
    - Every value displays `—` with supporting labels
 
-3. **Mechanism explanation**
+3. **Illustrative second-price clearing chart**
+   - original local SVG chart with ranked unnumbered sealed-bid bars
+   - one violet winning bar and a dashed second-price line
+   - legend: `Winning bid`, `Second price`, `Other sealed bids`
+   - persistent `Illustration — not chain data` disclosure
+   - no bid IDs, bidder identities, live prices, or chain-derived values
+
+4. **Mechanism explanation**
    - three-step sequence: Lock equal collateral → Reveal committed amount → Highest bidder pays second price
    - explicit note that revealed bids and the clearing price become public
 
-4. **Privacy truth table**
+5. **Privacy truth table**
    - private before reveal: bidder link and committed bid amount
    - public: NFT, reserve, cap, deadlines, bid timing/count, collateral transfer, later reveal and settlement fields
    - explicit warning that deposits, withdrawals, timing, and app-side helper activity can remain public
@@ -181,6 +188,7 @@ Tests prove:
 - amount and CTA controls are disabled;
 - no submit handler or wallet action is present;
 - the privacy truth table contains both hidden and public limitations;
+- the second-price chart is explicitly illustrative and contains no chain data;
 - the verified Sepolia pool address appears exactly.
 
 ### Browser verification
@@ -194,6 +202,8 @@ Verify at desktop and true 390px mobile widths:
 - mobile order matches the specification;
 - keyboard traversal reaches links in a sensible order;
 - reduced-motion mode removes transitions;
+- the desktop card remains sticky while scrolling and the mobile card is static;
+- encoded route IDs remain inert text with no dialog or script element in `main`;
 - screenshots show the complete above-fold composition.
 
 ## Acceptance criteria

@@ -19,6 +19,10 @@ test('renders the desktop auction bid preview without runtime errors', async ({ 
 
   const bidCard = page.getByTestId('bid-preview-card')
   await expect(bidCard).toHaveCSS('position', 'sticky')
+  const initialBidBox = await bidCard.boundingBox()
+  await page.evaluate(() => window.scrollTo(0, 1200))
+  await expect.poll(async () => (await bidCard.boundingBox())?.y ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(40)
+  expect(initialBidBox?.y ?? 0).toBeGreaterThan(40)
   await expect(page.locator('.cipherbid-auction-art')).toHaveCSS('background-image', /radial-gradient/)
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
   expect(errors).toEqual([])
@@ -36,6 +40,7 @@ test('stacks the lot, bid card, and facts at a true mobile viewport', async ({ p
   expect(lot).not.toBeNull()
   expect(bid).not.toBeNull()
   expect(facts).not.toBeNull()
+  await expect(page.getByTestId('bid-preview-card')).toHaveCSS('position', 'static')
   expect(lot!.y).toBeLessThan(bid!.y)
   expect(bid!.y).toBeLessThan(facts!.y)
   const overflow = await page.evaluate(() => {
@@ -59,5 +64,38 @@ test('removes decorative transitions in reduced-motion mode', async ({ page }) =
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto(route)
 
-  await expect(page.getByRole('link', { name: 'How privacy works' })).toHaveCSS('transition-duration', '0s')
+  const movingElements = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('.cipherbid-auction-page *')]
+      .map((element) => {
+        const style = getComputedStyle(element)
+        return {
+          tag: element.tagName,
+          transition: style.transitionDuration,
+          animation: style.animationName,
+        }
+      })
+      .filter((element) => element.transition !== '0s' || element.animation !== 'none'),
+  )
+  expect(movingElements).toEqual([])
+})
+
+test('keeps keyboard order logical and route ids inert', async ({ page }) => {
+  const payload = 'design-preview<script>alert(1)</script>'
+  const dialogs: string[] = []
+  page.on('dialog', async (dialog) => {
+    dialogs.push(dialog.message())
+    await dialog.dismiss()
+  })
+
+  await page.goto(`/auctions/${encodeURIComponent(payload)}`)
+  await expect(page.locator('main code')).toHaveText(payload)
+  await expect(page.locator('main script')).toHaveCount(0)
+  expect(dialogs).toEqual([])
+
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'CipherBid' })).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'How privacy works' })).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'Auctions' })).toBeFocused()
 })

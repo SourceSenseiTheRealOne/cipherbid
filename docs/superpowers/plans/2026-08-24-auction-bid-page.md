@@ -129,6 +129,7 @@ git commit -m "feat(web): scaffold truthful auction bid preview"
 
 **Files:**
 - Modify: `web/src/features/auction/ui/AuctionBidPreview.tsx`
+- Create: `web/src/features/auction/ui/SecondPriceIllustration.tsx`
 - Modify: `web/src/app/globals.css`
 - Modify: `web/tests/unit/AuctionBidPreview.test.tsx`
 
@@ -148,6 +149,9 @@ expect(screen.getByText('NFT lot')).toBeInTheDocument()
 expect(screen.getByText('Lock equal collateral')).toBeInTheDocument()
 expect(screen.getByText('Highest bidder pays second price')).toBeInTheDocument()
 expect(screen.getByText('Wallet not connected')).toBeInTheDocument()
+expect(screen.getByRole('img', { name: 'Illustrative second-price clearing chart' })).toBeInTheDocument()
+expect(screen.getByText('Illustration — not chain data')).toBeInTheDocument()
+expect(screen.getByText('Second price')).toBeInTheDocument()
 ```
 
 Assert the exact verified Sepolia pool address is visible:
@@ -171,6 +175,8 @@ Use a `lg:grid-cols-12` layout:
 - bid card: `lg:sticky lg:top-8`
 
 Use warm stone page background, graphite text, violet status/accent, fine borders, tabular/monospace value rows, and conservative radii. Keep all placeholders truthful.
+
+Add `SecondPriceIllustration` as a no-prop local SVG component between auction facts and the lifecycle panel. It must have `role="img"`, the accessible name `Illustrative second-price clearing chart`, a violet winning bar, a dashed second-price line, an `Illustration — not chain data` disclosure, and no numeric bid, bidder, or chain-derived value.
 
 - [ ] **Step 4: Implement mobile order and accessible controls**
 

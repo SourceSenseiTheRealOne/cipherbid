@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { SEPOLIA_STRK20_POOL } from '@/lib/starknet/network'
+import { SecondPriceIllustration } from './SecondPriceIllustration'
 
 export type AuctionBidPreviewProps = Readonly<{
   auctionId: string
@@ -38,14 +39,14 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             <Link href="/" className="text-lg font-semibold tracking-[-0.035em] outline-offset-4">
               CipherBid
             </Link>
-            <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-black/60 sm:flex">
+            <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-black/70 sm:flex">
               <span className="font-medium text-black">Auctions</span>
               <a href="#privacy" className="outline-offset-4 transition-colors hover:text-black">
                 How privacy works
               </a>
             </nav>
           </div>
-          <span className="inline-flex min-h-11 items-center rounded-full border border-black/10 bg-white/45 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-black/55">
+          <span className="inline-flex min-h-11 items-center rounded-full border border-black/10 bg-white/45 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-black/70">
             Wallet not connected
           </span>
         </div>
@@ -53,17 +54,21 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
 
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-16">
         <section aria-labelledby="auction-title" className="mb-9 border-b border-black/10 pb-9 sm:mb-12 sm:pb-12">
-          <div className="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em]">
-            <Link href="/" className="text-black/50 outline-offset-4 transition-colors hover:text-black">
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em]"
+          >
+            <Link href="/" className="text-black/70 outline-offset-4 transition-colors hover:text-black">
               Auctions
             </Link>
             <span aria-hidden="true" className="text-black/25">
               /
             </span>
+            <span className="text-black/70">Auction</span>
             <code className="max-w-full overflow-hidden text-ellipsis rounded-md border border-black/10 bg-white/55 px-2.5 py-1 font-mono text-[11px] normal-case tracking-normal text-black/65">
               {auctionId}
             </code>
-          </div>
+          </nav>
 
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="rounded-full bg-[#6654d9] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.13em] text-white">
@@ -98,6 +103,9 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             data-testid="auction-lot"
             className="min-w-0 overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#19171f] text-white lg:col-span-7 lg:col-start-1 lg:row-start-1"
           >
+            <h2 id="lot-title" className="sr-only">
+              NFT lot
+            </h2>
             <div
               className="cipherbid-auction-art relative flex min-h-[22rem] items-center justify-center overflow-hidden sm:min-h-[32rem]"
               aria-hidden="true"
@@ -112,7 +120,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             <div className="grid gap-px border-t border-white/10 bg-white/10 sm:grid-cols-3">
               {['Collection', 'Token ID', 'Custody'].map((label) => (
                 <dl key={label} className="bg-[#19171f] px-5 py-4">
-                  <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/45">{label}</dt>
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/70">{label}</dt>
                   <dd className="mt-2 break-words text-sm font-medium text-white/78">Awaiting chain data</dd>
                 </dl>
               ))}
@@ -121,7 +129,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
 
           <aside
             data-testid="bid-preview-card"
-            className="min-w-0 rounded-[1.4rem] border border-black/10 bg-[#1b1921] p-5 text-white shadow-[0_24px_70px_-45px_rgba(30,22,65,0.75)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-5 lg:row-start-1"
+            className="min-w-0 rounded-[1.4rem] border border-black/10 bg-[#1b1921] p-5 text-white shadow-[0_24px_70px_-45px_rgba(30,22,65,0.75)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-6 lg:row-start-1"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -136,7 +144,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             </div>
 
             <div className="mt-7">
-              <label htmlFor="bid-amount" className="text-xs font-semibold text-white/60">
+              <label htmlFor="bid-amount" className="text-xs font-semibold text-white/75">
                 Bid amount
               </label>
               <div className="mt-2 flex min-h-16 items-center rounded-xl border border-white/12 bg-white/[0.045] px-4 focus-within:border-[#9c8cff]">
@@ -147,12 +155,12 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
                   placeholder="Enter amount"
                   className="min-w-0 flex-1 bg-transparent text-2xl font-semibold text-white outline-none placeholder:text-white/25 disabled:cursor-not-allowed"
                 />
-                <span className="font-mono text-xs font-bold tracking-[0.12em] text-white/55">STRK</span>
+                <span className="font-mono text-xs font-bold tracking-[0.12em] text-white/70">STRK</span>
               </div>
             </div>
 
             <div className="mt-4" aria-label="Collateral cap meter">
-              <div className="flex justify-between text-[11px] font-medium text-white/45">
+              <div className="flex justify-between text-[11px] font-medium text-white/70">
                 <span>Uniform cap</span>
                 <span>Awaiting chain data</span>
               </div>
@@ -164,13 +172,13 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             <dl className="mt-6 divide-y divide-white/10 border-y border-white/10">
               {['Your sealed bid', 'Public collateral', 'Potential refund'].map((label) => (
                 <div key={label} className="flex items-center justify-between gap-4 py-3 text-sm">
-                  <dt className="text-white/52">{label}</dt>
+                  <dt className="text-white/70">{label}</dt>
                   <dd className="font-mono font-semibold text-white/75">—</dd>
                 </div>
               ))}
             </dl>
 
-            <div className="mt-6 rounded-xl border border-[#85d4b3]/20 bg-[#4ba77c]/10 p-4 text-sm leading-6 text-white/68">
+            <div className="mt-6 rounded-xl border border-[#85d4b3]/20 bg-[#4ba77c]/10 p-4 text-sm leading-6 text-white/85">
               Your actual bid stays sealed until reveal. The equal collateral transfer is public and identical for every
               bidder.
             </div>
@@ -178,11 +186,11 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             <button
               type="button"
               disabled
-              className="mt-5 min-h-12 w-full cursor-not-allowed rounded-xl bg-[#7463da] px-5 text-sm font-bold text-white/75 opacity-65"
+              className="mt-5 min-h-12 w-full cursor-not-allowed rounded-xl bg-[#5d4cab] px-5 text-sm font-bold text-white"
             >
               Bidding unavailable in design preview
             </button>
-            <p className="mt-3 text-center text-[11px] leading-5 text-white/38">
+            <p className="mt-3 text-center text-[11px] leading-5 text-white/65">
               No wallet request or transaction is performed on this page.
             </p>
           </aside>
@@ -194,11 +202,13 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
                 data-testid={`fact-${label.toLowerCase().replaceAll(' ', '-')}`}
                 className="rounded-2xl border border-black/10 bg-white/55 p-5"
               >
-                <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/45">{label}</dt>
+                <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/70">{label}</dt>
                 <PlaceholderValue />
               </dl>
             ))}
           </section>
+
+          <SecondPriceIllustration />
 
           <section
             aria-labelledby="mechanism-title"
@@ -214,7 +224,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
                   <span className="font-mono text-xs font-bold text-[#6654d9]">{item.step}</span>
                   <div>
                     <h3 className="font-semibold tracking-[-0.02em]">{item.title}</h3>
-                    <p className="mt-1 max-w-xl text-sm leading-6 text-black/55">{item.description}</p>
+                    <p className="mt-1 max-w-xl text-sm leading-6 text-black/70">{item.description}</p>
                   </div>
                 </li>
               ))}
@@ -236,9 +246,9 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
               <div className="rounded-2xl border border-[#2d8967]/20 bg-[#e1f1e9] p-5">
                 <h3 className="text-sm font-bold text-[#195e47]">Private before reveal</h3>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-[#245e4b]">
-                  <li>Bid amount inside the commitment</li>
-                  <li>Public link to the bidder, subject to timing analysis</li>
-                  <li>Which shielded note funded the action</li>
+                  <li>Committed bid amount</li>
+                  <li>Bidder-to-action link, subject to timing correlation</li>
+                  <li>Commitment opening until the reveal phase</li>
                 </ul>
               </div>
               <div className="rounded-2xl border border-black/10 bg-[#eeeae2] p-5">
@@ -261,26 +271,26 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
           >
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/42">Chain evidence</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/70">Chain evidence</p>
                 <h2 id="evidence-title" className="mt-2 text-xl font-semibold tracking-[-0.035em]">
                   Verified configuration boundary
                 </h2>
               </div>
-              <span className="rounded-full border border-black/10 bg-white/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black/50">
+              <span className="rounded-full border border-black/10 bg-white/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black/70">
                 Read-only context
               </span>
             </div>
             <dl className="mt-6 divide-y divide-black/10 border-y border-black/10 text-sm">
               <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr] sm:gap-5">
-                <dt className="text-black/45">Network</dt>
+                <dt className="text-black/70">Network</dt>
                 <dd className="font-mono font-semibold">Starknet Sepolia</dd>
               </div>
               <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr] sm:gap-5">
-                <dt className="text-black/45">Auction contract</dt>
+                <dt className="text-black/70">Auction contract</dt>
                 <dd className="font-mono text-black/62">Awaiting deployment</dd>
               </div>
               <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr] sm:gap-5">
-                <dt className="text-black/45">STRK20 pool</dt>
+                <dt className="text-black/70">STRK20 pool</dt>
                 <dd className="break-all font-mono text-xs leading-6 text-black/68">{SEPOLIA_STRK20_POOL}</dd>
               </div>
             </dl>
