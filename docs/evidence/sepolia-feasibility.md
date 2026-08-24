@@ -53,15 +53,14 @@ The canonical-cap reader and exact action builders are isolated, unit-tested pri
 
 The current `AuctionIngressSpike` is local-only and must not receive funds. To convert this record from blocked to passed safely:
 
-1. obtain a reviewed wallet capability or separately approved isolated custody boundary that creates commitments without exposing bid/claim secrets to the application;
+1. implement and independently review the accepted `cipherbid-vault` isolated custody boundary so it creates bid credentials without exposing the sealed bid amount, bid nonce, claim private key, or recovery plaintext to the application;
 2. replace the local spike with the reviewed auction contract that implements authenticated bidder/seller claims and exact balance-delta accounting;
-3. open the local app in a browser with Ready installed and unlocked;
-4. connect a funded Sepolia account supporting the required capability;
-5. deploy the refundable contract with the pool above and one non-zero uniform cap;
-6. ensure the wallet has matured shielded Sepolia STRK covering the public cap and pool fee;
-7. prepare and submit bid ingress, wait for a successful receipt, and verify helper state/token balance;
-8. prepare and submit invoke-only reveal, wait for a successful receipt, and verify helper state;
-9. execute and verify the authenticated refund/claim path so no collateral remains stranded;
-10. record exact hashes, finality, events, observed public fields, and absence of bidder/viewing-key data.
+3. deploy the refundable contract with the pool above and one non-zero uniform cap;
+4. create and register a dedicated Sepolia vault profile outside the browser, then independently fund its public fee reserve and mature private STRK balance;
+5. verify the exact class hash, pool, cap, funding-plan manifest, and vault-profile balance/maturity requirements in `cipherbid-vault`;
+6. submit bid ingress through `cipherbid-vault`, wait for a successful receipt, and verify helper state/token balance;
+7. submit direct public reveal through `cipherbid-vault`, wait for a successful receipt, and verify helper state;
+8. decrypt the offline claim bundle locally, execute and verify the authenticated refund/claim path through `cipherbid-vault`, then confirm no collateral remains stranded;
+9. record exact hashes, finality, events, observed public fields, vault-account visibility, and absence of browser viewing-key/secret data.
 
 Until those steps are executed and read back, CipherBid must not claim live Sepolia STRK20 feasibility.
