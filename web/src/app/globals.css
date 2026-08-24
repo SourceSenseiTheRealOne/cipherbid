@@ -1,1 +1,18 @@
 @import 'tailwindcss';
+
+.cipherbid-auction-art {
+  background:
+    radial-gradient(circle at 72% 28%, rgb(125 92 255 / 42%), transparent 32%),
+    radial-gradient(circle at 30% 76%, rgb(77 174 134 / 22%), transparent 28%),
+    linear-gradient(145deg, #17151f, #2b2441 52%, #7564d8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cipherbid-auction-page *,
+  .cipherbid-auction-page *::before,
+  .cipherbid-auction-page *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

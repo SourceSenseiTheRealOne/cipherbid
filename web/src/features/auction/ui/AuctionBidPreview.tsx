@@ -92,11 +92,11 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
           </div>
         </section>
 
-        <div data-testid="auction-layout" className="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
+        <div data-testid="auction-layout" className="grid min-w-0 gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
           <section
             aria-labelledby="lot-title"
             data-testid="auction-lot"
-            className="overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#19171f] text-white lg:col-span-7 lg:col-start-1 lg:row-start-1"
+            className="min-w-0 overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#19171f] text-white lg:col-span-7 lg:col-start-1 lg:row-start-1"
           >
             <div
               className="cipherbid-auction-art relative flex min-h-[22rem] items-center justify-center overflow-hidden sm:min-h-[32rem]"
@@ -113,7 +113,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
               {['Collection', 'Token ID', 'Custody'].map((label) => (
                 <dl key={label} className="bg-[#19171f] px-5 py-4">
                   <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/45">{label}</dt>
-                  <dd className="mt-2 text-sm font-medium text-white/78">Awaiting chain data</dd>
+                  <dd className="mt-2 break-words text-sm font-medium text-white/78">Awaiting chain data</dd>
                 </dl>
               ))}
             </div>
@@ -121,7 +121,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
 
           <aside
             data-testid="bid-preview-card"
-            className="rounded-[1.4rem] border border-black/10 bg-[#1b1921] p-5 text-white shadow-[0_24px_70px_-45px_rgba(30,22,65,0.75)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-5 lg:row-start-1"
+            className="min-w-0 rounded-[1.4rem] border border-black/10 bg-[#1b1921] p-5 text-white shadow-[0_24px_70px_-45px_rgba(30,22,65,0.75)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-5 lg:row-start-1"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
