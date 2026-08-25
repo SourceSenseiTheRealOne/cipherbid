@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { SEPOLIA_STRK20_POOL } from '@/lib/starknet/network'
+import { ProtocolConsole } from './ProtocolConsole'
 import { SecondPriceIllustration } from './SecondPriceIllustration'
 
 export type AuctionBidPreviewProps = Readonly<{
@@ -27,70 +28,73 @@ const lifecycle = [
 ] as const
 
 function PlaceholderValue() {
-  return <dd className="mt-2 text-2xl font-semibold tabular-nums text-[#18171b]">—</dd>
+  return <dd className="mt-2 text-2xl font-medium tabular-nums text-[#f7f8f8]">—</dd>
 }
 
 export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
   return (
-    <div className="cipherbid-auction-page min-h-screen bg-[#f3f0e9] text-[#18171b]">
-      <header className="border-b border-black/10 bg-[#f3f0e9]/95">
+    <div className="cipherbid-auction-page min-h-screen bg-[#08090a] text-[#f7f8f8]">
+      <header className="border-b border-white/[0.07] bg-[#08090a]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-lg font-semibold tracking-[-0.035em] outline-offset-4">
+            <Link href="/" className="text-lg font-medium tracking-[-0.04em] text-[#f7f8f8] outline-offset-4">
               CipherBid
             </Link>
-            <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-black/70 sm:flex">
-              <span className="font-medium text-black">Auctions</span>
-              <a href="#privacy" className="outline-offset-4 transition-colors hover:text-black">
+            <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-[#9ba3af] sm:flex">
+              <span className="font-medium text-[#f7f8f8]">Auctions</span>
+              <a href="#privacy" className="outline-offset-4 transition-colors hover:text-[#f7f8f8]">
                 How privacy works
               </a>
             </nav>
           </div>
-          <span className="inline-flex min-h-11 items-center rounded-full border border-black/10 bg-white/45 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-black/70">
-            Wallet not connected
+          <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-4 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#aeb5c2]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#7170ff]" aria-hidden="true" />
+            Read-only preview
           </span>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-16">
-        <section aria-labelledby="auction-title" className="mb-9 border-b border-black/10 pb-9 sm:mb-12 sm:pb-12">
+        <section aria-labelledby="auction-title" className="mb-9 border-b border-white/[0.07] pb-9 sm:mb-12 sm:pb-12">
           <nav
             aria-label="Breadcrumb"
-            className="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em]"
+            className="mb-6 flex flex-wrap items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em]"
           >
-            <Link href="/" className="text-black/70 outline-offset-4 transition-colors hover:text-black">
+            <Link href="/" className="text-[#9ba3af] outline-offset-4 transition-colors hover:text-[#f7f8f8]">
               Auctions
             </Link>
-            <span aria-hidden="true" className="text-black/25">
+            <span aria-hidden="true" className="text-white/25">
               /
             </span>
-            <span className="text-black/70">Auction</span>
-            <code className="max-w-full overflow-hidden text-ellipsis rounded-md border border-black/10 bg-white/55 px-2.5 py-1 font-mono text-[11px] normal-case tracking-normal text-black/65">
+            <span className="text-[#9ba3af]">Auction</span>
+            <code className="max-w-full overflow-hidden text-ellipsis rounded-md border border-white/10 bg-white/[0.035] px-2.5 py-1 font-mono text-[11px] normal-case tracking-normal text-[#c8ced8]">
               {auctionId}
             </code>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="rounded-full bg-[#6654d9] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.13em] text-white">
+            <span className="rounded-full border border-[#7170ff]/40 bg-[#5e6ad2]/25 px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#d7dcff]">
               Design preview
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#298a68]/25 bg-[#dff2e9] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.13em] text-[#176348]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#27a644]/30 bg-[#27a644]/10 px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#9be1af]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#23845f]" aria-hidden="true" />
-              Bidding open
+              Bid ingress model
             </span>
           </div>
 
           <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
             <div>
-              <p className="mb-3 text-sm font-semibold text-[#6654d9]">STRK20-funded Vickrey auction</p>
+              <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-[#a8b1ff]">
+                STRK20-funded Vickrey auction
+              </p>
               <h1
                 id="auction-title"
-                className="max-w-4xl text-4xl font-semibold leading-[0.98] tracking-[-0.055em] sm:text-6xl lg:text-7xl"
+                className="max-w-4xl text-4xl font-medium leading-[0.98] tracking-[-0.06em] text-[#f7f8f8] sm:text-6xl lg:text-7xl"
               >
                 A genuinely sealed NFT auction
               </h1>
             </div>
-            <p className="max-w-xl text-base leading-7 text-black/58 lg:pb-1">
+            <p className="max-w-xl text-base leading-7 text-[#9ba3af] lg:pb-1">
               Bidders lock the same public STRK collateral while their actual amounts remain sealed until reveal. The
               winner pays the second price.
             </p>
@@ -101,7 +105,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
           <section
             aria-labelledby="lot-title"
             data-testid="auction-lot"
-            className="min-w-0 overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#19171f] text-white lg:col-span-7 lg:col-start-1 lg:row-start-1"
+            className="min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-[#0f1011] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] lg:col-span-7 lg:col-start-1 lg:row-start-1"
           >
             <h2 id="lot-title" className="sr-only">
               NFT lot
@@ -127,9 +131,11 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
             </div>
           </section>
 
+          <ProtocolConsole />
+
           <aside
             data-testid="bid-preview-card"
-            className="min-w-0 rounded-[1.4rem] border border-black/10 bg-[#1b1921] p-5 text-white shadow-[0_24px_70px_-45px_rgba(30,22,65,0.75)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-6 lg:row-start-1"
+            className="min-w-0 rounded-2xl border border-white/10 bg-[#111217] p-5 text-white shadow-[0_28px_70px_-44px_rgba(0,0,0,0.95)] sm:p-7 lg:sticky lg:top-8 lg:col-span-5 lg:col-start-8 lg:row-span-6 lg:row-start-1"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -200,9 +206,11 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
               <dl
                 key={label}
                 data-testid={`fact-${label.toLowerCase().replaceAll(' ', '-')}`}
-                className="rounded-2xl border border-black/10 bg-white/55 p-5"
+                className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]"
               >
-                <dt className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/70">{label}</dt>
+                <dt className="font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#858b98]">
+                  {label}
+                </dt>
                 <PlaceholderValue />
               </dl>
             ))}
@@ -212,7 +220,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
 
           <section
             aria-labelledby="mechanism-title"
-            className="rounded-[1.4rem] border border-black/10 bg-[#e9e4da] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
+            className="cipherbid-panel rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6654d9]">Vickrey lifecycle</p>
             <h2 id="mechanism-title" className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
@@ -238,7 +246,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
           <section
             id="privacy"
             aria-label="Private and public auction data"
-            className="scroll-mt-8 rounded-[1.4rem] border border-black/10 bg-white/55 p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
+            className="cipherbid-panel scroll-mt-8 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6654d9]">Privacy boundary</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">What stays private—and what does not</h2>
@@ -267,7 +275,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
 
           <section
             aria-labelledby="evidence-title"
-            className="rounded-[1.4rem] border border-black/10 bg-[#ded8cd] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
+            className="cipherbid-panel rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
           >
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>

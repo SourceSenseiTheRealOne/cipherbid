@@ -15,6 +15,9 @@ test('renders the desktop auction bid preview without runtime errors', async ({ 
   expect(response?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1, name: 'A genuinely sealed NFT auction' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()
+  await expect(page.getByTestId('protocol-console')).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Protocol state' })).toContainText('Uniform cap collateral')
+  await expect(page.getByRole('region', { name: 'Protocol state' })).toContainText('Contract deployment pending')
   await expect(page.getByText('0x0254a6b2997ef52e9f830ce1f543f6b29768295e8d17e2267d672c552cfe0d91')).toBeVisible()
 
   const bidCard = page.getByTestId('bid-preview-card')
@@ -34,14 +37,18 @@ test('stacks the lot, bid card, and facts at a true mobile viewport', async ({ p
 
   expect(await page.evaluate(() => window.innerWidth)).toBe(390)
   const lot = await page.getByTestId('auction-lot').boundingBox()
+  const protocolConsole = await page.getByTestId('protocol-console').boundingBox()
   const bid = await page.getByTestId('bid-preview-card').boundingBox()
   const facts = await page.getByRole('region', { name: 'Auction facts' }).boundingBox()
 
   expect(lot).not.toBeNull()
+  expect(protocolConsole).not.toBeNull()
   expect(bid).not.toBeNull()
   expect(facts).not.toBeNull()
   await expect(page.getByTestId('bid-preview-card')).toHaveCSS('position', 'static')
   expect(lot!.y).toBeLessThan(bid!.y)
+  expect(lot!.y).toBeLessThan(protocolConsole!.y)
+  expect(protocolConsole!.y).toBeLessThan(bid!.y)
   expect(bid!.y).toBeLessThan(facts!.y)
   const overflow = await page.evaluate(() => {
     const viewportWidth = document.documentElement.clientWidth

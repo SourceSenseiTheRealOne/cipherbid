@@ -9,7 +9,7 @@ describe('AuctionBidPreview', () => {
     render(<AuctionBidPreview auctionId={maliciousRouteId} />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'A genuinely sealed NFT auction' })).toBeInTheDocument()
-    expect(screen.getByText('Design preview')).toBeInTheDocument()
+    expect(screen.getAllByText('Design preview')).not.toHaveLength(0)
     expect(screen.getByText(maliciousRouteId)).toBeInTheDocument()
     expect(document.querySelector('script')).toBeNull()
     const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' })
@@ -58,5 +58,15 @@ describe('AuctionBidPreview', () => {
     expect(screen.getByText('Illustration — not chain data')).toBeInTheDocument()
     expect(screen.getByText('Winning bid')).toBeInTheDocument()
     expect(screen.getByText('Second price')).toBeInTheDocument()
+  })
+
+  it('renders a qualitative protocol console without inventing chain data', () => {
+    render(<AuctionBidPreview auctionId="design-preview" />)
+
+    const protocolConsole = screen.getByRole('region', { name: 'Protocol state' })
+    expect(within(protocolConsole).getByText('Uniform cap collateral')).toBeInTheDocument()
+    expect(within(protocolConsole).getByText('Second-price settlement')).toBeInTheDocument()
+    expect(within(protocolConsole).getByText('Design preview')).toBeInTheDocument()
+    expect(within(protocolConsole).queryByText(/\d+\.?\d* STRK/)).not.toBeInTheDocument()
   })
 })
