@@ -15,6 +15,7 @@ describe('AuctionBidPreview', () => {
     const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' })
     expect(within(breadcrumb).getByText('Auction')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Connect a privacy-capable wallet' })).toBeInTheDocument()
+    expect(screen.getByTestId('wallet-connect-module')).toBeInTheDocument()
     expect(screen.getByText('No Starknet wallet detected. Install or unlock Ready, then refresh.')).toBeInTheDocument()
     expect(screen.getByLabelText('Bid amount')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()

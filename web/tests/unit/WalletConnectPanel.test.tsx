@@ -96,10 +96,28 @@ describe('WalletConnectPanel', () => {
       supportsStrk20: true,
     })
     expect(screen.getByText('0x123')).toBeInTheDocument()
+    expect(screen.getByTestId('wallet-connected-state')).toBeInTheDocument()
     expect(JSON.stringify(useWalletStore.getState())).not.toContain('strk20PrepareInvoke')
 
     unmount()
     expect(unsubscribe).toHaveBeenCalledOnce()
+  })
+
+  it('renders discovered wallets as polished local-avatar connection controls', async () => {
+    const wallet = { name: 'Ready', icon: 'https://example.invalid/should-not-load.svg' }
+    const discovery = {
+      getWallets: () => [wallet],
+      subscribe: () => () => undefined,
+    }
+
+    render(<WalletConnectPanel createDiscovery={() => discovery} provider={{}} />)
+
+    const option = await screen.findByRole('button', { name: /Ready/ })
+    expect(option).toHaveAttribute('data-testid', 'wallet-option-ready')
+    expect(option).toHaveClass('min-h-11')
+    expect(within(option).getByTestId('wallet-avatar-ready')).toHaveTextContent('R')
+    expect(within(option).getByText('Wallet API check')).toBeInTheDocument()
+    expect(option.querySelector('img')).toBeNull()
   })
 
   it('fails closed when the selected wallet lacks STRK20 support', async () => {
@@ -147,8 +165,8 @@ describe('WalletConnectPanel', () => {
     )
     await user.click(await screen.findByRole('button', { name: 'Ready' }))
 
-    expect(await screen.findByText('Chain: SN_SEPOLIA')).toBeInTheDocument()
-    expect(screen.getByText('Wallet API: 0.10.3, 0.11.0')).toBeInTheDocument()
+    expect(await screen.findByText('SN_SEPOLIA')).toBeInTheDocument()
+    expect(screen.getByText('0.10.3, 0.11.0')).toBeInTheDocument()
     expect(screen.getByText('STRK20 compatible')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Disconnect wallet' }))
