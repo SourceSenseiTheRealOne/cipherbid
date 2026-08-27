@@ -17,12 +17,15 @@ export default function Home() {
         </p>
       </header>
       <div className="rounded-2xl border border-slate-200 p-6 shadow-sm">
-        <WalletConnectPanel onConnected={() => setWalletConnected(true)} />
+        <WalletConnectPanel
+          onConnected={() => setWalletConnected(true)}
+          onDisconnected={() => setWalletConnected(false)}
+        />
       </div>
       {walletConnected ? (
         <p role="status" className="rounded-xl bg-amber-50 p-4 text-amber-950">
-          Wallet capability verified. Bid preparation remains disabled until secrets can stay outside application state
-          and the auction contract has authenticated refund and claim paths.
+          Wallet capability verified. Bid preparation remains disabled until the live STRK20 route spike and auction
+          claim paths are verified.
         </p>
       ) : null}
     </main>

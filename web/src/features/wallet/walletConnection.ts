@@ -7,6 +7,7 @@ export type WalletConnectionDependencies = {
   requestChainId: (wallet: unknown) => Promise<string>
   supportedWalletApi: (wallet: unknown) => Promise<readonly string[]>
   normalizeAddress: (address: string) => string
+  subscribeWalletChanges: (wallet: unknown, onChange: () => void) => () => void
 }
 
 export type PrivacyWalletConnection = Readonly<{
