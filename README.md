@@ -20,6 +20,10 @@ This is **STRK20-funded sealed bidding with equalized real collateral**. It is n
 - Original responsive Next.js interface
 - Honest privacy and compliance evidence
 
+## Canonical demo and evidence baseline
+
+The submission demo has one issuer/seller, two separate supported privacy-wallet sessions, and one read-only observer. Its deterministic Vickrey case uses `0 < R ≤ A < B ≤ C`: Bidder B wins and pays `max(R, A)` after both valid reveals. The full public/private boundary, expected settlement, and readback-only evidence ledger are frozen in [`docs/evidence/task-0-demo-matrix.md`](docs/evidence/task-0-demo-matrix.md).
+
 ## Privacy boundary
 
 | Public | Private before reveal |
@@ -29,7 +33,7 @@ This is **STRK20-funded sealed bidding with equalized real collateral**. It is n
 | Identical collateral transfer amount | Bid and claim secrets |
 | Revealed bids, winner, clearing price | STRK20 note ownership and source linkage |
 
-Deposits, withdrawals, timing, open-note amounts, and app-side anonymizer calls can remain public. The app never receives or exports a user's STRK20 viewing key.
+Deposits, withdrawals, timing, open-note amounts, and app-side anonymizer calls can remain public. The app never receives or exports a user's STRK20 viewing key. It does not claim that a variable bid amount remains encrypted after it leaves the STRK20 pool.
 
 ## Status
 

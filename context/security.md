@@ -1,13 +1,13 @@
 # Security
 
-- Bind commitments to chain ID, deployment, auction ID, amount, vault-held bid nonce, claim handle, and NFT recipient.
-- Authorize claims with an offline vault-held Stark-curve claim key and an onchain public key/handle; bind every claim signature to the exact chain, deployment, auction, commitment, action, recipient, and replay-protected nonce.
+- Bind commitments to chain ID, deployment, auction ID, amount, memory-only bid nonce, claim handle, and NFT recipient.
+- Require the commitment-bound claim secret for one-time claims; reject wrong, missing, replayed, or cross-auction claim credentials.
 - Require the configured STRK20 pool as `privacy_invoke` caller.
 - Account for incoming collateral by verified token balance delta.
 - Use checks-effects-interactions and reentrancy guards around token/NFT callbacks.
 - Bound bidder count and settlement work.
 - Prove value conservation for every lifecycle branch.
 - Parse decimal strings into integer base units; never serialize floating point.
-- Keep all keys and secrets outside the browser, Git, logs, analytics, URLs, clipboard-by-default flows, and server storage. Keep CipherBid Vault records in OS-protected local storage with an opt-in encrypted offline recovery export.
-- CipherBid Vault owns a dedicated execution-account key, viewing key, and private notes; it must have explicit lifecycle fee reserve, offline-claim-bundle backup, compromise response, and no-rotation-with-open-obligations controls.
+- Wallet private keys, viewing keys, private notes, and session material stay inside the connected wallet. Bid amount, nonce, and claim secret may exist only in browser memory for the active interaction and inside a mandatory password-encrypted downloaded recovery bundle; never write plaintext to browser storage, Git, logs, analytics, URLs, clipboard, or a server.
+- Require explicit target/cap/commitment confirmation, a `strk20PrepareInvoke` preflight, bounded receipt polling, and chain readback before UI success. Treat dapp-built action substitution before a wallet prompt as a disclosed residual risk.
 - Use synthetic low-value assets and explicit budget approval for mainnet.
