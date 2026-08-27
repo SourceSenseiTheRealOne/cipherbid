@@ -14,6 +14,8 @@ test('renders the desktop auction bid preview without runtime errors', async ({ 
 
   expect(response?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1, name: 'A genuinely sealed NFT auction' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 2, name: 'Connect a privacy-capable wallet' })).toBeVisible()
+  await expect(page.getByText('No Starknet wallet detected. Install or unlock Ready, then refresh.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()
   await expect(page.getByTestId('protocol-console')).toBeVisible()
   await expect(page.getByRole('region', { name: 'Protocol state' })).toContainText('Uniform cap collateral')

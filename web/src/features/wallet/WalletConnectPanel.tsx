@@ -17,7 +17,7 @@ type WalletConnectPanelProps = Readonly<{
   provider?: unknown
   connect?: (wallet: unknown, provider: unknown) => Promise<PrivacyWalletConnection>
   subscribeWalletChanges?: (wallet: unknown, onChange: () => void) => () => void
-  onConnected: () => void
+  onConnected?: () => void
   onDisconnected?: () => void
 }>
 
@@ -111,7 +111,7 @@ export function WalletConnectPanel({
       })
       if (!completed) return
       setConnectedWallet(wallet)
-      onConnected()
+      onConnected?.()
     } catch {
       useWalletStore.getState().failConnection(attempt, 'Wallet connection failed or was rejected.')
     } finally {

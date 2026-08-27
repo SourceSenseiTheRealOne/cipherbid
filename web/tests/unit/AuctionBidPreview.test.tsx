@@ -5,7 +5,7 @@ import { AuctionBidPreview } from '@/features/auction/ui/AuctionBidPreview'
 const maliciousRouteId = 'design-preview<script>alert(1)</script>'
 
 describe('AuctionBidPreview', () => {
-  it('renders the route id as inert text and exposes no operational bid control', () => {
+  it('renders the route id as inert text, a real wallet connector, and no operational bid control', () => {
     render(<AuctionBidPreview auctionId={maliciousRouteId} />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'A genuinely sealed NFT auction' })).toBeInTheDocument()
@@ -14,9 +14,10 @@ describe('AuctionBidPreview', () => {
     expect(document.querySelector('script')).toBeNull()
     const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' })
     expect(within(breadcrumb).getByText('Auction')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Connect a privacy-capable wallet' })).toBeInTheDocument()
+    expect(screen.getByText('No Starknet wallet detected. Install or unlock Ready, then refresh.')).toBeInTheDocument()
     expect(screen.getByLabelText('Bid amount')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()
-    expect(screen.queryByText(/connect wallet/i)).not.toBeInTheDocument()
   })
 
   it('uses truthful placeholders instead of invented onchain auction data', () => {

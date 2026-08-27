@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { SEPOLIA_STRK20_POOL } from '@/lib/starknet/network'
 import { ProtocolConsole } from './ProtocolConsole'
 import { SecondPriceIllustration } from './SecondPriceIllustration'
+import { WalletConnectPanel } from '@/features/wallet/WalletConnectPanel'
 
 export type AuctionBidPreviewProps = Readonly<{
   auctionId: string
@@ -149,6 +150,10 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
               </span>
             </div>
 
+            <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.025] p-4">
+              <WalletConnectPanel />
+            </div>
+
             <div className="mt-7">
               <label htmlFor="bid-amount" className="text-xs font-semibold text-white/75">
                 Bid amount
@@ -197,7 +202,7 @@ export function AuctionBidPreview({ auctionId }: AuctionBidPreviewProps) {
               Bidding unavailable in design preview
             </button>
             <p className="mt-3 text-center text-[11px] leading-5 text-white/65">
-              No wallet request or transaction is performed on this page.
+              Wallet connection is available here. Bidding remains disabled until the live STRK20 route is verified.
             </p>
           </aside>
 
