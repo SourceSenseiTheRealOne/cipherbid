@@ -5,7 +5,8 @@ import { createStore } from '@starknet-io/get-starknet-discovery'
 import { browserWalletDependencies } from './browserWalletDependencies'
 import { connectPrivacyWallet, type PrivacyWalletConnection } from './walletConnection'
 import { useWalletStore } from './walletStore'
-import { createSepoliaProvider, isSepoliaChainId } from '@/lib/starknet/network'
+import { createSepoliaProvider, SEPOLIA_CHAIN_ID } from '@/lib/starknet/network'
+import { MAINNET_CHAIN_ID } from '@/config/deployment'
 
 type WalletDiscovery = Readonly<{
   getWallets: () => readonly unknown[]
@@ -17,7 +18,9 @@ type WalletConnectPanelProps = Readonly<{
   provider?: unknown
   connect?: (wallet: unknown, provider: unknown) => Promise<PrivacyWalletConnection>
   subscribeWalletChanges?: (wallet: unknown, onChange: () => void) => () => void
-  onConnected?: () => void
+  expectedChainId?: string
+  expectedNetworkLabel?: string
+  onConnected?: (connection: PrivacyWalletConnection) => void
   onDisconnected?: () => void
 }>
 
@@ -54,6 +57,16 @@ function isPickable(wallet: unknown): boolean {
   return !walletName(wallet).toLowerCase().includes('metamask')
 }
 
+function normalizedChainId(chainId: string): string {
+  if (chainId === 'SN_SEPOLIA') return SEPOLIA_CHAIN_ID
+  if (chainId === 'SN_MAIN') return MAINNET_CHAIN_ID
+  try {
+    return `0x${BigInt(chainId).toString(16)}`
+  } catch {
+    return chainId
+  }
+}
+
 const defaultConnect = (wallet: unknown, provider: unknown) =>
   connectPrivacyWallet(wallet, provider, browserWalletDependencies)
 const defaultSepoliaProvider = createSepoliaProvider()
@@ -63,6 +76,8 @@ export function WalletConnectPanel({
   provider = defaultSepoliaProvider,
   connect = defaultConnect,
   subscribeWalletChanges = browserWalletDependencies.subscribeWalletChanges,
+  expectedChainId = SEPOLIA_CHAIN_ID,
+  expectedNetworkLabel = 'Starknet Sepolia',
   onConnected,
   onDisconnected,
 }: WalletConnectPanelProps) {
@@ -109,8 +124,8 @@ export function WalletConnectPanel({
     setPendingWalletName(walletName(wallet))
     try {
       const connection = await connect(wallet, provider)
-      if (!isSepoliaChainId(connection.chainId)) {
-        useWalletStore.getState().failConnection(attempt, 'Switch the wallet to Starknet Sepolia and try again.')
+      if (normalizedChainId(connection.chainId) !== normalizedChainId(expectedChainId)) {
+        useWalletStore.getState().failConnection(attempt, `Switch the wallet to ${expectedNetworkLabel} and try again.`)
         return
       }
       if (!connection.supportsStrk20) {
@@ -123,7 +138,7 @@ export function WalletConnectPanel({
       })
       if (!completed) return
       setConnectedWallet(wallet)
-      onConnected?.()
+      onConnected?.(connection)
     } catch {
       useWalletStore.getState().failConnection(attempt, 'Wallet connection failed or was rejected.')
     } finally {

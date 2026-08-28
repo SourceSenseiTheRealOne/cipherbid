@@ -19,8 +19,8 @@
 - Seller, NFT, reserve, cap, deadlines
 - Bid count and timing
 - Identical cap transferred from pool to auction helper
-- Bid commitment, claim public key/handle, revealed amounts, winner recipient, clearing price
+- Bid commitment, claim handles, revealed amounts, winner recipient, clearing price
 - Deposits, withdrawals, open-note amounts, and app-side anonymizer activity
-- Connected-wallet address for post-close direct reveal/claim activity, and its timing
+- Connected-wallet address for seller creation and direct reveal activity, and its timing
 
-For the sprint demo, the browser receives the bid amount, bid nonce, and claim secret only in memory in order to construct the commitment and an encrypted recovery bundle. It must never persist plaintext to browser storage, cookies, URLs, logs, analytics, crash reports, clipboard, Git, or a server. The wallet owns its viewing key and notes. STRK20's governance-appointed auditor escrow is protocol-level lawful disclosure, not an auction-scoped CipherBid feature. A connected wallet can be linkable through post-close direct reveal/claim activity and timing; this is not a claim of complete identity privacy.
+For the sprint demo, the browser receives bidder and seller app-specific credentials only in memory in order to construct commitments/actions and encrypted recovery bundles. It must never persist plaintext to browser storage, cookies, URLs, logs, analytics, crash reports, clipboard, Git, or a server. The wallet owns its viewing key, notes, proof generation, signing, and submission. STRK20's governance-appointed auditor escrow is protocol-level lawful disclosure, not an auction-scoped CipherBid feature. Seller creation and direct reveal can link to the connected account; STRK20 claims still expose timing and output amounts. CipherBid does not claim complete identity privacy.

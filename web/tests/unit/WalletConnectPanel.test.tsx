@@ -86,7 +86,7 @@ describe('WalletConnectPanel', () => {
     await user.click(await screen.findByRole('button', { name: /Ready/ }))
 
     expect(connect).toHaveBeenCalledWith(wallet, provider)
-    expect(onConnected).toHaveBeenCalledWith()
+    expect(onConnected).toHaveBeenCalledWith(connection)
     expect(walletAccount.strk20PrepareInvoke).not.toHaveBeenCalled()
     expect(walletAccount.strk20InvokeTransaction).not.toHaveBeenCalled()
     expect(useWalletStore.getState()).toMatchObject({
