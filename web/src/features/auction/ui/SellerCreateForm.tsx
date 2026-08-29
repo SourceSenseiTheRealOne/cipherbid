@@ -7,6 +7,7 @@ import type { PrivacyWalletConnection } from '@/features/wallet/walletConnection
 import { useWalletStore } from '@/features/wallet/walletStore'
 import { generateSellerCredential } from '@/features/credentials/credentials'
 import { readAuctionSnapshot, type ChainReader } from '@/features/auction/auctionReader'
+import { buildAuctionHref } from '@/features/auction/auctionRoute'
 import { verifyTransactionTransition } from '@/features/transactions/receiptVerifier'
 import { TransactionOrchestrator } from '@/features/transactions/transactionOrchestrator'
 import { runSellerCreationFlow, type StandardWallet } from '@/features/transactions/auctionTransactionFlows'
@@ -191,7 +192,7 @@ export function SellerCreateForm({ deployment, connection, onCreated }: SellerCr
       </p>
       {createdAuctionId !== null ? (
         <a
-          href={`/auctions/${createdAuctionId}`}
+          href={buildAuctionHref(createdAuctionId.toString())}
           className="mt-2 inline-flex min-h-11 items-center font-semibold text-[#aee5c1] underline underline-offset-4"
         >
           Open auction #{createdAuctionId.toString()}
