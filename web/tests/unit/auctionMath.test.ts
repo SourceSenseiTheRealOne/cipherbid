@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_U128, parseTokenAmount } from '@/features/auction/auctionMath'
+import { formatTokenAmount, formatUnixTimestamp, MAX_U128, parseTokenAmount } from '@/features/auction/auctionMath'
 
 describe('parseTokenAmount', () => {
   it('converts exact decimal strings to base-unit bigint without floating point', () => {
@@ -34,5 +34,31 @@ describe('parseTokenAmount', () => {
     expect(() => parseTokenAmount('1', 256)).toThrow('Token decimals must be an integer from 0 to 255')
     expect(() => parseTokenAmount((MAX_U128 + 1n).toString(), 0)).toThrow('Amount exceeds the Starknet u128 limit')
     expect(() => parseTokenAmount('5.000001', 6, { max: 5_000_000n })).toThrow('Amount exceeds the auction cap')
+  })
+})
+
+describe('formatTokenAmount', () => {
+  it('formats base units without floating point or trailing fractional zeroes', () => {
+    expect(formatTokenAmount(2_000_000_000_000_000_000n, 18)).toBe('2')
+    expect(formatTokenAmount(5_250_000_000_000_000_000n, 18)).toBe('5.25')
+    expect(formatTokenAmount(1n, 18)).toBe('0.000000000000000001')
+    expect(formatTokenAmount(42n, 0)).toBe('42')
+  })
+
+  it('rejects invalid decimals and negative amounts', () => {
+    expect(() => formatTokenAmount(1n, -1)).toThrow('Token decimals')
+    expect(() => formatTokenAmount(-1n, 18)).toThrow('non-negative')
+  })
+})
+
+describe('formatUnixTimestamp', () => {
+  it('renders deterministic UTC auction deadlines', () => {
+    expect(formatUnixTimestamp(1_787_917_800n)).toBe('2026-08-28 11:50:00 UTC')
+    expect(formatUnixTimestamp(1_787_918_100n)).toBe('2026-08-28 11:55:00 UTC')
+  })
+
+  it('rejects timestamps that cannot be represented safely', () => {
+    expect(() => formatUnixTimestamp(-1n)).toThrow('timestamp')
+    expect(() => formatUnixTimestamp(BigInt(Number.MAX_SAFE_INTEGER) + 1n)).toThrow('timestamp')
   })
 })
