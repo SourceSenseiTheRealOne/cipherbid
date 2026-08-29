@@ -28,7 +28,7 @@ Public readback confirms the reviewed class hashes, canonical pool and STRK toke
 
 ## Public frontend
 
-The production target is GitHub Pages at `https://sourcesenseitherealone.github.io/cipherbid/`. The source-controlled deployment workflow uses immutable action pins, least-privilege token permissions, and only public mainnet configuration. Do not treat that URL as deployed evidence until the workflow has run from `main` and the resulting routes have been independently read back.
+The production frontend is live at [`https://sourcesenseitherealone.github.io/cipherbid/`](https://sourcesenseitherealone.github.io/cipherbid/). Its source-controlled deployment workflow uses immutable action pins, least-privilege token permissions, and only public mainnet configuration. The [`main` deployment, workflow, Pages settings, and public browser routes were independently read back](docs/evidence/submission/pages-deployment.md).
 
 The exportable live-auction route is `/auction?id=<positive-u64>`. It validates one auction ID, reads public Starknet state in the browser, verifies the deployed class/configuration and NFT custody, then renders wallet controls. Ready X still owns private-note discovery, proving, signing, and submission.
 
