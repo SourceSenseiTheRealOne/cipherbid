@@ -12,6 +12,18 @@ This directory contains public, secret-free specifications and verified readback
 
 The mainnet private lifecycle is **not yet verified**. Do not create `mainnet/transactions.md`, `mainnet/auction-lifecycle.md`, or add hashes to `strk20.json` until the corresponding pool-touching transactions succeed and independent receipt/state readback passes.
 
+## Prepared recording control
+
+| Artifact                                           | Status                      | Scope                                                                                                                                        |
+| -------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`mainnet/demo-script.md`](mainnet/demo-script.md) | Prepared; recording blocked | Maximum-three-minute narration, capture rules, and hard evidence gates bound to the deployed mainnet contracts and canonical `2/3 STRK` case |
+
+The script is not demo-video evidence. Its hard gate forbids recording or publication until the complete real lifecycle, claims, and Atomic Delivery Receipt are independently verified.
+
+## Durable frontend publication
+
+The reviewed deployment target is `https://sourcesenseitherealone.github.io/cipherbid/`, with live auction reads at `/auction?id=<positive-u64>`. The pinned GitHub Pages workflow and static export are implementation controls, not hosted evidence by themselves. A public deployment record is created under `submission/` only after a successful `main` workflow, Pages API readback, HTTP checks, and clean-browser verification. Until then, `strk20.json.demo_url` remains empty.
+
 ## Canonical lifecycle and security controls
 
 | Artifact                                                                     | Scope                                                                                  |

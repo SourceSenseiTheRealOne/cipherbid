@@ -26,6 +26,12 @@ This is **STRK20-funded sealed bidding with equalized real collateral**. It is n
 
 Public readback confirms the reviewed class hashes, canonical pool and STRK token, a maximum of 32 bidders, and deployer ownership of NFT `99`. See the [deployment evidence](docs/evidence/mainnet/deployment.md) and [machine-readable manifest](docs/evidence/mainnet/deployment.json).
 
+## Public frontend
+
+The production target is GitHub Pages at `https://sourcesenseitherealone.github.io/cipherbid/`. The source-controlled deployment workflow uses immutable action pins, least-privilege token permissions, and only public mainnet configuration. Do not treat that URL as deployed evidence until the workflow has run from `main` and the resulting routes have been independently read back.
+
+The exportable live-auction route is `/auction?id=<positive-u64>`. It validates one auction ID, reads public Starknet state in the browser, verifies the deployed class/configuration and NFT custody, then renders wallet controls. Ready X still owns private-note discovery, proving, signing, and submission.
+
 ## Canonical demo
 
 The bounded mainnet demo uses one seller, two separate Ready X accounts, and one read-only observer:
@@ -151,6 +157,7 @@ npx --yes pnpm@10.18.1 exec next dev --webpack -p 4110
 Open:
 
 - `http://127.0.0.1:4110/` — auction browser
+- `http://127.0.0.1:4110/auction?id=1` — public auction reader; ID `1` remains unavailable until a real auction exists
 - `http://127.0.0.1:4110/create` — seller creation flow
 - `http://127.0.0.1:4110/demo/setup` — Ready X bidder shielding
 
@@ -171,7 +178,9 @@ npx --yes pnpm@10.18.1 --dir web lint
 npx --yes pnpm@10.18.1 --dir web typecheck
 npx --yes pnpm@10.18.1 --dir web test
 npx --yes pnpm@10.18.1 --dir web test:e2e
+npx --yes pnpm@10.18.1 --dir web pages:verify
 npx --yes pnpm@10.18.1 --dir web build
+CIPHERBID_PAGES_BUILD=1 npx --yes pnpm@10.18.1 --dir web build
 ```
 
 ## Operational scripts
@@ -198,7 +207,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Hackathon requirements matrix](docs/evidence/hackathon-requirements-matrix.md)
 - [Sepolia rehearsal](docs/evidence/sepolia/demo-runbook.md)
 
-`strk20.json` remains intentionally empty until at least three successful, independently verified mainnet transactions both touch STRK20 and satisfy the CipherBid lifecycle-event/state-readback requirements. Deployment and funding transactions alone do not qualify.
+`strk20.json` contains only the two verified contract addresses. Its transaction and URL fields remain intentionally empty until at least three successful, independently verified mainnet transactions touch STRK20, the real lifecycle route is publicly verified, and the video is published. Deployment and funding transactions alone do not qualify.
 
 ## Scope
 

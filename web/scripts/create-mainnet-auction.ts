@@ -271,7 +271,7 @@ async function main(): Promise<void> {
     nftDeploymentTransactionHash: deploymentRecord.demoNftDeploymentTransactionHash,
     auctionCreationTransactionHash,
     remainingBudgetCeiling: remainingBudget.toString(),
-    auctionUrl: `http://localhost:4110/auctions/${creationPlan.form.auctionId}`,
+    auctionUrl: `http://localhost:4110/auction?id=${creationPlan.form.auctionId}`,
     explorerUrl: `https://voyager.online/contract/${deploymentRecord.auctionHouse}`,
   }
   const evidenceDirectory = path.resolve(process.cwd(), '..', '.runtime-evidence', 'mainnet')

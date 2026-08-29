@@ -409,7 +409,7 @@ async function main() {
     bidderAccounts: BIDDER_ACCOUNTS,
     nftDeploymentTransactionHash: nft.transactionHash,
     auctionCreationTransactionHash: createTransactionHash,
-    auctionUrl: `http://localhost:4110/auctions/${plan.form.auctionId}`,
+    auctionUrl: `http://localhost:4110/auction?id=${plan.form.auctionId}`,
     explorerUrl: `https://sepolia.voyager.online/contract/${AUCTION_HOUSE}`,
   }
   const recordPath = path.join(evidenceDirectory, `auction-${plan.form.auctionId}.json`)

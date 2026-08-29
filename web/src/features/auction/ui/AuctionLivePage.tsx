@@ -52,7 +52,7 @@ export type AuctionLiveViewModel = Readonly<{
 
 type AuctionLivePageProps =
   | Readonly<{ model: AuctionLiveViewModel; error?: never; auctionId?: never }>
-  | Readonly<{ model?: never; error: string; auctionId: string }>
+  | Readonly<{ model?: never; error: string; auctionId: string; onRetry?: () => void }>
 
 function short(value: string): string {
   return value.length <= 18 ? value : `${value.slice(0, 10)}…${value.slice(-6)}`
@@ -89,6 +89,15 @@ export function AuctionLivePage(props: AuctionLivePageProps) {
           <p role="alert" className="mt-6 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-amber-100">
             {props.error}
           </p>
+          {props.onRetry ? (
+            <button
+              type="button"
+              onClick={props.onRetry}
+              className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-white px-5 font-semibold text-[#111217]"
+            >
+              Retry public read
+            </button>
+          ) : null}
         </div>
       </main>
     )
