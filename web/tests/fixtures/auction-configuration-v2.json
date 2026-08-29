@@ -1,0 +1,56 @@
+{
+  "schema": "cipherbid.auction-configuration.v2",
+  "house": {
+    "pool": "0x123",
+    "paymentToken": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+    "maxBidders": 32
+  },
+  "auction": {
+    "auctionId": "7",
+    "seller": "0xabc",
+    "sellerClaimHandle": "0x54b096c60c80fd98e2e6f2495db67227a0c8c2bdc69733df8fa23a4a5eb0e28",
+    "nftContract": "0xdef",
+    "tokenId": "0",
+    "reservePrice": "1000",
+    "collateralCap": "5000",
+    "biddingDeadline": "2000",
+    "revealDeadline": "3000",
+    "bidderLimit": 2
+  },
+  "creation": {
+    "caller": "0xabc",
+    "now": "1000"
+  },
+  "types": {
+    "auctionId": "u64_nonzero",
+    "seller": "ContractAddress_nonzero",
+    "sellerClaimHandle": "felt252_nonzero",
+    "nftContract": "ContractAddress_nonzero",
+    "tokenId": "u256",
+    "paymentToken": "ContractAddress_canonical_STRK",
+    "pool": "ContractAddress_nonzero",
+    "reservePrice": "u128_nonzero",
+    "collateralCap": "u128_nonzero",
+    "biddingDeadline": "u64_unix_seconds",
+    "revealDeadline": "u64_unix_seconds",
+    "bidderLimit": "u16_2_to_house_max"
+  },
+  "boundaries": {
+    "contractAddressBound": "0x800000000000000000000000000000000000000000000000000000000000000"
+  },
+  "semantics": {
+    "auctionIdScope": ["chain_id", "auction_house_address", "auction_id"],
+    "auctionIdReuse": "forbidden_forever",
+    "sellerSource": "creation_caller",
+    "sellerClaimHandleMutable": false,
+    "sellerClaimSecretStored": false,
+    "poolDiffersFromPaymentToken": true,
+    "tokenIdZeroAllowed": true,
+    "biddingOpen": "now < bidding_deadline",
+    "revealOpen": "bidding_deadline <= now < reveal_deadline",
+    "settlementOpen": "now >= reveal_deadline",
+    "houseConfigurationMutable": false,
+    "auctionConfigurationMutable": false,
+    "lifecycleStateMutable": true
+  }
+}

@@ -2,9 +2,58 @@
 
 .cipherbid-auction-art {
   background:
-    radial-gradient(circle at 72% 28%, rgb(125 92 255 / 42%), transparent 32%),
-    radial-gradient(circle at 30% 76%, rgb(77 174 134 / 22%), transparent 28%),
-    linear-gradient(145deg, #17151f, #2b2441 52%, #7564d8);
+    radial-gradient(circle at 74% 23%, rgb(113 112 255 / 48%), transparent 28%),
+    radial-gradient(circle at 25% 82%, rgb(40 166 104 / 18%), transparent 25%),
+    linear-gradient(145deg, #0a0b0d, #151526 52%, #242342);
+}
+
+.cipherbid-auction-page {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.018) 1px, transparent 1px),
+    radial-gradient(circle at 50% -20%, rgb(94 106 210 / 0.16), transparent 38%);
+  background-position: center;
+  background-size:
+    44px 44px,
+    44px 44px,
+    auto;
+  font-feature-settings: 'cv01', 'ss03';
+}
+
+.cipherbid-auction-art::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background-image: linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+.cipherbid-panel :is(h2, h3) {
+  color: #f7f8f8;
+}
+
+.cipherbid-panel :is(p, li, dt, dd) {
+  color: #9ba3af;
+}
+
+.cipherbid-panel .text-\[\#6654d9\] {
+  color: #a8b1ff;
+}
+
+.cipherbid-panel .divide-black\/10,
+.cipherbid-panel .border-black\/10 {
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+.cipherbid-panel .bg-\[\#e1f1e9\],
+.cipherbid-panel .bg-\[\#eeeae2\] {
+  background: rgb(255 255 255 / 0.035);
+}
+
+.cipherbid-panel .text-\[\#195e47\],
+.cipherbid-panel .text-\[\#245e4b\] {
+  color: #aee5c1;
 }
 
 @media (prefers-reduced-motion: reduce) {

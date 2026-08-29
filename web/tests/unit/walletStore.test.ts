@@ -8,10 +8,11 @@ afterEach(() => {
 describe('walletStore', () => {
   it('stores only public connection state and clears it on disconnect', () => {
     const state = useWalletStore.getState()
-    state.beginConnection()
+    const attempt = state.beginConnection()
     expect(useWalletStore.getState().status).toBe('connecting')
 
-    state.completeConnection({
+    state.completeConnection(attempt, {
+      walletName: 'Ready',
       address: '0x123',
       chainId: 'SN_SEPOLIA',
       walletApiVersions: ['0.10.3'],
@@ -39,10 +40,27 @@ describe('walletStore', () => {
   })
 
   it('preserves a controlled public error without storing an exception object', () => {
-    useWalletStore.getState().failConnection('Wallet API 0.10.3 is required')
+    const attempt = useWalletStore.getState().beginConnection()
+    useWalletStore.getState().failConnection(attempt, 'Wallet API 0.10.3 is required')
     expect(useWalletStore.getState()).toMatchObject({
       status: 'error',
       error: 'Wallet API 0.10.3 is required',
     })
+  })
+
+  it('ignores a stale connection completion after the user disconnects', () => {
+    const attempt = useWalletStore.getState().beginConnection()
+    useWalletStore.getState().disconnect()
+
+    expect(
+      useWalletStore.getState().completeConnection(attempt, {
+        walletName: 'Ready',
+        address: '0x123',
+        chainId: 'SN_SEPOLIA',
+        walletApiVersions: ['0.10.3'],
+        supportsStrk20: true,
+      }),
+    ).toBe(false)
+    expect(useWalletStore.getState().status).toBe('disconnected')
   })
 })

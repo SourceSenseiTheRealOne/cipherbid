@@ -12,17 +12,7 @@ export type PlaceBidInput = Readonly<{
   auctionHouse: HexAddress
 }>
 
-export type RevealBidInput = Readonly<{
-  auctionId: bigint
-  amount: bigint
-  bidSecret: bigint
-  claimHandle: bigint
-  assetRecipient: HexAddress
-  auctionHouse: HexAddress
-}>
-
 const PLACE_BID = 0n
-const REVEAL_BID = 1n
 const ZERO = num.toHex(0n)
 const POOL_ADDRESS_PLACEHOLDER = '${poolAddress}'
 
@@ -46,25 +36,6 @@ export function buildPlaceBidActions(input: PlaceBidInput): readonly WALLET_API.
         felt(input.claimHandle),
         ZERO,
         ZERO,
-        POOL_ADDRESS_PLACEHOLDER,
-        ZERO,
-      ],
-    },
-  ]
-}
-
-export function buildRevealBidActions(input: RevealBidInput): readonly WALLET_API.STRK20_ACTION[] {
-  return [
-    {
-      type: 'invoke',
-      contract: input.auctionHouse,
-      calldata: [
-        felt(REVEAL_BID),
-        felt(input.auctionId),
-        felt(input.amount),
-        felt(input.bidSecret),
-        felt(input.claimHandle),
-        input.assetRecipient,
         POOL_ADDRESS_PLACEHOLDER,
         ZERO,
       ],

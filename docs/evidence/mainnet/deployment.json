@@ -1,0 +1,62 @@
+{
+  "schema": "cipherbid.mainnet-deployment.v1",
+  "capturedAt": "2026-08-29T09:28:12Z",
+  "updatedAt": "2026-08-29T09:35:05Z",
+  "network": "mainnet",
+  "chainId": "0x534e5f4d41494e",
+  "deployer": "0x01017404a72b0d5312d7f41e81e0a87b89387db78361bb4ce60b0e0a390d72aa",
+  "auctionHouse": "0x01b32af8bab712ede82117b8ff1b8866e09798f6c81edc255ffe59dd42e4843e",
+  "demoNft": "0x05c7080c583304469e853e472d46a20448ff82bf9ee4c87a8efabc35f8177e1f",
+  "auctionHouseClassHash": "0x06aa99b7ae9e10619b5a3c1713a4d71054844d3dda8e21bef98db6e653d5efc4",
+  "demoErc721ClassHash": "0x06c7cba5680595203f9327f5784130907bad1b808891122ad358c10b93136a41",
+  "strk20Pool": "0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a",
+  "paymentToken": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+  "maximumBudget": "150000000000000000000",
+  "totalActualFee": "40936745660631231056",
+  "totalAuthorizedCeiling": "79974516584897918577",
+  "totalTransferredValue": "50000000000000000000",
+  "remainingBudgetCeiling": "20025483415102081423",
+  "declarationTransactions": [
+    {
+      "contractName": "AuctionHouse",
+      "classHash": "0x06aa99b7ae9e10619b5a3c1713a4d71054844d3dda8e21bef98db6e653d5efc4",
+      "transactionHash": "0x552781e5ecb2ab9826474c8395ca5fd2f534ce6155367ab67ae195f5e2c9dc6",
+      "blockNumber": 14038906
+    },
+    {
+      "contractName": "DemoERC721",
+      "classHash": "0x06c7cba5680595203f9327f5784130907bad1b808891122ad358c10b93136a41",
+      "transactionHash": "0x01efc7df78014f252d346af3b88a5035b002cf005079604f6e3bf9df0f1fa9b",
+      "blockNumber": 14039038
+    }
+  ],
+  "deploymentTransactionHash": "0x03732f01800aa06e569e88a78232c3e7396546e314850a1b54dfae05a68a64b4",
+  "deploymentBlockNumber": 14039088,
+  "demoNftDeploymentTransactionHash": "0x029ce413d931197cd911b33cdf21f00d4c599bde29d7822e563ea89c55330a4c",
+  "demoNftDeploymentBlockNumber": 14039156,
+  "topUpTransactions": [
+    {
+      "role": "Bidder A",
+      "recipient": "0x00289637e6debed46ce1a64ea30a9f1fa492458bac580c908f940f225fd11a8e",
+      "amount": "25000000000000000000",
+      "transactionHash": "0x18d06d74ec6b8888a9ee55ee0b750859c56fd3842d67e49ffe947b0ea2939ae",
+      "blockNumber": 14039611
+    },
+    {
+      "role": "Bidder B",
+      "recipient": "0x057791bafe2653e8a62509261aeba6a9d09f1fe09f039c9ff0c09c00c24b1f1a",
+      "amount": "25000000000000000000",
+      "transactionHash": "0x54ee14acf35d4bd2922a44e7ec76b98a6420d8cca6ac6b3773366ffb345953b",
+      "blockNumber": 14039623
+    }
+  ],
+  "houseConfig": {
+    "strk20Pool": "0x040337b1af3c663e86e333bab5a4b28da8d4652a15a69beee2b677776ffe812a",
+    "paymentToken": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+    "maximumBidders": 32
+  },
+  "demoNftTokenId": "99",
+  "demoNftOwner": "0x01017404a72b0d5312d7f41e81e0a87b89387db78361bb4ce60b0e0a390d72aa",
+  "explorerUrl": "https://voyager.online/contract/0x01b32af8bab712ede82117b8ff1b8866e09798f6c81edc255ffe59dd42e4843e",
+  "demoNftExplorerUrl": "https://voyager.online/contract/0x05c7080c583304469e853e472d46a20448ff82bf9ee4c87a8efabc35f8177e1f"
+}
