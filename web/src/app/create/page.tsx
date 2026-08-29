@@ -1,8 +1,6 @@
 import { loadDeploymentManifest, type DeploymentManifest } from '@/config/deployment'
 import { SellerCreatePage } from '@/features/auction/ui/SellerCreatePage'
 
-export const dynamic = 'force-dynamic'
-
 export default function CreateAuctionRoute() {
   let deployment: DeploymentManifest | undefined
   try {

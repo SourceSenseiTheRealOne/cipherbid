@@ -18,7 +18,7 @@ test('renders the live-chain home entry point without runtime errors', async ({ 
   await expect(page.getByRole('link', { name: 'Create an auction' })).toHaveAttribute('href', '/create')
   await expect(async () => {
     await page.getByLabel('Auction ID').fill('7')
-    expect(await page.getByRole('link', { name: 'Open auction' }).getAttribute('href')).toBe('/auctions/7')
+    expect(await page.getByRole('link', { name: 'Open auction' }).getAttribute('href')).toBe('/auction?id=7')
   }).toPass()
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
   expect(errors).toEqual([])
@@ -80,11 +80,11 @@ test('rejects hostile route IDs as inert text', async ({ page }) => {
     await dialog.dismiss()
   })
 
-  const response = await page.goto(`/auctions/${encodeURIComponent(payload)}`)
+  const response = await page.goto(`/auction?id=${encodeURIComponent(payload)}`)
   expect(response?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1, name: 'Live auction unavailable' })).toBeVisible()
   await expect(page.getByRole('alert')).toContainText('Auction ID must be a positive u64 decimal value.')
-  await expect(page.locator('main')).toContainText(encodeURIComponent(payload))
+  await expect(page.locator('main')).toContainText(payload)
   await expect(page.locator('main script')).toHaveCount(0)
   expect(dialogs).toEqual([])
 
