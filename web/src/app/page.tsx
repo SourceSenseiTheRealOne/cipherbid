@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { buildAuctionHref } from '@/features/auction/auctionRoute'
 
 export default function Home() {
   const [auctionId, setAuctionId] = useState('1')
@@ -67,7 +68,7 @@ export default function Home() {
               className="mt-2 min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xl font-semibold outline-none focus:border-[#a8b1ff]"
             />
             <Link
-              href={`/auctions/${safeAuctionId}`}
+              href={buildAuctionHref(safeAuctionId)}
               className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-white px-5 font-semibold text-[#111217]"
             >
               Open auction
