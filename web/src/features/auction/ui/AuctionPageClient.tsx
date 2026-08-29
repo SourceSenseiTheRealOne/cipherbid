@@ -10,9 +10,8 @@ import { AuctionLivePage, type AuctionLiveViewModel } from '@/features/auction/u
 export type AuctionModelLoader = (auctionId: bigint) => Promise<AuctionLiveViewModel>
 
 type LoadState =
-  | Readonly<{ status: 'loading'; auctionId: string }>
-  | Readonly<{ status: 'ready'; auctionId: string; model: AuctionLiveViewModel }>
-  | Readonly<{ status: 'error'; auctionId: string }>
+  | Readonly<{ status: 'ready'; requestKey: string; model: AuctionLiveViewModel }>
+  | Readonly<{ status: 'error'; requestKey: string }>
 
 export function AuctionPageLoading({ auctionId = '' }: Readonly<{ auctionId?: string }>) {
   return (
@@ -36,33 +35,33 @@ export function AuctionPageClient({
   const query = searchParams.toString()
   const route = useMemo(() => parseAuctionIdValues(new URLSearchParams(query).getAll('id')), [query])
   const [retry, setRetry] = useState(0)
-  const [state, setState] = useState<LoadState>({ status: 'loading', auctionId: '' })
+  const [state, setState] = useState<LoadState | null>(null)
+  const requestKey = route.ok ? `${route.canonicalId}:${retry}` : ''
 
   useEffect(() => {
     if (!route.ok) return
 
     let active = true
-    const canonicalId = route.canonicalId
-    setState({ status: 'loading', auctionId: canonicalId })
+    const activeRequestKey = requestKey
     void loadModel(route.auctionId).then(
       (model) => {
-        if (active) setState({ status: 'ready', auctionId: canonicalId, model })
+        if (active) setState({ status: 'ready', requestKey: activeRequestKey, model })
       },
       () => {
-        if (active) setState({ status: 'error', auctionId: canonicalId })
+        if (active) setState({ status: 'error', requestKey: activeRequestKey })
       },
     )
 
     return () => {
       active = false
     }
-  }, [loadModel, retry, route])
+  }, [loadModel, requestKey, route])
 
   if (!route.ok) {
     return <AuctionLivePage error={route.error} auctionId={route.displayId} />
   }
 
-  if (state.auctionId !== route.canonicalId || state.status === 'loading') {
+  if (!state || state.requestKey !== requestKey) {
     return <AuctionPageLoading auctionId={route.canonicalId} />
   }
 
