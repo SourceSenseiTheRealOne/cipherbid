@@ -1,0 +1,108 @@
+{
+  "schema": "cipherbid.auction-lifecycle.v1",
+  "states": ["BiddingOpen", "RevealOpen", "ReadyToSettle", "SettledSold", "SettledNoSale", "ClaimsComplete"],
+  "phaseBoundaries": {
+    "biddingOpen": "now < bidding_deadline",
+    "revealOpen": "bidding_deadline <= now < reveal_deadline",
+    "readyToSettle": "now >= reveal_deadline"
+  },
+  "rules": {
+    "tieBreak": "lowest_accepted_index",
+    "oneValidRevealPrice": "reserve",
+    "noReserveBid": "no_sale",
+    "unrevealedBid": "full_cap_refund",
+    "winnerSurplus": "cap - clearing_price",
+    "loserRefund": "cap",
+    "sellerEntitlement": "clearing_price",
+    "zeroWinnerSurplus": "auto_consumed_no_transaction",
+    "noSaleNftRecipient": "seller",
+    "soldNftRecipient": "winning_committed_recipient",
+    "claimConsumption": "exactly_once"
+  },
+  "scenarios": [
+    {
+      "name": "canonical-two-bidder-sold",
+      "reserve": "2",
+      "cap": "5",
+      "bids": [
+        { "acceptedIndex": 0, "commitment": "101", "amount": "3" },
+        { "acceptedIndex": 1, "commitment": "202", "amount": "4" }
+      ],
+      "expected": {
+        "sold": true,
+        "winnerIndex": 1,
+        "clearingPrice": "3",
+        "bidderClaims": [
+          { "acceptedIndex": 0, "kind": "loser_refund", "amount": "5" },
+          { "acceptedIndex": 1, "kind": "winner_surplus", "amount": "2" }
+        ],
+        "sellerEntitlement": "3",
+        "lockedCollateral": "10",
+        "distributedValue": "10"
+      }
+    },
+    {
+      "name": "equal-bid-earliest-wins",
+      "reserve": "2",
+      "cap": "5",
+      "bids": [
+        { "acceptedIndex": 0, "commitment": "301", "amount": "4" },
+        { "acceptedIndex": 1, "commitment": "302", "amount": "4" }
+      ],
+      "expected": {
+        "sold": true,
+        "winnerIndex": 0,
+        "clearingPrice": "4",
+        "bidderClaims": [
+          { "acceptedIndex": 0, "kind": "winner_surplus", "amount": "1" },
+          { "acceptedIndex": 1, "kind": "loser_refund", "amount": "5" }
+        ],
+        "sellerEntitlement": "4",
+        "lockedCollateral": "10",
+        "distributedValue": "10"
+      }
+    },
+    {
+      "name": "one-valid-reveal",
+      "reserve": "2",
+      "cap": "5",
+      "bids": [
+        { "acceptedIndex": 0, "commitment": "401", "amount": "3" },
+        { "acceptedIndex": 1, "commitment": "402", "amount": null }
+      ],
+      "expected": {
+        "sold": true,
+        "winnerIndex": 0,
+        "clearingPrice": "2",
+        "bidderClaims": [
+          { "acceptedIndex": 0, "kind": "winner_surplus", "amount": "3" },
+          { "acceptedIndex": 1, "kind": "loser_refund", "amount": "5" }
+        ],
+        "sellerEntitlement": "2",
+        "lockedCollateral": "10",
+        "distributedValue": "10"
+      }
+    },
+    {
+      "name": "no-bid-meets-reserve",
+      "reserve": "3",
+      "cap": "5",
+      "bids": [
+        { "acceptedIndex": 0, "commitment": "501", "amount": "2" },
+        { "acceptedIndex": 1, "commitment": "502", "amount": null }
+      ],
+      "expected": {
+        "sold": false,
+        "winnerIndex": null,
+        "clearingPrice": "0",
+        "bidderClaims": [
+          { "acceptedIndex": 0, "kind": "loser_refund", "amount": "5" },
+          { "acceptedIndex": 1, "kind": "loser_refund", "amount": "5" }
+        ],
+        "sellerEntitlement": "0",
+        "lockedCollateral": "10",
+        "distributedValue": "10"
+      }
+    }
+  ]
+}

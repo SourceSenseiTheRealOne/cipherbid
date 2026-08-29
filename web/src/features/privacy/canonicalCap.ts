@@ -1,5 +1,4 @@
 import { MAX_U128 } from '@/features/auction/auctionMath'
-import { createSepoliaProvider } from '@/lib/starknet/network'
 import type { HexAddress } from './strk20Actions'
 import type { Call } from 'starknet'
 
@@ -7,12 +6,7 @@ type CapProvider = Readonly<{
   callContract: (call: Call) => Promise<string[]>
 }>
 
-const defaultProvider: CapProvider = createSepoliaProvider()
-
-export async function readCanonicalCap(
-  auctionHouse: HexAddress,
-  provider: CapProvider = defaultProvider,
-): Promise<bigint> {
+export async function readCanonicalCap(auctionHouse: HexAddress, provider: CapProvider): Promise<bigint> {
   const response = await provider.callContract({
     contractAddress: auctionHouse,
     entrypoint: 'get_cap',

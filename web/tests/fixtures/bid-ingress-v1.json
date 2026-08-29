@@ -1,0 +1,117 @@
+{
+  "schema": "cipherbid.bid-ingress.v1",
+  "route": "withdraw_then_invoke",
+  "sample": {
+    "auctionId": "7",
+    "paymentToken": "0x111",
+    "cap": "5",
+    "commitment": "101",
+    "claimHandle": "202",
+    "auctionHouse": "0x222"
+  },
+  "actions": [
+    {
+      "type": "withdraw",
+      "token": "0x111",
+      "amount": "0x5",
+      "recipient": "0x222"
+    },
+    {
+      "type": "invoke",
+      "contract": "0x222",
+      "calldata": ["0x0", "0x7", "0x65", "0xca", "0x0", "0x0", "${poolAddress}", "0x0"]
+    }
+  ],
+  "placeholders": {
+    "poolAddress": ["actions[1].calldata[6]"],
+    "openNoteIds": []
+  },
+  "privacyInvoke": {
+    "selector": "privacy_invoke",
+    "arguments": [
+      {
+        "index": 0,
+        "name": "operation",
+        "cairoType": "u8",
+        "semantic": "PLACE_BID",
+        "sampleValue": "0x0"
+      },
+      {
+        "index": 1,
+        "name": "auction_id",
+        "cairoType": "u64",
+        "semantic": "auction identifier",
+        "sampleValue": "0x7"
+      },
+      {
+        "index": 2,
+        "name": "primary_value",
+        "cairoType": "felt252",
+        "semantic": "domain-separated sealed bid commitment",
+        "sampleValue": "0x65"
+      },
+      {
+        "index": 3,
+        "name": "claim_handle",
+        "cairoType": "felt252",
+        "semantic": "public one-time claim handle",
+        "sampleValue": "0xca"
+      },
+      {
+        "index": 4,
+        "name": "reserved_0",
+        "cairoType": "felt252",
+        "semantic": "must be zero for PLACE_BID",
+        "sampleValue": "0x0"
+      },
+      {
+        "index": 5,
+        "name": "reserved_1",
+        "cairoType": "felt252",
+        "semantic": "must be zero for PLACE_BID",
+        "sampleValue": "0x0"
+      },
+      {
+        "index": 6,
+        "name": "pool_address",
+        "cairoType": "ContractAddress",
+        "semantic": "wallet-resolved configured pool address",
+        "sampleValue": "${poolAddress}"
+      },
+      {
+        "index": 7,
+        "name": "open_note_id",
+        "cairoType": "felt252",
+        "semantic": "must be zero because bid ingress creates no open note",
+        "sampleValue": "0x0"
+      }
+    ],
+    "returnType": "Span<OpenNoteDeposit>",
+    "expectedLength": 0
+  },
+  "submission": {
+    "preflight": "strk20PrepareInvoke(actions, true)",
+    "preflightProof": "empty",
+    "submit": "strk20InvokeTransaction(actions)",
+    "proofGeneration": "wallet",
+    "signature": "wallet",
+    "broadcast": "wallet"
+  },
+  "receipt": {
+    "requiredPoolEvents": ["Withdrawal", "ExternalContractInvoked"],
+    "requiredAuctionEvents": ["BidCommitted"],
+    "forbiddenPoolEvents": ["OpenNoteCreated", "OpenNoteDeposited"],
+    "walletResultFields": ["transaction_hash"]
+  },
+  "privacyBoundary": {
+    "appReceives": ["transaction_hash"],
+    "appNeverReceives": [
+      "viewing_key",
+      "private_notes",
+      "wallet_private_key",
+      "proof_data",
+      "proof_output",
+      "proof_facts"
+    ]
+  }
+}

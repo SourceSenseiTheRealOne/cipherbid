@@ -1,0 +1,189 @@
+{
+  "schema": "cipherbid.lifecycle-routes.v2",
+  "sample": {
+    "auctionId": "7",
+    "acceptedIndex": "0",
+    "amount": "3",
+    "bidNonce": "404",
+    "claimHandle": "202",
+    "claimSecret": "555",
+    "sellerClaimSecret": "777",
+    "sellerClaimHandle": "0x54b096c60c80fd98e2e6f2495db67227a0c8c2bdc69733df8fa23a4a5eb0e28",
+    "assetRecipient": "0x333",
+    "paymentToken": "0x111",
+    "auctionHouse": "0x222",
+    "walletRecipient": "0x444",
+    "sellerRecipient": "0x555",
+    "sellerOpenNoteId": "0x999",
+    "cap": "5",
+    "clearingPrice": "3"
+  },
+  "directCalls": {
+    "reveal": {
+      "contractAddress": "0x222",
+      "entrypoint": "reveal_bid",
+      "calldata": ["0x7", "0x0", "0x3", "0x194", "0x333"]
+    },
+    "settlement": {
+      "contractAddress": "0x222",
+      "entrypoint": "settle_auction",
+      "calldata": ["0x7"]
+    },
+    "sellerProceedsAuthorization": {
+      "contractAddress": "0x222",
+      "entrypoint": "authorize_seller_proceeds",
+      "calldata": ["0x7", "0x54b096c60c80fd98e2e6f2495db67227a0c8c2bdc69733df8fa23a4a5eb0e28", "0x999"]
+    }
+  },
+  "operationValues": {
+    "PLACE_BID": 0,
+    "LOSER_REFUND": 1,
+    "WINNER_SURPLUS": 2,
+    "SELLER_PROCEEDS": 3
+  },
+  "strk20Claims": {
+    "loserRefund": {
+      "actions": [
+        {
+          "type": "transfer",
+          "token": "0x111",
+          "amount": "OPEN",
+          "recipient": "0x444"
+        },
+        {
+          "type": "invoke",
+          "contract": "0x222",
+          "calldata": ["0x1", "0x7", "0x22b", "0xca", "0x0", "0x0", "${poolAddress}", "${openNoteIds[0]}"]
+        }
+      ],
+      "outputAmount": "5",
+      "outputFormula": "cap"
+    },
+    "winnerSurplus": {
+      "actions": [
+        {
+          "type": "transfer",
+          "token": "0x111",
+          "amount": "OPEN",
+          "recipient": "0x444"
+        },
+        {
+          "type": "invoke",
+          "contract": "0x222",
+          "calldata": ["0x2", "0x7", "0x22b", "0xca", "0x0", "0x0", "${poolAddress}", "${openNoteIds[0]}"]
+        }
+      ],
+      "outputAmount": "2",
+      "outputFormula": "cap - clearing_price"
+    },
+    "sellerProceeds": {
+      "actions": [
+        {
+          "type": "transfer",
+          "token": "0x111",
+          "amount": "OPEN",
+          "recipient": "0x555"
+        },
+        {
+          "type": "invoke",
+          "contract": "0x222",
+          "calldata": [
+            "0x3",
+            "0x7",
+            "0x309",
+            "0x54b096c60c80fd98e2e6f2495db67227a0c8c2bdc69733df8fa23a4a5eb0e28",
+            "0x0",
+            "0x0",
+            "${poolAddress}",
+            "${openNoteIds[0]}"
+          ]
+        }
+      ],
+      "outputAmount": "3",
+      "outputFormula": "clearing_price"
+    }
+  },
+  "sellerAuthorization": {
+    "requiredCaller": "configured_seller",
+    "preparation": "strk20PrepareInvoke(actions,true)",
+    "binds": ["auction_id", "seller_claim_handle", "open_note_id"],
+    "replaceableBeforeClaim": true,
+    "reprepareAfterAuthorization": true,
+    "frontRunBehavior": "copied_secret_can_only_target_authorized_note",
+    "publicDisclosure": "seller_to_open_note_id_link"
+  },
+  "sharedPrivacyInvoke": {
+    "arguments": [
+      { "index": 0, "name": "operation", "cairoType": "u8" },
+      { "index": 1, "name": "auction_id", "cairoType": "u64" },
+      { "index": 2, "name": "primary_value", "cairoType": "felt252" },
+      { "index": 3, "name": "claim_handle", "cairoType": "felt252" },
+      { "index": 4, "name": "reserved_0", "cairoType": "felt252" },
+      { "index": 5, "name": "reserved_1", "cairoType": "felt252" },
+      { "index": 6, "name": "pool_address", "cairoType": "ContractAddress" },
+      { "index": 7, "name": "open_note_id", "cairoType": "felt252" }
+    ],
+    "returnType": "Span<OpenNoteDeposit>"
+  },
+  "contractOutputs": {
+    "loserRefund": {
+      "length": 1,
+      "noteId": "${openNoteIds[0]}",
+      "token": "payment_token",
+      "amount": "cap"
+    },
+    "winnerSurplus": {
+      "length": 1,
+      "noteId": "${openNoteIds[0]}",
+      "token": "payment_token",
+      "amount": "cap - clearing_price",
+      "zeroAmountBehavior": "ineligible_no_transaction"
+    },
+    "sellerProceeds": {
+      "route": "strk20_open_note",
+      "length": 1,
+      "noteId": "${openNoteIds[0]}",
+      "recipientAuthorization": "configured_seller_pre_authorized_note_id",
+      "token": "payment_token",
+      "amount": "clearing_price",
+      "openNoteDeposits": 1
+    }
+  },
+  "events": {
+    "reveal": ["BidRevealed"],
+    "settlement": ["AuctionSettled", "ERC721.Transfer"],
+    "loserRefund": ["OpenNoteCreated", "LoserRefundClaimed", "ExternalContractInvoked", "OpenNoteDeposited"],
+    "winnerSurplus": ["OpenNoteCreated", "WinnerSurplusClaimed", "ExternalContractInvoked", "OpenNoteDeposited"],
+    "sellerProceedsAuthorization": ["SellerProceedsAuthorized"],
+    "sellerProceeds": ["OpenNoteCreated", "SellerProceedsClaimed", "ExternalContractInvoked", "OpenNoteDeposited"]
+  },
+  "submission": {
+    "standardCalls": "walletAccount.execute(call)",
+    "strk20Claims": "walletAccount.strk20InvokeTransaction(actions)",
+    "proofGeneration": "wallet_for_all_strk20_claims",
+    "result": ["transaction_hash"]
+  },
+  "poolTouching": {
+    "bidderAIngress": true,
+    "bidderBIngress": true,
+    "revealA": false,
+    "revealB": false,
+    "settlement": false,
+    "loserRefund": true,
+    "winnerSurplus": true,
+    "sellerProceedsAuthorization": false,
+    "sellerProceeds": true
+  },
+  "mainnetMinimum": ["bidderAIngress", "bidderBIngress", "loserRefund"],
+  "preferredDemo": [
+    "bidderAIngress",
+    "bidderBIngress",
+    "revealA",
+    "revealB",
+    "settlement",
+    "loserRefund",
+    "winnerSurplus",
+    "sellerProceedsAuthorization",
+    "sellerProceeds"
+  ]
+}
