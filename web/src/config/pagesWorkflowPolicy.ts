@@ -115,12 +115,7 @@ export function verifyPagesWorkflow(source: string): readonly string[] {
 
   const setup = buildSteps.find((step) => step.uses === APPROVED_ACTIONS[1])
   const setupWith = record(setup?.with)
-  if (
-    !setupWith ||
-    setupWith['node-version'] !== '24.13.1' ||
-    setupWith.cache !== 'pnpm' ||
-    setupWith['cache-dependency-path'] !== 'web/pnpm-lock.yaml'
-  ) {
+  if (!setupWith || !exactKeys(setupWith, ['node-version']) || setupWith['node-version'] !== '24.13.1') {
     fail('workflow-node-setup-invalid')
   }
 
