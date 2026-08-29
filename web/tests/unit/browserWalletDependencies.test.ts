@@ -37,4 +37,28 @@ describe('browserWalletDependencies', () => {
     expect(stubs.connect).toHaveBeenCalledWith(provider, wallet)
     expect(stubs.supportedWalletApi).toHaveBeenCalledWith(wallet)
   })
+
+  it('uses the Wallet Standard change event to invalidate a changed wallet session', () => {
+    type ChangeListener = (changes: {
+      accounts?: readonly unknown[]
+      chains?: readonly unknown[]
+      features?: unknown
+    }) => void
+    const on = vi.fn<(event: 'change', listener: ChangeListener) => () => void>((_event, listener) => {
+      listener({ accounts: [] })
+      return () => undefined
+    })
+    const wallet = {
+      name: 'Ready',
+      features: {
+        'standard:events': { on },
+      },
+    }
+    const onChange = vi.fn()
+
+    browserWalletDependencies.subscribeWalletChanges(wallet, onChange)
+
+    expect(on).toHaveBeenCalledWith('change', expect.any(Function))
+    expect(onChange).toHaveBeenCalledOnce()
+  })
 })

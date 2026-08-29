@@ -2,7 +2,7 @@ export function SecondPriceIllustration() {
   return (
     <section
       aria-labelledby="clearing-chart-title"
-      className="rounded-[1.4rem] border border-black/10 bg-[#f8f6f1] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
+      className="cipherbid-panel rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -11,12 +11,12 @@ export function SecondPriceIllustration() {
             Second-price clearing, illustrated
           </h2>
         </div>
-        <span className="rounded-full border border-black/15 bg-[#eeeae2] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black/70">
+        <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#aeb5c2]">
           Illustration — not chain data
         </span>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-black/10 bg-[#19171f] p-3 sm:p-5">
+      <div className="mt-6 overflow-hidden rounded-xl border border-white/10 bg-[#0b0c0e] p-3 sm:p-5">
         <svg
           role="img"
           aria-label="Illustrative second-price clearing chart"

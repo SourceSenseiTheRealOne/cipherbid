@@ -1,4 +1,15 @@
 import { supportsWalletApiVersion } from './walletCapabilities'
+import { MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID } from '@/config/deployment'
+
+function normalizeChainId(chainId: string): string {
+  if (chainId === 'SN_MAIN') return MAINNET_CHAIN_ID
+  if (chainId === 'SN_SEPOLIA') return SEPOLIA_CHAIN_ID
+  try {
+    return `0x${BigInt(chainId).toString(16)}`
+  } catch {
+    return chainId
+  }
+}
 
 export type WalletConnectionDependencies = {
   createAccount: (provider: unknown, wallet: unknown) => Promise<unknown>
@@ -7,6 +18,7 @@ export type WalletConnectionDependencies = {
   requestChainId: (wallet: unknown) => Promise<string>
   supportedWalletApi: (wallet: unknown) => Promise<readonly string[]>
   normalizeAddress: (address: string) => string
+  subscribeWalletChanges: (wallet: unknown, onChange: () => void) => () => void
 }
 
 export type PrivacyWalletConnection = Readonly<{
@@ -38,7 +50,7 @@ export async function connectPrivacyWallet(
     throw new Error('Wallet account permission was not granted')
   }
 
-  const [chainId, walletApiVersions] = await Promise.all([
+  const [rawChainId, walletApiVersions] = await Promise.all([
     dependencies.requestChainId(wallet),
     dependencies.supportedWalletApi(wallet),
   ])
@@ -51,7 +63,7 @@ export async function connectPrivacyWallet(
   return {
     account,
     address: address as `0x${string}`,
-    chainId,
+    chainId: normalizeChainId(rawChainId),
     walletApiVersions: [...walletApiVersions],
     supportsStrk20: supportsWalletApiVersion(walletApiVersions),
   }

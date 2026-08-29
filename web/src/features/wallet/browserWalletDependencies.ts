@@ -27,4 +27,11 @@ export const browserWalletDependencies: WalletConnectionDependencies = {
     return result.map(String)
   },
   normalizeAddress: (address) => validateAndParseAddress(address),
+  subscribeWalletChanges: (wallet, onChange) => {
+    const events = asWallet(wallet).features?.['standard:events']
+    if (!events) return () => undefined
+    return events.on('change', (changes) => {
+      if (changes.accounts || changes.chains || changes.features) onChange()
+    })
+  },
 }
