@@ -1,6 +1,6 @@
 # CipherBid mainnet release candidate
 
-Initially re-frozen at `2026-08-29T02:47:23Z` before any CipherBid mainnet contract write. The user later approved a hackathon-only custody exception for the original Ready account. Its local key was independently matched to the account's onchain owner before execution. The verified deployment supersedes the pre-write account state below; see [`deployment.md`](./deployment.md).
+Initially re-frozen at `2026-08-29T02:47:23Z` before any CipherBid mainnet contract write. The user later approved a hackathon-only custody exception for the original Ready account. Its local key was independently matched to the account's onchain owner before execution. This file preserves the pre-write plan; the verified [`deployment`](./deployment.md), [`transaction ledger`](./transactions.md), and actual [`2/4 STRK lifecycle`](./auction-lifecycle.md) supersede its expected-state fields.
 
 ## Public identities
 
@@ -54,7 +54,7 @@ At the observed `6 STRK` pool fee:
 - seller shield target for deposit plus proceeds claim: `12 STRK`;
 - total mainnet deployer spend ceiling for declarations, deployments, public top-ups, setup, and lifecycle fees: **`150 STRK`**.
 
-Every transaction is estimated before submission and must fail closed if its cumulative authorized ceiling would exceed `150 STRK`. Both `25 STRK` bidder top-ups succeeded; each Ready X account still needs to submit its `24 STRK` public deposit before the private lifecycle can start. The hackathon deployer signer remains isolated in a dedicated local `0600` sncast account file and is never printed or copied into the repository.
+At freeze time, both `25 STRK` bidder top-ups had succeeded and each Ready X account still needed to submit its `24 STRK` public deposit. Both deposits later succeeded and exceeded the ten-block maturity gate before auction creation. The hackathon deployer signer remained isolated in a dedicated local `0600` sncast account file and was never printed or copied into the repository.
 
 ## Contract artifacts
 

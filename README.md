@@ -4,11 +4,11 @@
 
 CipherBid is an open-source Vickrey auction house for ERC-721 assets on Starknet. Every bidder escrows the same public STRK collateral cap through STRK20 while committing to a private bid amount. After the bidding window closes, bidders reveal their commitments, the highest valid bidder wins, and the NFT is delivered atomically at the greater of the reserve or second-highest valid bid.
 
-> **Demo deployment only:** the deployed contracts and public funding transactions below are verified on Starknet mainnet. The two-wallet private bid lifecycle is still pending Ready X deposits, so `strk20.json` intentionally contains no qualifying transaction claims yet.
+> **Verified mainnet demo:** auction [`1788040057342`](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) completed the two-wallet private-bid lifecycle, atomic settlement, and both bidder claims. Bidder B entered `4 STRK`, not the frozen plan's `3 STRK`; this README and the public evidence preserve the actual chain value.
 
 ## Why equal collateral?
 
-A STRK20 `privacy_invoke` withdraws tokens from the privacy pool to the helper through a public ERC-20 edge. Escrowing each bidder's variable bid would reveal that amount before the reveal phase. CipherBid therefore locks the same cap for every accepted bidder. The public transfer proves every bid is funded without disclosing whether the sealed bid is `2 STRK`, `3 STRK`, or another value at or below the cap.
+A STRK20 `privacy_invoke` withdraws tokens from the privacy pool to the helper through a public ERC-20 edge. Escrowing each bidder's variable bid would reveal that amount before the reveal phase. CipherBid therefore locks the same cap for every accepted bidder. The public transfer proves every bid is funded without disclosing whether the sealed bid is `2 STRK`, `4 STRK`, or another value at or below the cap.
 
 This is **STRK20-funded sealed bidding with equalized real collateral**. It is not an unfunded hash-only auction, and it does not claim bids remain private after reveal.
 
@@ -24,7 +24,7 @@ This is **STRK20-funded sealed bidding with equalized real collateral**. It is n
 | AuctionHouse declaration | [`0x552781e5ecb2ab9826474c8395ca5fd2f534ce6155367ab67ae195f5e2c9dc6`](https://voyager.online/tx/0x552781e5ecb2ab9826474c8395ca5fd2f534ce6155367ab67ae195f5e2c9dc6)         |
 | DemoERC721 declaration   | [`0x01efc7df78014f252d346af3b88a5035b002cf005079604f6e3bf9df0f1fa9b`](https://voyager.online/tx/0x01efc7df78014f252d346af3b88a5035b002cf005079604f6e3bf9df0f1fa9b)         |
 
-Public readback confirms the reviewed class hashes, canonical pool and STRK token, a maximum of 32 bidders, and deployer ownership of NFT `99`. See the [deployment evidence](docs/evidence/mainnet/deployment.md) and [machine-readable manifest](docs/evidence/mainnet/deployment.json).
+Deployment readback confirmed the reviewed class hashes, canonical pool and STRK token, a maximum of 32 bidders, and initial deployer ownership of NFT `99`. The [verified lifecycle](docs/evidence/mainnet/auction-lifecycle.md) now proves token `99` was delivered to Bidder B during settlement. See the [deployment evidence](docs/evidence/mainnet/deployment.md) and [machine-readable manifest](docs/evidence/mainnet/deployment.json).
 
 ## Public frontend
 
@@ -32,7 +32,7 @@ The production frontend is live at [`https://sourcesenseitherealone.github.io/ci
 
 The exportable live-auction route is `/auction?id=<positive-u64>`. It validates one auction ID, reads public Starknet state in the browser, verifies the deployed class/configuration and NFT custody, then renders wallet controls. Ready X still owns private-note discovery, proving, signing, and submission.
 
-## Canonical demo
+## Verified mainnet demo
 
 The bounded mainnet demo uses one seller, two separate Ready X accounts, and one read-only observer:
 
@@ -41,16 +41,16 @@ The bounded mainnet demo uses one seller, two separate Ready X accounts, and one
 | Reserve                 |   `1 STRK` |
 | Equal collateral cap    |   `4 STRK` |
 | Bidder A sealed bid     |   `2 STRK` |
-| Bidder B sealed bid     |   `3 STRK` |
-| Expected winner         |   Bidder B |
-| Expected clearing price |   `2 STRK` |
+| Bidder B sealed bid     |   `4 STRK` |
+| Verified winner         |   Bidder B |
+| Verified clearing price |   `2 STRK` |
 | Loser refund            |   `4 STRK` |
 | Winner surplus          |   `2 STRK` |
 | Seller proceeds         |   `2 STRK` |
 | Bidding window          | 10 minutes |
 | Reveal window           |  5 minutes |
 
-Both bidders must first shield `24 STRK` and wait at least ten accepted blocks before the timed auction starts. Public readiness verifies registration, deposit amount, and maturity only. Ready X remains authoritative for unspent private-note balance.
+Both bidders shielded `24 STRK` and passed the ten-block maturity gate before the timed auction started. Public readiness verified registration, deposit amount, and maturity only. Ready X remained authoritative for unspent private-note balance.
 
 ## Architecture
 
@@ -200,6 +200,8 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 
 - [Evidence index](docs/evidence/README.md)
 - [Mainnet deployment](docs/evidence/mainnet/deployment.md)
+- [Verified mainnet transaction ledger](docs/evidence/mainnet/transactions.md)
+- [Verified mainnet auction lifecycle](docs/evidence/mainnet/auction-lifecycle.md)
 - [Mainnet release candidate](docs/evidence/mainnet/release-candidate.md)
 - [Canonical demo matrix](docs/evidence/task-0-demo-matrix.md)
 - [Lifecycle specification](docs/evidence/task-2-3-lifecycle-specification.md)
@@ -207,7 +209,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Hackathon requirements matrix](docs/evidence/hackathon-requirements-matrix.md)
 - [Sepolia rehearsal](docs/evidence/sepolia/demo-runbook.md)
 
-`strk20.json` contains only the two verified contract addresses. Its transaction and URL fields remain intentionally empty until at least three successful, independently verified mainnet transactions touch STRK20, the real lifecycle route is publicly verified, and the video is published. Deployment and funding transactions alone do not qualify.
+`strk20.json` contains the two verified contracts, four successful pool-touching CipherBid lifecycle transactions, and the clean-browser-verified live auction URL. `demo_video` remains intentionally empty until the maximum-three-minute video is publicly playable and independently checked.
 
 ## Scope
 

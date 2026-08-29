@@ -18,6 +18,7 @@ export type AtomicSettlementModel = Readonly<{
   winnerRecipient: string
   clearingPrice: string
   sellerEntitlement: string
+  sellerClaimConsumed: boolean
   custodyValid: boolean
 }>
 
@@ -72,9 +73,11 @@ export function AtomicDeliveryReceipt({
           </dd>
         </div>
         <div className="grid gap-1 py-3 sm:grid-cols-[9rem_1fr]">
-          <dt className="text-[#858b98]">Seller allocation</dt>
+          <dt className="text-[#858b98]">Seller entitlement</dt>
           <dd>
-            {settlement.settled && settlement.sold ? `Seller receives ${strk(settlement.sellerEntitlement)}` : '—'}
+            {settlement.settled && settlement.sold
+              ? `${strk(settlement.sellerEntitlement)} ${settlement.sellerClaimConsumed ? 'claimed' : 'remains claimable'}`
+              : '—'}
           </dd>
         </div>
       </dl>

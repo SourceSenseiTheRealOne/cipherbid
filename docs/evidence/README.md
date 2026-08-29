@@ -9,21 +9,23 @@ This directory contains public, secret-free specifications and verified readback
 | [`mainnet/deployment.md`](mainnet/deployment.md)                   | Verified                                        | Mainnet declarations, deployed addresses, successful receipts, class hashes, immutable AuctionHouse config, DemoERC721 ownership, and bounded fee accounting |
 | [`mainnet/deployment.json`](mainnet/deployment.json)               | Verified                                        | Machine-readable public deployment manifest consumed by frontend and auction-plan tooling                                                                    |
 | [`mainnet/release-candidate.md`](mainnet/release-candidate.md)     | Superseded pre-write freeze plus current status | Approved accounts, protocol addresses, demo economics, pool-fee assumptions, and release stop conditions                                                     |
+| [`mainnet/transactions.md`](mainnet/transactions.md)               | Verified                                        | Eight successful lifecycle receipts; four qualifying pool-touching CipherBid transactions with event and trace checks                                        |
+| [`mainnet/auction-lifecycle.md`](mainnet/auction-lifecycle.md)     | Verified                                        | Actual 2/4 STRK reveals, Vickrey settlement, NFT delivery, bidder claims, value conservation, and seller-fee deferral                                        |
 | [`submission/pages-deployment.md`](submission/pages-deployment.md) | Verified                                        | Durable GitHub Pages settings, exact deployed `main` SHA, successful hosted workflow/deployment, HTTP routes, and clean-browser runtime checks               |
 
-The mainnet private lifecycle is **not yet verified**. Do not create `mainnet/transactions.md`, `mainnet/auction-lifecycle.md`, or add hashes to `strk20.json` until the corresponding pool-touching transactions succeed and independent receipt/state readback passes.
+The mainnet private lifecycle is verified through both bidder claims. Seller proceeds remain exactly accounted and claimable but were intentionally deferred because the live `6 STRK` pool fee exceeds the `2 STRK` entitlement.
 
 ## Prepared recording control
 
-| Artifact                                           | Status                      | Scope                                                                                                                                        |
-| -------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`mainnet/demo-script.md`](mainnet/demo-script.md) | Prepared; recording blocked | Maximum-three-minute narration, capture rules, and hard evidence gates bound to the deployed mainnet contracts and canonical `2/3 STRK` case |
+| Artifact                                           | Status                      | Scope                                                                                                                                     |
+| -------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [`mainnet/demo-script.md`](mainnet/demo-script.md) | Prepared; recording blocked | Maximum-three-minute narration, capture rules, and hard evidence gates bound to the deployed mainnet contracts and actual `2/4 STRK` case |
 
 The script is not demo-video evidence. Its hard gate forbids recording or publication until the complete real lifecycle, claims, and Atomic Delivery Receipt are independently verified.
 
 ## Durable frontend publication
 
-The durable frontend is verified at `https://sourcesenseitherealone.github.io/cipherbid/`, with live auction reads at `/auction?id=<positive-u64>`. The public deployment record binds the successful hosted workflow to the exact `main` SHA and browser readback. `strk20.json.demo_url` remains empty until the final paired lifecycle verifies the real auction route.
+The durable frontend is verified at `https://sourcesenseitherealone.github.io/cipherbid/`. The real settled route is `/auction/?id=1788040057342`; clean-browser readback verified HTTP `200`, sold state, both reveal values, clearing price, NFT delivery, and zero horizontal overflow. That URL is now published in `strk20.json.demo_url`.
 
 ## Canonical lifecycle and security controls
 
