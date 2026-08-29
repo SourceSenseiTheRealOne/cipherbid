@@ -99,7 +99,10 @@ describe('auction transaction flows', () => {
   it('uses STRK20 for private bid and claims, but standard execute for reveal and settlement', async () => {
     const execute = vi.fn(async () => hashResponse('0x201'))
     const strk20InvokeTransaction = vi.fn(
-      async (_actions: Parameters<PrivacyWallet['strk20InvokeTransaction']>[0]) => hashResponse('0x202'),
+      async (...arguments_: Parameters<PrivacyWallet['strk20InvokeTransaction']>) => {
+        void arguments_
+        return hashResponse('0x202')
+      },
     )
     const wallet = { execute, strk20InvokeTransaction }
     const verify = vi.fn(async (hash: string) => ({ hash }))
@@ -177,7 +180,10 @@ describe('auction transaction flows', () => {
     const seller = createSellerCredential({ ...binding, claimSecret: 0x503n })
     const execute = vi.fn(async () => hashResponse('0x301'))
     const strk20InvokeTransaction = vi.fn(
-      async (_actions: Parameters<PrivacyWallet['strk20InvokeTransaction']>[0]) => hashResponse('0x302'),
+      async (...arguments_: Parameters<PrivacyWallet['strk20InvokeTransaction']>) => {
+        void arguments_
+        return hashResponse('0x302')
+      },
     )
     const strk20PrepareInvoke = vi.fn(async () => ({ openNoteId: '0x903' }))
     const verify = vi.fn(async (hash: string) => ({ hash }))
@@ -209,7 +215,11 @@ describe('auction transaction flows', () => {
     await expect(
       runSellerClaimFlow({
         orchestrator: new TransactionOrchestrator(),
-        wallet: { execute: vi.fn(async () => hashResponse('0x401')), strk20InvokeTransaction: privacySubmit, strk20PrepareInvoke: changedPrepare },
+        wallet: {
+          execute: vi.fn(async () => hashResponse('0x401')),
+          strk20InvokeTransaction: privacySubmit,
+          strk20PrepareInvoke: changedPrepare,
+        },
         expectedWallet,
         getWalletSnapshot,
         credential: seller,

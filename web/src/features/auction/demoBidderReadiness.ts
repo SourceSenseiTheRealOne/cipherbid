@@ -40,11 +40,13 @@ function normalized(value: Hex, label: string): Hex {
   return `0x${parsed.toString(16)}`
 }
 
-export function evaluateDemoBidderReadiness(input: Readonly<{
-  bidders: readonly DemoBidderObservation[]
-  latestBlock: number
-  minimumPublicDeposit?: bigint
-}>): Readonly<{ ready: boolean; statuses: readonly DemoBidderStatus[] }> {
+export function evaluateDemoBidderReadiness(
+  input: Readonly<{
+    bidders: readonly DemoBidderObservation[]
+    latestBlock: number
+    minimumPublicDeposit?: bigint
+  }>,
+): Readonly<{ ready: boolean; statuses: readonly DemoBidderStatus[] }> {
   if (!Number.isSafeInteger(input.latestBlock) || input.latestBlock < 0) {
     throw new Error('Latest block must be a non-negative safe integer')
   }
@@ -73,7 +75,11 @@ export function evaluateDemoBidderReadiness(input: Readonly<{
     const qualifyingDeposits = bidder.deposits
       .map((deposit) => {
         if (deposit.amount < 0n) throw new Error(`${bidder.name} deposit amount cannot be negative`)
-        if (!Number.isSafeInteger(deposit.blockNumber) || deposit.blockNumber < 0 || deposit.blockNumber > input.latestBlock) {
+        if (
+          !Number.isSafeInteger(deposit.blockNumber) ||
+          deposit.blockNumber < 0 ||
+          deposit.blockNumber > input.latestBlock
+        ) {
           throw new Error(`${bidder.name} deposit block is invalid`)
         }
         felt(deposit.transactionHash, `${bidder.name} deposit transaction hash`)

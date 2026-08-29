@@ -41,7 +41,8 @@ function cryptoApi(): Crypto {
 }
 
 function passwordBytes(password: string): Uint8Array {
-  if (typeof password !== 'string' || password.length < 12) throw new Error('Recovery password must contain at least 12 characters')
+  if (typeof password !== 'string' || password.length < 12)
+    throw new Error('Recovery password must contain at least 12 characters')
   if (password.length > 1_024) throw new Error('Recovery password is too long')
   return encoder.encode(password)
 }
@@ -180,7 +181,8 @@ function parsePayload(bytes: Uint8Array): readonly CipherBidCredential[] {
   const parsed = JSON.parse(decoder.decode(bytes)) as unknown
   if (!isRecord(parsed)) throw new Error('Recovery payload must be an object')
   exactKeys(parsed, ['schema', 'credentials'])
-  if (parsed.schema !== PAYLOAD_SCHEMA || !Array.isArray(parsed.credentials)) throw new Error('Unsupported recovery payload')
+  if (parsed.schema !== PAYLOAD_SCHEMA || !Array.isArray(parsed.credentials))
+    throw new Error('Unsupported recovery payload')
   if (parsed.credentials.length === 0 || parsed.credentials.length > MAX_CREDENTIALS) {
     throw new Error('Recovery payload credential count is invalid')
   }
@@ -188,7 +190,11 @@ function parsePayload(bytes: Uint8Array): readonly CipherBidCredential[] {
 }
 
 function parseEnvelope(serialized: string): RecoveryEnvelope {
-  if (typeof serialized !== 'string' || serialized.length === 0 || encoder.encode(serialized).length > MAX_BUNDLE_BYTES) {
+  if (
+    typeof serialized !== 'string' ||
+    serialized.length === 0 ||
+    encoder.encode(serialized).length > MAX_BUNDLE_BYTES
+  ) {
     throw new Error('Recovery envelope size is invalid')
   }
   const parsed = JSON.parse(serialized) as unknown
@@ -314,6 +320,7 @@ export async function createVerifiedRecoveryBundle(
     throw new Error('Recovery bundle import verification failed')
   }
   const digest = await cryptoApi().subtle.digest('SHA-256', ownedBuffer(encoder.encode(serialized)))
-  const bundleId = `0x${[...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')}` as const
+  const bundleId =
+    `0x${[...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')}` as const
   return Object.freeze({ serialized, bundleId, credentialCount: recovered.length })
 }

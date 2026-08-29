@@ -1,13 +1,6 @@
 {
   "schema": "cipherbid.auction-lifecycle.v1",
-  "states": [
-    "BiddingOpen",
-    "RevealOpen",
-    "ReadyToSettle",
-    "SettledSold",
-    "SettledNoSale",
-    "ClaimsComplete"
-  ],
+  "states": ["BiddingOpen", "RevealOpen", "ReadyToSettle", "SettledSold", "SettledNoSale", "ClaimsComplete"],
   "phaseBoundaries": {
     "biddingOpen": "now < bidding_deadline",
     "revealOpen": "bidding_deadline <= now < reveal_deadline",

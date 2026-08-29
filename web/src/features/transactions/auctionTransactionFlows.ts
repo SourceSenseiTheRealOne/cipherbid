@@ -11,16 +11,9 @@ import {
   buildSellerProceedsActions,
   buildWinnerSurplusActions,
 } from '@/features/privacy/strk20ClaimActions'
-import type {
-  BidderCredential,
-  CipherBidCredential,
-  SellerCredential,
-} from '@/features/credentials/credentials'
+import type { BidderCredential, CipherBidCredential, SellerCredential } from '@/features/credentials/credentials'
 import { createVerifiedRecoveryBundle } from '@/features/credentials/recoveryBundle'
-import {
-  TransactionOrchestrator,
-  type WalletSnapshot,
-} from '@/features/transactions/transactionOrchestrator'
+import { TransactionOrchestrator, type WalletSnapshot } from '@/features/transactions/transactionOrchestrator'
 
 export type VerifiedRecoveryExport = Readonly<{
   serialized: string
@@ -333,8 +326,7 @@ export async function runSellerClaimFlow<AuthorizationEvidence, ClaimEvidence>(
       }
       return actions
     },
-    submit: async (preparedActions) =>
-      transactionHash(await input.wallet.strk20InvokeTransaction(preparedActions)),
+    submit: async (preparedActions) => transactionHash(await input.wallet.strk20InvokeTransaction(preparedActions)),
     verify: input.verifyClaim,
   })
 

@@ -77,9 +77,12 @@ export function DemoBidderSetupPanel({
   return (
     <section aria-labelledby="demo-shield-title" className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-6">
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Private funding setup</p>
-      <h2 id="demo-shield-title" className="mt-2 text-2xl font-semibold">Prepare a demo bidder</h2>
+      <h2 id="demo-shield-title" className="mt-2 text-2xl font-semibold">
+        Prepare a demo bidder
+      </h2>
       <p className="mt-3 text-sm leading-6 text-[#9ba3af]">
-        Ready X owns registration, note discovery, proving, and submission. CipherBid requests one public {config.shieldDisplay} STRK deposit and never receives a viewing key.
+        Ready X owns registration, note discovery, proving, and submission. CipherBid requests one public{' '}
+        {config.shieldDisplay} STRK deposit and never receives a viewing key.
       </p>
 
       {bidder ? (
@@ -89,7 +92,10 @@ export function DemoBidderSetupPanel({
         </div>
       ) : null}
       {wrongAccount ? (
-        <p role="alert" className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
+        <p
+          role="alert"
+          className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100"
+        >
           Connect bidder A or bidder B; the seller account cannot shield bidder funds.
         </p>
       ) : null}
@@ -114,9 +120,14 @@ export function DemoBidderSetupPanel({
           {pending ? 'Waiting for Ready X…' : buttonLabel}
         </button>
       </div>
-      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">{status}</p>
+      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
+        {status}
+      </p>
       {error ? (
-        <p role="alert" className="mt-2 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
+        <p
+          role="alert"
+          className="mt-2 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100"
+        >
           {error}
         </p>
       ) : null}
@@ -131,7 +142,8 @@ export function DemoBidderSetupPanel({
         </a>
       ) : null}
       <p className="mt-4 text-xs leading-5 text-[#858b98]">
-        The pool currently charges its own private-operation fee. Keep the remaining public STRK for account fees and later claims.
+        The pool currently charges its own private-operation fee. Keep the remaining public STRK for account fees and
+        later claims.
       </p>
     </section>
   )
@@ -146,13 +158,24 @@ export function DemoBidderSetupPage({ deployment }: Readonly<{ deployment: Deplo
     <main className="min-h-screen bg-[#08090a] px-5 py-10 text-[#f7f8f8] sm:px-8 lg:px-10">
       <div className="mx-auto max-w-5xl">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
-          <Link href="/" className="text-lg font-semibold tracking-[-0.04em]">CipherBid</Link>
-          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-[#9ba3af] hover:text-white">Back to auctions</Link>
+          <Link href="/" className="text-lg font-semibold tracking-[-0.04em]">
+            CipherBid
+          </Link>
+          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-[#9ba3af] hover:text-white">
+            Back to auctions
+          </Link>
         </header>
         <section className="py-10 sm:py-14" aria-labelledby="demo-setup-title">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[#a8b1ff]">{config.networkLabel} demo preparation</p>
-          <h1 id="demo-setup-title" className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">Shield both demo bidders before the timer starts</h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-[#9ba3af]">Connect Bidder A, shield once, disconnect, switch Ready X to Bidder B, and repeat. The auction CLI will refuse to start until both deposits are at least ten blocks old.</p>
+          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[#a8b1ff]">
+            {config.networkLabel} demo preparation
+          </p>
+          <h1 id="demo-setup-title" className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">
+            Shield both demo bidders before the timer starts
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-[#9ba3af]">
+            Connect Bidder A, shield once, disconnect, switch Ready X to Bidder B, and repeat. The auction CLI will
+            refuse to start until both deposits are at least ten blocks old.
+          </p>
         </section>
         <div className="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
           <WalletConnectPanel

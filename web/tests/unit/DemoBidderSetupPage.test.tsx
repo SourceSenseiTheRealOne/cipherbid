@@ -27,10 +27,7 @@ describe('DemoBidderSetupPanel', () => {
 
     expect(shield).toHaveBeenCalledWith(connection, MAINNET_DEMO_BIDDER_CONFIG)
     expect(await screen.findByRole('status')).toHaveTextContent('Shield transaction submitted')
-    expect(screen.getByRole('link', { name: /0x123/ })).toHaveAttribute(
-      'href',
-      'https://voyager.online/tx/0x123',
-    )
+    expect(screen.getByRole('link', { name: /0x123/ })).toHaveAttribute('href', 'https://voyager.online/tx/0x123')
   })
 
   it('offers standard account activation before the private shield flow', async () => {
@@ -42,11 +39,7 @@ describe('DemoBidderSetupPanel', () => {
       chainId: SEPOLIA_CHAIN_ID,
     }
     render(
-      <DemoBidderSetupPanel
-        connection={sepoliaConnection}
-        config={SEPOLIA_DEMO_BIDDER_CONFIG}
-        activate={activate}
-      />,
+      <DemoBidderSetupPanel connection={sepoliaConnection} config={SEPOLIA_DEMO_BIDDER_CONFIG} activate={activate} />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Activate Bidder A' }))
@@ -78,9 +71,11 @@ describe('DemoBidderSetupPanel', () => {
 
   it('turns an unregistered viewing-key failure into the exact Ready X onboarding step', async () => {
     const user = userEvent.setup()
-    const shield = vi.fn().mockRejectedValue(
-      new Error('No viewing key available for account. Ensure the account is provisioned via the backend.'),
-    )
+    const shield = vi
+      .fn()
+      .mockRejectedValue(
+        new Error('No viewing key available for account. Ensure the account is provisioned via the backend.'),
+      )
     render(<DemoBidderSetupPanel connection={connection} config={MAINNET_DEMO_BIDDER_CONFIG} shield={shield} />)
 
     await user.click(screen.getByRole('button', { name: 'Shield 24 STRK for Bidder A' }))

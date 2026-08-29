@@ -36,7 +36,8 @@ export type AuctionCreationForm = Readonly<{
 function address(value: HexAddress, label: string): HexAddress {
   if (!/^0x[0-9a-fA-F]+$/.test(value)) throw new Error(`${label} must be a hexadecimal Starknet address`)
   const parsed = BigInt(value)
-  if (parsed <= 0n || parsed >= CONTRACT_ADDRESS_BOUND) throw new Error(`${label} is outside the Starknet address range`)
+  if (parsed <= 0n || parsed >= CONTRACT_ADDRESS_BOUND)
+    throw new Error(`${label} is outside the Starknet address range`)
   return `0x${parsed.toString(16)}`
 }
 

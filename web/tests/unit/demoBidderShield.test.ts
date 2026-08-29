@@ -25,7 +25,10 @@ describe('demo bidder shield flow', () => {
     expect(demoBidderForAddress(MAINNET_BIDDER_A, MAINNET_DEMO_BIDDER_CONFIG)).toBe('Bidder A')
     expect(demoBidderForAddress(MAINNET_BIDDER_B, MAINNET_DEMO_BIDDER_CONFIG)).toBe('Bidder B')
     expect(
-      demoBidderForAddress('0x054499e46751979eea7fcc64475836d1a5f591c2d12a7546e42e8516fdbabc4d', MAINNET_DEMO_BIDDER_CONFIG),
+      demoBidderForAddress(
+        '0x054499e46751979eea7fcc64475836d1a5f591c2d12a7546e42e8516fdbabc4d',
+        MAINNET_DEMO_BIDDER_CONFIG,
+      ),
     ).toBeNull()
   })
 
@@ -53,9 +56,7 @@ describe('demo bidder shield flow', () => {
 
     const result = await runDemoBidderShield(connection(MAINNET_BIDDER_A, invoke), MAINNET_DEMO_BIDDER_CONFIG)
 
-    expect(invoke).toHaveBeenCalledWith([
-      { type: 'deposit', token: STRK_TOKEN, amount: '0x14d1120d7b1600000' },
-    ])
+    expect(invoke).toHaveBeenCalledWith([{ type: 'deposit', token: STRK_TOKEN, amount: '0x14d1120d7b1600000' }])
     expect(result).toEqual({ bidder: 'Bidder A', transactionHash: '0x123' })
   })
 

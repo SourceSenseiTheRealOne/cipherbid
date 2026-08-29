@@ -47,12 +47,12 @@ describe('auction lifecycle v1', () => {
     expect(deriveAuctionPhase({ now: 9n, biddingDeadline: 10n, revealDeadline: 20n })).toBe('BiddingOpen')
     expect(deriveAuctionPhase({ now: 10n, biddingDeadline: 10n, revealDeadline: 20n })).toBe('RevealOpen')
     expect(deriveAuctionPhase({ now: 20n, biddingDeadline: 10n, revealDeadline: 20n })).toBe('ReadyToSettle')
-    expect(
-      deriveAuctionPhase({ now: 20n, biddingDeadline: 10n, revealDeadline: 20n, settlement: 'sold' }),
-    ).toBe('SettledSold')
-    expect(
-      deriveAuctionPhase({ now: 20n, biddingDeadline: 10n, revealDeadline: 20n, settlement: 'no_sale' }),
-    ).toBe('SettledNoSale')
+    expect(deriveAuctionPhase({ now: 20n, biddingDeadline: 10n, revealDeadline: 20n, settlement: 'sold' })).toBe(
+      'SettledSold',
+    )
+    expect(deriveAuctionPhase({ now: 20n, biddingDeadline: 10n, revealDeadline: 20n, settlement: 'no_sale' })).toBe(
+      'SettledNoSale',
+    )
     expect(
       deriveAuctionPhase({
         now: 20n,

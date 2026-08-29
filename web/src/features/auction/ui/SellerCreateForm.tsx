@@ -9,10 +9,7 @@ import { generateSellerCredential } from '@/features/credentials/credentials'
 import { readAuctionSnapshot, type ChainReader } from '@/features/auction/auctionReader'
 import { verifyTransactionTransition } from '@/features/transactions/receiptVerifier'
 import { TransactionOrchestrator } from '@/features/transactions/transactionOrchestrator'
-import {
-  runSellerCreationFlow,
-  type StandardWallet,
-} from '@/features/transactions/auctionTransactionFlows'
+import { runSellerCreationFlow, type StandardWallet } from '@/features/transactions/auctionTransactionFlows'
 
 export type SellerCreateDeployment = DeploymentManifest
 
@@ -127,10 +124,15 @@ export function SellerCreateForm({ deployment, connection, onCreated }: SellerCr
     'min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 outline-none focus:border-[#a8b1ff] disabled:cursor-not-allowed disabled:opacity-50'
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-7">
+    <form
+      onSubmit={(event) => void submit(event)}
+      className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-7"
+    >
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Seller workflow</p>
       <h2 className="mt-2 text-2xl font-semibold">Create auction</h2>
-      {!enabled ? <p className="mt-4 text-sm text-[#9ba3af]">Connect a compatible wallet to create an auction.</p> : null}
+      {!enabled ? (
+        <p className="mt-4 text-sm text-[#9ba3af]">Connect a compatible wallet to create an auction.</p>
+      ) : null}
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {[
           ['Auction ID', auctionId, setAuctionId, 'numeric'],
@@ -174,14 +176,24 @@ export function SellerCreateForm({ deployment, connection, onCreated }: SellerCr
         </label>
       </div>
       <p className="mt-5 rounded-xl border border-[#7170ff]/20 bg-[#7170ff]/10 p-4 text-sm leading-6 text-[#d7dcff]">
-        Encrypted recovery is downloaded and import-verified before the wallet receives the NFT approval and auction creation request.
+        Encrypted recovery is downloaded and import-verified before the wallet receives the NFT approval and auction
+        creation request.
       </p>
-      <button type="submit" disabled={!enabled} className="mt-5 min-h-12 w-full rounded-xl bg-[#6654d9] px-5 font-semibold disabled:cursor-not-allowed disabled:opacity-45">
+      <button
+        type="submit"
+        disabled={!enabled}
+        className="mt-5 min-h-12 w-full rounded-xl bg-[#6654d9] px-5 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+      >
         Create auction with NFT custody
       </button>
-      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">{status}</p>
+      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
+        {status}
+      </p>
       {createdAuctionId !== null ? (
-        <a href={`/auctions/${createdAuctionId}`} className="mt-2 inline-flex min-h-11 items-center font-semibold text-[#aee5c1] underline underline-offset-4">
+        <a
+          href={`/auctions/${createdAuctionId}`}
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-[#aee5c1] underline underline-offset-4"
+        >
           Open auction #{createdAuctionId.toString()}
         </a>
       ) : null}

@@ -1,5 +1,3 @@
-#[feature("safe_dispatcher")]
-
 use cipherbid::demo_erc721::{
     IDemoERC721Dispatcher, IDemoERC721DispatcherTrait, IDemoERC721SafeDispatcher,
     IDemoERC721SafeDispatcherTrait,
@@ -49,6 +47,7 @@ fn constructor_mints_one_approved_transferable_demo_token() {
 }
 
 #[test]
+#[feature("safe_dispatcher")]
 fn unauthorized_transfer_and_zero_owner_deployment_are_rejected() {
     let seller = address(0x777);
     let attacker = address(0x666);

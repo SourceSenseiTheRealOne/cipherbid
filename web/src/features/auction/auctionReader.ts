@@ -94,14 +94,16 @@ export async function readAndValidateDeployment(reader: ChainReader, manifest: D
     call(reader, { contractAddress: manifest.auctionHouse, entrypoint: 'get_house_config' }),
   ])
   const classHash = normalizeHex(classHashRaw, 'Auction house class hash')
-  if (!sameFelt(classHash, manifest.auctionHouseClassHash)) throw new Error('Auction house class hash does not match manifest')
+  if (!sameFelt(classHash, manifest.auctionHouseClassHash))
+    throw new Error('Auction house class hash does not match manifest')
   expectLength(houseResult, 3, 'get_house_config')
   const pool = normalizeHex(houseResult[0], 'Configured pool')
   const paymentToken = normalizeHex(houseResult[1], 'Configured payment token')
   const maxBidders = boundedNumber(houseResult[2], 'Configured bidder bound', MAX_SUPPORTED_BIDDERS)
   if (maxBidders === 0) throw new Error('Configured bidder bound is zero')
   if (!sameFelt(pool, manifest.strk20Pool)) throw new Error('Configured STRK20 pool does not match manifest')
-  if (!sameFelt(paymentToken, manifest.paymentToken)) throw new Error('Configured payment token does not match manifest')
+  if (!sameFelt(paymentToken, manifest.paymentToken))
+    throw new Error('Configured payment token does not match manifest')
 
   return Object.freeze({
     pool: manifest.strk20Pool,
@@ -196,11 +198,7 @@ export async function readAuctionSnapshot(reader: ChainReader, manifest: Deploym
   })
   expectLength(ownerResult, 1, 'owner_of')
   const nftOwner = normalizeHex(ownerResult[0], 'NFT owner')
-  const expectedOwner = !state.settled
-    ? manifest.auctionHouse
-    : state.sold
-      ? state.winnerRecipient
-      : config.seller
+  const expectedOwner = !state.settled ? manifest.auctionHouse : state.sold ? state.winnerRecipient : config.seller
   const custodyValid = sameFelt(nftOwner, expectedOwner)
   if (!custodyValid) throw new Error('NFT custody does not match auction lifecycle state')
 

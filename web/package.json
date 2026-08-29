@@ -5,8 +5,11 @@
   "scripts": {
     "dev": "next dev --webpack",
     "auction:create:sepolia": "tsx scripts/create-sepolia-auction.ts",
+    "auction:create:mainnet": "tsx scripts/create-mainnet-auction.ts",
     "auction:preflight:sepolia": "tsx scripts/create-sepolia-auction.ts --preflight-only",
     "auction:preflight:mainnet": "tsx scripts/preflight-mainnet.ts",
+    "deploy:mainnet": "tsx scripts/deploy-mainnet.ts",
+    "env:mainnet": "tsx scripts/configure-mainnet-env.ts",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",

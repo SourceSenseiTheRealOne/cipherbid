@@ -15,19 +15,7 @@ const manifest: DeploymentManifest = {
 function reader(overrides: Partial<Record<string, readonly string[]>> = {}): ChainReader {
   const results: Record<string, readonly string[]> = {
     '0x123:get_house_config': [manifest.strk20Pool, manifest.paymentToken, '0x20'],
-    '0x123:get_auction_config': [
-      '0x7',
-      '0x777',
-      '0xabc',
-      '0x999',
-      '0x63',
-      '0x0',
-      '0x2',
-      '0x5',
-      '0x64',
-      '0xc8',
-      '0x2',
-    ],
+    '0x123:get_auction_config': ['0x7', '0x777', '0xabc', '0x999', '0x63', '0x0', '0x2', '0x5', '0x64', '0xc8', '0x2'],
     '0x123:get_auction_state': ['0x1', '0x1', '0x1', '0x222', '0x888', '0x3', '0x3', '0x903', '0x0'],
     '0x123:get_bid_count': ['0x2'],
     '0x123:get_bid:0x0': ['0x111', '0xa11', '0x1', '0x3', '0x887'],
@@ -88,7 +76,10 @@ describe('auction reader', () => {
     const badClassReader = { ...reader(), getClassHashAt: async () => '0x999' }
     await expect(readAndValidateDeployment(badClassReader, manifest)).rejects.toThrow('class hash')
     await expect(
-      readAndValidateDeployment(reader({ '0x123:get_house_config': ['0x999', manifest.paymentToken, '0x20'] }), manifest),
+      readAndValidateDeployment(
+        reader({ '0x123:get_house_config': ['0x999', manifest.paymentToken, '0x20'] }),
+        manifest,
+      ),
     ).rejects.toThrow('pool')
     await expect(readAuctionSnapshot(reader({ '0x123:get_bid_count': ['0x21'] }), manifest, 7n)).rejects.toThrow(
       'bounded maximum',

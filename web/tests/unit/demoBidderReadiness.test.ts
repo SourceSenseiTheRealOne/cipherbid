@@ -9,17 +9,13 @@ const ready = [
     name: 'cipherbid-sepolia-bidder-a',
     address: bidderA,
     publicKey: '0x111',
-    deposits: [
-      { amount: 15_000_000_000_000_000_000n, blockNumber: 100, transactionHash: '0xaaa' as const },
-    ],
+    deposits: [{ amount: 15_000_000_000_000_000_000n, blockNumber: 100, transactionHash: '0xaaa' as const }],
   },
   {
     name: 'cipherbid-sepolia-bidder-b',
     address: bidderB,
     publicKey: '0x222',
-    deposits: [
-      { amount: 20_000_000_000_000_000_000n, blockNumber: 101, transactionHash: '0xbbb' as const },
-    ],
+    deposits: [{ amount: 20_000_000_000_000_000_000n, blockNumber: 101, transactionHash: '0xbbb' as const }],
   },
 ] as const
 
@@ -29,8 +25,20 @@ describe('Sepolia demo bidder readiness', () => {
 
     expect(result.ready).toBe(true)
     expect(result.statuses).toEqual([
-      expect.objectContaining({ name: 'cipherbid-sepolia-bidder-a', registered: true, depositAmount: 15_000_000_000_000_000_000n, confirmations: 11, ready: true }),
-      expect.objectContaining({ name: 'cipherbid-sepolia-bidder-b', registered: true, depositAmount: 20_000_000_000_000_000_000n, confirmations: 10, ready: true }),
+      expect.objectContaining({
+        name: 'cipherbid-sepolia-bidder-a',
+        registered: true,
+        depositAmount: 15_000_000_000_000_000_000n,
+        confirmations: 11,
+        ready: true,
+      }),
+      expect.objectContaining({
+        name: 'cipherbid-sepolia-bidder-b',
+        registered: true,
+        depositAmount: 20_000_000_000_000_000_000n,
+        confirmations: 10,
+        ready: true,
+      }),
     ])
   })
 
@@ -99,11 +107,20 @@ describe('Sepolia demo bidder readiness', () => {
 
     expect(result.ready).toBe(false)
     expect(result.statuses[0]?.blockers).toContain('No public STRK deposit of at least 24 STRK was found')
-    expect(result.statuses[1]).toEqual(expect.objectContaining({ ready: true, depositAmount: 24_000_000_000_000_000_000n }))
+    expect(result.statuses[1]).toEqual(
+      expect.objectContaining({ ready: true, depositAmount: 24_000_000_000_000_000_000n }),
+    )
   })
 
   it('rejects duplicate accounts or viewing public keys', () => {
-    expect(() => evaluateDemoBidderReadiness({ latestBlock: 111, bidders: [ready[0], { ...ready[1], address: bidderA }] })).toThrow('distinct')
-    expect(() => evaluateDemoBidderReadiness({ latestBlock: 111, bidders: [ready[0], { ...ready[1], publicKey: ready[0].publicKey }] })).toThrow('distinct')
+    expect(() =>
+      evaluateDemoBidderReadiness({ latestBlock: 111, bidders: [ready[0], { ...ready[1], address: bidderA }] }),
+    ).toThrow('distinct')
+    expect(() =>
+      evaluateDemoBidderReadiness({
+        latestBlock: 111,
+        bidders: [ready[0], { ...ready[1], publicKey: ready[0].publicKey }],
+      }),
+    ).toThrow('distinct')
   })
 })

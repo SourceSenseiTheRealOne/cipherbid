@@ -7,10 +7,7 @@ pub trait IDemoERC721<TContractState> {
     fn approve(ref self: TContractState, spender: ContractAddress, token_id: u256);
     fn get_approved(self: @TContractState, token_id: u256) -> ContractAddress;
     fn transfer_from(
-        ref self: TContractState,
-        from: ContractAddress,
-        to: ContractAddress,
-        token_id: u256,
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
     );
 }
 
@@ -83,10 +80,7 @@ pub mod DemoERC721 {
         }
 
         fn transfer_from(
-            ref self: ContractState,
-            from: ContractAddress,
-            to: ContractAddress,
-            token_id: u256,
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
         ) {
             let zero: ContractAddress = 0.try_into().unwrap();
             assert(to != zero, 'ZERO_RECIPIENT');

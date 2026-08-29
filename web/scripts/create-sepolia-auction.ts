@@ -152,9 +152,7 @@ function bufferedBounds(output: string): GasBounds {
     l1DataGasPrice: buffer(parsedValue(output, 'L1 Data Gas Price'), 3n, 2n),
   }
   const ceiling =
-    bounds.l1Gas * bounds.l1GasPrice +
-    bounds.l2Gas * bounds.l2GasPrice +
-    bounds.l1DataGas * bounds.l1DataGasPrice
+    bounds.l1Gas * bounds.l1GasPrice + bounds.l2Gas * bounds.l2GasPrice + bounds.l1DataGas * bounds.l1DataGasPrice
   if (ceiling > MAX_TRANSACTION_FEE) {
     throw new Error(`Buffered transaction ceiling ${ceiling} Fri exceeds the 2 STRK demo limit`)
   }
@@ -197,10 +195,7 @@ function callValues(value: readonly string[] | Readonly<{ result: readonly strin
   return 'result' in value ? value.result : value
 }
 
-async function publicDeposits(
-  provider: RpcProvider,
-  bidderAddress: `0x${string}`,
-): Promise<readonly PublicDeposit[]> {
+async function publicDeposits(provider: RpcProvider, bidderAddress: `0x${string}`): Promise<readonly PublicDeposit[]> {
   const deposits: PublicDeposit[] = []
   let continuationToken: string | undefined
   do {
@@ -308,14 +303,7 @@ function deployDemoNft(auctionId: bigint): Readonly<{ address: `0x${string}`; tr
 
 function createAuction(multicallTokens: readonly string[]): `0x${string}` {
   const currentNonce = nonce()
-  const base = [
-    'multicall',
-    'execute',
-    '--network',
-    'sepolia',
-    '--nonce',
-    currentNonce.toString(),
-  ]
+  const base = ['multicall', 'execute', '--network', 'sepolia', '--nonce', currentNonce.toString()]
   const dryRun = sncast([...base, '--dry-run', '--detailed', ...multicallTokens])
   const output = sncast(['--wait', ...base, ...boundArgs(bufferedBounds(dryRun)), ...multicallTokens])
   process.stdout.write(output)
@@ -374,7 +362,9 @@ async function main() {
   })
 
   if (options.planOnly) {
-    console.log(JSON.stringify({ plan: plan.form, recoveryBundleId: bundle.bundleId, bundlePath, passwordPath }, null, 2))
+    console.log(
+      JSON.stringify({ plan: plan.form, recoveryBundleId: bundle.bundleId, bundlePath, passwordPath }, null, 2),
+    )
     return
   }
 
@@ -426,7 +416,9 @@ async function main() {
   writeFileSync(recordPath, JSON.stringify(publicRecord, null, 2), { encoding: 'utf8', mode: 0o600, flag: 'wx' })
   console.log(JSON.stringify({ ...publicRecord, bundlePath, passwordPath, recordPath }, null, 2))
   console.log('Import the seller account into Ready by revealing the Sncast key locally; the script never prints it.')
-  console.log('Bidder A and B are already deployed and funded; import their keys locally into Ready and submit immediately.')
+  console.log(
+    'Bidder A and B are already deployed and funded; import their keys locally into Ready and submit immediately.',
+  )
 }
 
 main().catch((error: unknown) => {

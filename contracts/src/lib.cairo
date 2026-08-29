@@ -48,10 +48,7 @@ pub struct AuctionState {
 #[starknet::interface]
 pub trait IERC721<TContractState> {
     fn transfer_from(
-        ref self: TContractState,
-        from: ContractAddress,
-        to: ContractAddress,
-        token_id: u256,
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
     );
     fn owner_of(self: @TContractState, token_id: u256) -> ContractAddress;
 }
@@ -118,14 +115,13 @@ mod AuctionHouse {
         StoragePointerWriteAccess,
     };
     use starknet::{
-        ContractAddress, get_block_timestamp, get_caller_address, get_contract_address,
-        get_tx_info,
+        ContractAddress, get_block_timestamp, get_caller_address, get_contract_address, get_tx_info,
     };
+    use crate::commitment::{compute_bid_commitment, compute_claim_handle};
     use super::{
         AuctionConfig, AuctionState, BidRecord, IAuctionHouse, IERC20Dispatcher,
         IERC20DispatcherTrait, IERC721Dispatcher, IERC721DispatcherTrait, OpenNoteDeposit,
     };
-    use crate::commitment::{compute_bid_commitment, compute_claim_handle};
 
     const MAX_SUPPORTED_BIDDERS: u32 = 32;
     const BID_SLOT_DOMAIN: felt252 = 'CIPHERBID_SLOT_V1';
@@ -314,20 +310,21 @@ mod AuctionHouse {
             };
             self.auction_exists.write(auction_id, true);
             self.auctions.write(auction_id, config);
-            self.emit(
-                AuctionCreated {
-                    auction_id,
-                    seller,
-                    seller_claim_handle,
-                    nft_contract,
-                    token_id,
-                    reserve_price,
-                    cap,
-                    bidding_deadline,
-                    reveal_deadline,
-                    bidder_limit,
-                },
-            );
+            self
+                .emit(
+                    AuctionCreated {
+                        auction_id,
+                        seller,
+                        seller_claim_handle,
+                        nft_contract,
+                        token_id,
+                        reserve_price,
+                        cap,
+                        bidding_deadline,
+                        reveal_deadline,
+                        bidder_limit,
+                    },
+                );
 
             let house = get_contract_address();
             let nft = IERC721Dispatcher { contract_address: nft_contract };
@@ -382,30 +379,33 @@ mod AuctionHouse {
                 assert(actual_balance == expected_balance, 'BAD_COLLATERAL_DELTA');
 
                 let zero_address: ContractAddress = 0.try_into().unwrap();
-                self.bids.write(
-                    bid_key(auction_id, accepted_index),
-                    BidRecord {
-                        commitment: primary_value,
-                        claim_handle,
-                        revealed: false,
-                        amount: 0,
-                        asset_recipient: zero_address,
-                    },
-                );
+                self
+                    .bids
+                    .write(
+                        bid_key(auction_id, accepted_index),
+                        BidRecord {
+                            commitment: primary_value,
+                            claim_handle,
+                            revealed: false,
+                            amount: 0,
+                            asset_recipient: zero_address,
+                        },
+                    );
                 self.commitment_seen.write(commitment_key, true);
                 self.claim_handle_seen.write(claim_key, true);
                 self.claim_handle_index_plus_one.write(claim_key, accepted_index + 1);
                 self.bid_counts.write(auction_id, accepted_index + 1);
                 self.accounted_payment_balance.write(next_balance);
-                self.emit(
-                    BidCommitted {
-                        auction_id,
-                        accepted_index,
-                        commitment: primary_value,
-                        claim_handle,
-                        cap: config.cap,
-                    },
-                );
+                self
+                    .emit(
+                        BidCommitted {
+                            auction_id,
+                            accepted_index,
+                            commitment: primary_value,
+                            claim_handle,
+                            cap: config.cap,
+                        },
+                    );
 
                 let deposits: Array<OpenNoteDeposit> = array![];
                 return deposits.span();
@@ -466,17 +466,17 @@ mod AuctionHouse {
             } else if operation == 2 {
                 self.emit(WinnerSurplusClaimed { auction_id, claim_handle, open_note_id, amount });
             } else {
-                self.emit(
-                    SellerProceedsClaimed {
-                        auction_id,
-                        seller_claim_handle: claim_handle,
-                        open_note_id,
-                        amount,
-                    },
-                );
+                self
+                    .emit(
+                        SellerProceedsClaimed {
+                            auction_id, seller_claim_handle: claim_handle, open_note_id, amount,
+                        },
+                    );
             }
 
-            let deposits = array![OpenNoteDeposit { note_id: open_note_id, token: payment_token, amount }];
+            let deposits = array![
+                OpenNoteDeposit { note_id: open_note_id, token: payment_token, amount },
+            ];
             deposits.span()
         }
 
@@ -562,7 +562,7 @@ mod AuctionHouse {
                     }
                 }
                 index += 1;
-            };
+            }
 
             let sold = highest >= config.reserve_price;
             let clearing_price = if sold {
@@ -574,32 +574,39 @@ mod AuctionHouse {
             } else {
                 0
             };
-            let nft_recipient = if sold { winner_recipient } else { config.seller };
-            self.auction_states.write(
-                auction_id,
-                AuctionState {
-                    settled: true,
-                    sold,
-                    winner_index,
-                    winner_commitment,
-                    winner_recipient,
-                    clearing_price,
-                    seller_entitlement: clearing_price,
-                    seller_authorized_note: 0,
-                    seller_claim_consumed: !sold,
-                },
-            );
-            self.emit(
-                AuctionSettled {
+            let nft_recipient = if sold {
+                winner_recipient
+            } else {
+                config.seller
+            };
+            self
+                .auction_states
+                .write(
                     auction_id,
-                    sold,
-                    winner_index,
-                    winner_commitment,
-                    winner_recipient,
-                    clearing_price,
-                    seller_entitlement: clearing_price,
-                },
-            );
+                    AuctionState {
+                        settled: true,
+                        sold,
+                        winner_index,
+                        winner_commitment,
+                        winner_recipient,
+                        clearing_price,
+                        seller_entitlement: clearing_price,
+                        seller_authorized_note: 0,
+                        seller_claim_consumed: !sold,
+                    },
+                );
+            self
+                .emit(
+                    AuctionSettled {
+                        auction_id,
+                        sold,
+                        winner_index,
+                        winner_commitment,
+                        winner_recipient,
+                        clearing_price,
+                        seller_entitlement: clearing_price,
+                    },
+                );
 
             let nft = IERC721Dispatcher { contract_address: config.nft_contract };
             nft.transfer_from(get_contract_address(), nft_recipient, config.token_id);
@@ -627,9 +634,7 @@ mod AuctionHouse {
             assert(!state.seller_claim_consumed, 'SELLER_CLAIM_CONSUMED');
             state.seller_authorized_note = open_note_id;
             self.auction_states.write(auction_id, state);
-            self.emit(
-                SellerProceedsAuthorized { auction_id, seller_claim_handle, open_note_id },
-            );
+            self.emit(SellerProceedsAuthorized { auction_id, seller_claim_handle, open_note_id });
         }
 
         fn get_accounted_payment_balance(self: @ContractState) -> u128 {

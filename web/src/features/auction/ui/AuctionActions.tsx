@@ -6,10 +6,7 @@ import type { PrivacyWalletConnection } from '@/features/wallet/walletConnection
 import { useWalletStore } from '@/features/wallet/walletStore'
 import type { AuctionLiveViewModel } from '@/features/auction/ui/AuctionLivePage'
 import { formatTokenAmount, parseTokenAmount } from '@/features/auction/auctionMath'
-import {
-  AtomicDeliveryReceipt,
-  type VerifiedTransactionReceipt,
-} from '@/features/auction/ui/AtomicDeliveryReceipt'
+import { AtomicDeliveryReceipt, type VerifiedTransactionReceipt } from '@/features/auction/ui/AtomicDeliveryReceipt'
 import type { DeploymentManifest } from '@/config/deployment'
 import { readAuctionSnapshot, type ChainReader } from '@/features/auction/auctionReader'
 import {
@@ -50,7 +47,12 @@ function phase(model: AuctionLiveViewModel): 'bidding' | 'reveal' | 'settle' | '
 }
 
 function publicManifest(model: AuctionLiveViewModel): DeploymentManifest {
-  if (!isHex(model.auctionHouse) || !isHex(model.auctionHouseClassHash) || !isHex(model.strk20Pool) || !isHex(model.paymentToken)) {
+  if (
+    !isHex(model.auctionHouse) ||
+    !isHex(model.auctionHouseClassHash) ||
+    !isHex(model.strk20Pool) ||
+    !isHex(model.paymentToken)
+  ) {
     throw new Error('Live deployment data is malformed')
   }
   return {
@@ -87,7 +89,7 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
   )
   const orchestrator = useMemo(() => new TransactionOrchestrator(), [])
   const [bidAmount, setBidAmount] = useState('')
-  const [recipient, setRecipient] = useState(connection?.address ?? '')
+  const [recipientOverrides, setRecipientOverrides] = useState<Record<string, string>>({})
   const [password, setPassword] = useState('')
   const [bidderCredential, setBidderCredential] = useState<BidderCredential | null>(null)
   const [sellerCredential, setSellerCredential] = useState<SellerCredential | null>(null)
@@ -96,10 +98,9 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
   const currentPhase = phase(model)
   const enabled = connection !== null && connection.supportsStrk20
 
-  useEffect(() => {
-    if (connection) setRecipient(connection.address)
-  }, [connection])
   useEffect(() => orchestrator.subscribe((state) => setStatus(state.status.replaceAll('_', ' '))), [orchestrator])
+
+  const recipient = connection ? (recipientOverrides[connection.address] ?? connection.address) : ''
 
   function walletSnapshot() {
     const state = useWalletStore.getState()
@@ -193,7 +194,10 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
       const credentials = await decryptRecoveryBundle(await file.text(), password)
       const matching = credentials.find(
         (credential) =>
-          credential.auctionId === BigInt(model.auctionId) && credential.auctionHouse === BigInt(model.auctionHouse),
+          credential.network === model.network &&
+          credential.chainId === BigInt(model.chainId) &&
+          credential.auctionId === BigInt(model.auctionId) &&
+          credential.auctionHouse === BigInt(model.auctionHouse),
       )
       if (!matching) throw new Error('No matching credential')
       if (matching.role === 'seller') {
@@ -265,7 +269,12 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
         paymentToken: deployment.paymentToken,
         recipient: connection.address,
         verify: (hash) =>
-          verify(hash, winner ? 'WinnerSurplusClaimed' : 'LoserRefundClaimed', true, asyncSnapshot => asyncSnapshot.state.settled),
+          verify(
+            hash,
+            winner ? 'WinnerSurplusClaimed' : 'LoserRefundClaimed',
+            true,
+            (asyncSnapshot) => asyncSnapshot.state.settled,
+          ),
       })
       recordReceipt(winner ? 'Winner surplus' : 'Loser refund', evidence)
       setStatus('private bidder claim confirmed')
@@ -290,8 +299,7 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
           extractResolvedSellerOpenNoteId(prepared, sellerCredential, deployment.strk20Pool),
         verifyAuthorization: (hash) =>
           verify(hash, 'SellerProceedsAuthorized', false, (fresh) => fresh.state.sellerAuthorizedNote > 0n),
-        verifyClaim: (hash) =>
-          verify(hash, 'SellerProceedsClaimed', true, (fresh) => fresh.state.sellerClaimConsumed),
+        verifyClaim: (hash) => verify(hash, 'SellerProceedsClaimed', true, (fresh) => fresh.state.sellerClaimConsumed),
       })
       recordReceipt('Seller authorization', result.authorizationEvidence)
       recordReceipt('Seller proceeds', result.claimEvidence)
@@ -303,13 +311,20 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
   }
 
   return (
-    <section aria-labelledby="auction-actions-title" className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-6">
+    <section
+      aria-labelledby="auction-actions-title"
+      className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-6"
+    >
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Wallet actions</p>
-      <h2 id="auction-actions-title" className="mt-2 text-2xl font-semibold">Transact privately</h2>
+      <h2 id="auction-actions-title" className="mt-2 text-2xl font-semibold">
+        Transact privately
+      </h2>
       {!enabled ? <p className="mt-4 text-sm text-[#9ba3af]">Connect a compatible wallet to transact.</p> : null}
 
       <div className="mt-5 space-y-4">
-        <label className="block text-sm font-medium" htmlFor="live-bid-amount">Private bid amount</label>
+        <label className="block text-sm font-medium" htmlFor="live-bid-amount">
+          Private bid amount
+        </label>
         <input
           id="live-bid-amount"
           aria-label="Private bid amount"
@@ -324,15 +339,22 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
           Enter any positive bid up to {formatTokenAmount(BigInt(model.cap), 18)} STRK. Bids below the{' '}
           {formatTokenAmount(BigInt(model.reservePrice), 18)} STRK reserve cannot win.
         </p>
-        <label className="block text-sm font-medium" htmlFor="live-recipient">NFT recipient</label>
+        <label className="block text-sm font-medium" htmlFor="live-recipient">
+          NFT recipient
+        </label>
         <input
           id="live-recipient"
           value={recipient}
           disabled={!enabled || currentPhase !== 'bidding'}
-          onChange={(event) => setRecipient(event.target.value)}
+          onChange={(event) => {
+            if (!connection) return
+            setRecipientOverrides((current) => ({ ...current, [connection.address]: event.target.value }))
+          }}
           className="min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 font-mono text-xs outline-none focus:border-[#a8b1ff] disabled:opacity-50"
         />
-        <label className="block text-sm font-medium" htmlFor="recovery-password">Recovery password</label>
+        <label className="block text-sm font-medium" htmlFor="recovery-password">
+          Recovery password
+        </label>
         <input
           id="recovery-password"
           aria-label="Recovery password"
@@ -343,7 +365,9 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
           onChange={(event) => setPassword(event.target.value)}
           className="min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 outline-none focus:border-[#a8b1ff] disabled:opacity-50"
         />
-        <label className="block text-sm font-medium" htmlFor="recovery-import">Import encrypted recovery bundle</label>
+        <label className="block text-sm font-medium" htmlFor="recovery-import">
+          Import encrypted recovery bundle
+        </label>
         <input
           id="recovery-import"
           aria-label="Import encrypted recovery bundle"
@@ -356,14 +380,59 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <button type="button" disabled={!enabled || currentPhase !== 'bidding'} onClick={() => void submitBid()} className="min-h-12 rounded-xl bg-[#6654d9] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45">Submit private bid</button>
-        <button type="button" disabled={!enabled || currentPhase !== 'reveal' || bidderCredential?.acceptedIndex === undefined} onClick={() => void reveal()} className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45">Reveal bid</button>
-        <button type="button" disabled={!enabled || currentPhase !== 'settle'} onClick={() => void settle()} className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45">Settle auction</button>
-        <button type="button" disabled={!enabled || currentPhase !== 'settled' || !bidderCredential} onClick={() => void bidderClaim()} className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45">Claim bidder funds</button>
-        <button type="button" disabled={!enabled || currentPhase !== 'settled' || !sellerCredential || BigInt(connection?.address ?? '0x0') !== BigInt(model.seller)} onClick={() => void sellerClaim()} className="min-h-12 rounded-xl border border-[#3bc478]/20 bg-[#3bc478]/10 px-4 font-semibold text-[#aee5c1] disabled:cursor-not-allowed disabled:opacity-45 sm:col-span-2">Claim seller proceeds privately</button>
+        <button
+          type="button"
+          disabled={!enabled || currentPhase !== 'bidding'}
+          onClick={() => void submitBid()}
+          className="min-h-12 rounded-xl bg-[#6654d9] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          Submit private bid
+        </button>
+        <button
+          type="button"
+          disabled={!enabled || currentPhase !== 'reveal' || bidderCredential?.acceptedIndex === undefined}
+          onClick={() => void reveal()}
+          className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          Reveal bid
+        </button>
+        <button
+          type="button"
+          disabled={!enabled || currentPhase !== 'settle'}
+          onClick={() => void settle()}
+          className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          Settle auction
+        </button>
+        <button
+          type="button"
+          disabled={!enabled || currentPhase !== 'settled' || !bidderCredential}
+          onClick={() => void bidderClaim()}
+          className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          Claim bidder funds
+        </button>
+        <button
+          type="button"
+          disabled={
+            !enabled ||
+            currentPhase !== 'settled' ||
+            !sellerCredential ||
+            BigInt(connection?.address ?? '0x0') !== BigInt(model.seller)
+          }
+          onClick={() => void sellerClaim()}
+          className="min-h-12 rounded-xl border border-[#3bc478]/20 bg-[#3bc478]/10 px-4 font-semibold text-[#aee5c1] disabled:cursor-not-allowed disabled:opacity-45 sm:col-span-2"
+        >
+          Claim seller proceeds privately
+        </button>
       </div>
-      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">{status}</p>
-      <p className="mt-2 text-xs leading-5 text-[#858b98]">Recovery files are encrypted locally. CipherBid does not store credentials in localStorage or send them to a backend.</p>
+      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
+        {status}
+      </p>
+      <p className="mt-2 text-xs leading-5 text-[#858b98]">
+        Recovery files are encrypted locally. CipherBid does not store credentials in localStorage or send them to a
+        backend.
+      </p>
       <div className="mt-6">
         <AtomicDeliveryReceipt
           settlement={{

@@ -80,9 +80,15 @@ export default async function AuctionPage({
   const { auctionId: routeAuctionId } = await params
   const auctionId = parseAuctionId(routeAuctionId)
   if (auctionId === null) {
-    return <AuctionLivePage error="Auction ID must be a positive u64 decimal value." auctionId={routeAuctionId.slice(0, 80)} />
+    return (
+      <AuctionLivePage
+        error="Auction ID must be a positive u64 decimal value."
+        auctionId={routeAuctionId.slice(0, 80)}
+      />
+    )
   }
 
+  let model: AuctionLiveViewModel | undefined
   try {
     const manifest = loadDeploymentManifest(process.env)
     const provider = new RpcProvider({ nodeUrl: manifest.rpcUrl })
@@ -91,26 +97,25 @@ export default async function AuctionPage({
       getClassHashAt: (address) => provider.getClassHashAt(address),
     }
     const snapshot = await readAuctionSnapshot(reader, manifest, auctionId)
-    return (
-      <AuctionLivePage
-        model={viewModel(
-          manifest.network,
-          manifest.chainId,
-          manifest.rpcUrl,
-          manifest.auctionHouse,
-          manifest.auctionHouseClassHash,
-          manifest.strk20Pool,
-          manifest.paymentToken,
-          snapshot,
-        )}
-      />
+    model = viewModel(
+      manifest.network,
+      manifest.chainId,
+      manifest.rpcUrl,
+      manifest.auctionHouse,
+      manifest.auctionHouseClassHash,
+      manifest.strk20Pool,
+      manifest.paymentToken,
+      snapshot,
     )
   } catch {
-    return (
-      <AuctionLivePage
-        error="Auction deployment is not configured or the requested onchain state could not be read."
-        auctionId={auctionId.toString()}
-      />
-    )
+    model = undefined
   }
+  return model ? (
+    <AuctionLivePage model={model} />
+  ) : (
+    <AuctionLivePage
+      error="Auction deployment is not configured or the requested onchain state could not be read."
+      auctionId={auctionId.toString()}
+    />
+  )
 }

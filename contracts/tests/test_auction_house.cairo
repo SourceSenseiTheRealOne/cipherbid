@@ -1,10 +1,8 @@
-#[feature("safe_dispatcher")]
-
+use cipherbid::commitment::{compute_bid_commitment, compute_claim_handle};
 use cipherbid::{
     IAuctionHouseDispatcher, IAuctionHouseDispatcherTrait, IAuctionHouseSafeDispatcher,
     IAuctionHouseSafeDispatcherTrait,
 };
-use cipherbid::commitment::{compute_bid_commitment, compute_claim_handle};
 use snforge_std::{
     ContractClassTrait, DeclareResultTrait, declare, start_cheat_block_timestamp,
     start_cheat_caller_address, stop_cheat_caller_address,
@@ -15,10 +13,7 @@ use starknet::ContractAddress;
 trait IMockERC721<TContractState> {
     fn approve(ref self: TContractState, spender: ContractAddress, token_id: u256);
     fn transfer_from(
-        ref self: TContractState,
-        from: ContractAddress,
-        to: ContractAddress,
-        token_id: u256,
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
     );
     fn owner_of(self: @TContractState, token_id: u256) -> ContractAddress;
 }
@@ -48,10 +43,7 @@ mod MockERC721 {
         }
 
         fn transfer_from(
-            ref self: ContractState,
-            from: ContractAddress,
-            to: ContractAddress,
-            token_id: u256,
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
         ) {
             let owner = self.owners.read(token_id);
             let caller = get_caller_address();
@@ -71,25 +63,20 @@ mod MockERC721 {
 trait IMockERC20<TContractState> {
     fn mint(ref self: TContractState, recipient: ContractAddress, amount: u256);
     fn approve(ref self: TContractState, spender: ContractAddress, amount: u256) -> bool;
-    fn allowance(
-        self: @TContractState, owner: ContractAddress, spender: ContractAddress,
-    ) -> u256;
+    fn allowance(self: @TContractState, owner: ContractAddress, spender: ContractAddress) -> u256;
     fn pull(
-        ref self: TContractState,
-        owner: ContractAddress,
-        recipient: ContractAddress,
-        amount: u256,
+        ref self: TContractState, owner: ContractAddress, recipient: ContractAddress, amount: u256,
     );
     fn balance_of(self: @TContractState, account: ContractAddress) -> u256;
 }
 
 #[starknet::contract]
 mod MockERC20 {
-    use starknet::{ContractAddress, get_caller_address};
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess,
     };
+    use starknet::{ContractAddress, get_caller_address};
     use super::IMockERC20;
 
     #[storage]
@@ -238,6 +225,7 @@ fn creation_custodies_nft_and_freezes_configuration() {
 }
 
 #[test]
+#[feature("safe_dispatcher")]
 fn failed_custody_rolls_back_creation_and_allows_retry() {
     let seller = address(0x777);
     let house = deploy_house(address(0x123), address(0x456), 32);
@@ -290,6 +278,7 @@ fn pool_parks_exact_cap_and_records_bounded_bid() {
 }
 
 #[test]
+#[feature("safe_dispatcher")]
 fn wrong_collateral_amount_reverts_without_consuming_slot() {
     let seller = address(0x777);
     let pool = address(0x123);
@@ -317,6 +306,7 @@ fn wrong_collateral_amount_reverts_without_consuming_slot() {
 }
 
 #[test]
+#[feature("safe_dispatcher")]
 fn reveal_recomputes_commitment_and_persists_public_bid_data_once() {
     let seller = address(0x777);
     let pool = address(0x123);
@@ -354,6 +344,7 @@ fn reveal_recomputes_commitment_and_persists_public_bid_data_once() {
 }
 
 #[test]
+#[feature("safe_dispatcher")]
 fn settlement_delivers_nft_and_records_vickrey_price() {
     let seller = address(0x777);
     let pool = address(0x123);
@@ -443,9 +434,7 @@ fn settlement_delivers_nft_and_records_vickrey_price() {
     token_dispatcher.pull(house, pool, 2);
     stop_cheat_caller_address(token);
 
-    let proceeds = dispatcher.privacy_invoke(
-        3, 7, seller_secret, seller_handle, 0, 0, pool, 0x903,
-    );
+    let proceeds = dispatcher.privacy_invoke(3, 7, seller_secret, seller_handle, 0, 0, pool, 0x903);
     assert(proceeds.len() == 1, 'BAD_SELLER_OUTPUTS');
     let proceeds_deposit = *proceeds.at(0);
     assert(proceeds_deposit.note_id == 0x903, 'BAD_SELLER_NOTE');
@@ -526,9 +515,7 @@ fn no_sale_returns_nft_and_unrevealed_bid_gets_full_cap() {
     let secret = 0x711;
     let handle = compute_claim_handle(secret);
     let recipient = address(0x899);
-    let commitment = compute_bid_commitment(
-        'SN_SEPOLIA', house, 9, 2, 0x721, handle, recipient,
-    );
+    let commitment = compute_bid_commitment('SN_SEPOLIA', house, 9, 2, 0x721, handle, recipient);
     let token_dispatcher = IMockERC20Dispatcher { contract_address: token };
     token_dispatcher.mint(house, 5);
     start_cheat_caller_address(house, pool);

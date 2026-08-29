@@ -58,7 +58,9 @@ export function deriveAuctionPhase(input: AuctionPhaseInput): AuctionPhase {
   return 'ReadyToSettle'
 }
 
-export function settleVickrey(input: Readonly<{ reserve: bigint; cap: bigint; bids: readonly AcceptedBid[] }>): VickreySettlement {
+export function settleVickrey(
+  input: Readonly<{ reserve: bigint; cap: bigint; bids: readonly AcceptedBid[] }>,
+): VickreySettlement {
   if (input.reserve <= 0n || input.cap <= 0n || input.reserve > input.cap) {
     throw new Error('Settlement requires 0 < reserve <= cap')
   }

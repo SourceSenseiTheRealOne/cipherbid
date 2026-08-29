@@ -90,7 +90,11 @@ function sameFelt(left: string, right: string): boolean {
   }
 }
 
-async function waitWithTimeout(provider: ReceiptProvider, transactionHash: string, timeoutMs: number): Promise<unknown> {
+async function waitWithTimeout(
+  provider: ReceiptProvider,
+  transactionHash: string,
+  timeoutMs: number,
+): Promise<unknown> {
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) throw new Error('Receipt timeout must be a positive integer')
   let timer: ReturnType<typeof setTimeout> | undefined
   const timeout = new Promise<never>((_, reject) => {
@@ -106,15 +110,17 @@ async function waitWithTimeout(provider: ReceiptProvider, transactionHash: strin
   }
 }
 
-export async function verifyTransactionTransition(input: Readonly<{
-  provider: ReceiptProvider
-  manifest: DeploymentManifest
-  transactionHash: string
-  expectedEvent: CipherBidEventName
-  requirePoolTouch: boolean
-  readState: () => Promise<boolean>
-  timeoutMs?: number
-}>) {
+export async function verifyTransactionTransition(
+  input: Readonly<{
+    provider: ReceiptProvider
+    manifest: DeploymentManifest
+    transactionHash: string
+    expectedEvent: CipherBidEventName
+    requirePoolTouch: boolean
+    readState: () => Promise<boolean>
+    timeoutMs?: number
+  }>,
+) {
   if (!/^0x[0-9a-fA-F]+$/.test(input.transactionHash) || BigInt(input.transactionHash) === 0n) {
     throw new Error('Transaction hash must be a non-zero hexadecimal felt')
   }

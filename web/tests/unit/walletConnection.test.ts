@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { connectPrivacyWallet, type WalletConnectionDependencies } from '@/features/wallet/walletConnection'
+import { MAINNET_CHAIN_ID, SEPOLIA_CHAIN_ID } from '@/config/deployment'
 
 function testDependencies(overrides: Partial<WalletConnectionDependencies> = {}): WalletConnectionDependencies {
   return {
@@ -27,8 +28,17 @@ describe('connectPrivacyWallet', () => {
     expect(result).toEqual({
       account,
       address: '0x123',
-      chainId: 'SN_SEPOLIA',
+      chainId: SEPOLIA_CHAIN_ID,
       walletApiVersions: ['0.10.3'],
+      supportsStrk20: true,
+    })
+  })
+
+  it('normalizes the Ready mainnet short chain ID before credential binding', async () => {
+    const dependencies = testDependencies({ requestChainId: vi.fn().mockResolvedValue('SN_MAIN') })
+
+    await expect(connectPrivacyWallet({}, {}, dependencies)).resolves.toMatchObject({
+      chainId: MAINNET_CHAIN_ID,
       supportsStrk20: true,
     })
   })

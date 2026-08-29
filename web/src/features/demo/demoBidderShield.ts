@@ -53,7 +53,9 @@ type ShieldWallet = Readonly<{
   strk20InvokeTransaction: (actions: readonly WALLET_API.STRK20_ACTION[]) => Promise<unknown>
 }>
 type ActivationWallet = Readonly<{
-  execute: (call: Readonly<{ contractAddress: string; entrypoint: string; calldata: readonly string[] }>) => Promise<unknown>
+  execute: (
+    call: Readonly<{ contractAddress: string; entrypoint: string; calldata: readonly string[] }>,
+  ) => Promise<unknown>
 }>
 
 function sameFelt(left: string, right: string): boolean {
@@ -102,7 +104,12 @@ function shieldWallet(account: unknown): ShieldWallet {
 }
 
 function activationWallet(account: unknown): ActivationWallet {
-  if (typeof account !== 'object' || account === null || !('execute' in account) || typeof account.execute !== 'function') {
+  if (
+    typeof account !== 'object' ||
+    account === null ||
+    !('execute' in account) ||
+    typeof account.execute !== 'function'
+  ) {
     throw new Error('Connected wallet does not expose standard Starknet execution')
   }
   return account as ActivationWallet

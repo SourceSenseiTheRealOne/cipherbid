@@ -1,5 +1,9 @@
 import { hash, RpcProvider } from 'starknet'
-import { evaluateDemoBidderReadiness, type DemoBidderStatus, type PublicDeposit } from '@/features/auction/demoBidderReadiness'
+import {
+  evaluateDemoBidderReadiness,
+  type DemoBidderStatus,
+  type PublicDeposit,
+} from '@/features/auction/demoBidderReadiness'
 import { MAINNET_STRK20_POOL, STRK_TOKEN } from '@/config/deployment'
 import { MAINNET_BIDDER_A, MAINNET_BIDDER_B, buildMainnetReleaseCandidate } from '@/config/mainnetRelease'
 
@@ -15,10 +19,7 @@ function callValues(value: readonly string[] | Readonly<{ result: readonly strin
   return 'result' in value ? value.result : value
 }
 
-async function publicDeposits(
-  provider: RpcProvider,
-  bidderAddress: `0x${string}`,
-): Promise<readonly PublicDeposit[]> {
+async function publicDeposits(provider: RpcProvider, bidderAddress: `0x${string}`): Promise<readonly PublicDeposit[]> {
   const deposits: PublicDeposit[] = []
   let continuationToken: string | undefined
   do {

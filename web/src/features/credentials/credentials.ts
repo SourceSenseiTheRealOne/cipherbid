@@ -63,9 +63,7 @@ function validateBinding(binding: CredentialBinding): void {
   }
 }
 
-export function createSellerCredential(
-  input: CredentialBinding & Readonly<{ claimSecret: bigint }>,
-): SellerCredential {
+export function createSellerCredential(input: CredentialBinding & Readonly<{ claimSecret: bigint }>): SellerCredential {
   validateBinding(input)
   const claimHandle = computeClaimHandle(input.claimSecret)
   return Object.freeze({
