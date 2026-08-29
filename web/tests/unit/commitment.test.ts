@@ -1,45 +1,109 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { shortString } from 'starknet'
 import { computeBidCommitment, computeClaimHandle, type BidCommitmentInput } from '@/features/auction/commitment'
 
-const vector: BidCommitmentInput = {
-  chainId: BigInt(shortString.encodeShortString('SN_SEPOLIA')),
-  auctionHouse: 0x222n,
-  auctionId: 7n,
-  amount: 3_000_000_000_000_000_000n,
-  bidSecret: 987_654_321n,
-  claimHandle: 0x3078725b5aaffe73f545ebca32c0b5a4af14404599edd691c752e59ffca3724n,
-  assetRecipient: 0x333n,
+type StringRecord = Readonly<Record<string, string>>
+type Vector = Readonly<{
+  name: string
+  claimSecret: string
+  claimHandle: string
+  chainId: string
+  auctionHouse: string
+  auctionId: string
+  amount: string
+  bidNonce: string
+  assetRecipient: string
+  commitment: string
+}>
+
+const fixture = JSON.parse(
+  readFileSync(resolve(process.cwd(), 'tests/fixtures/bid-credentials-v1.json'), 'utf8'),
+) as Readonly<{
+  schema: string
+  domains: Readonly<Record<'claim' | 'bid', Readonly<{ literal: string; felt: string }>>>
+  boundaries: StringRecord
+  preimages: Readonly<Record<'claimHandle' | 'bidCommitment', readonly string[]>>
+  vectors: readonly Vector[]
+  invalid: Readonly<Record<keyof BidCommitmentInput | 'claimSecret', readonly string[]>>
+  credentialModel: Readonly<{
+    private: readonly string[]
+    derivedPublic: readonly string[]
+    publicAtReveal: readonly string[]
+    supersededFieldsForbidden: readonly string[]
+  }>
+}>
+
+function input(vector: Vector): BidCommitmentInput {
+  return {
+    chainId: BigInt(vector.chainId),
+    auctionHouse: BigInt(vector.auctionHouse),
+    auctionId: BigInt(vector.auctionId),
+    amount: BigInt(vector.amount),
+    bidNonce: BigInt(vector.bidNonce),
+    claimHandle: BigInt(vector.claimHandle),
+    assetRecipient: BigInt(vector.assetRecipient),
+  }
 }
 
-describe('CipherBid commitments', () => {
-  it('matches the frozen Poseidon V1 vectors', () => {
-    expect(computeClaimHandle(123_456_789n)).toBe(0x3078725b5aaffe73f545ebca32c0b5a4af14404599edd691c752e59ffca3724n)
-    expect(computeBidCommitment(vector)).toBe(0x34fe5ddb49c604d4b8b63f768c4d6e4159bdd4166bdc3e1e7094217c9f6313en)
+const reference = input(fixture.vectors[0])
+
+describe('CipherBid bid credentials v1', () => {
+  it('freezes domains, preimage order, boundaries, and the credential model', () => {
+    expect(fixture.schema).toBe('cipherbid.bid-credentials.v1')
+    expect(fixture.domains).toEqual({
+      claim: { literal: 'CIPHERBID_CLAIM_V1', felt: '0x4349504845524249445f434c41494d5f5631' },
+      bid: { literal: 'CIPHERBID_BID_V1', felt: '0x4349504845524249445f4249445f5631' },
+    })
+    expect(fixture.preimages.claimHandle).toEqual(['claim_domain', 'claim_secret'])
+    expect(fixture.preimages.bidCommitment).toEqual([
+      'bid_domain',
+      'chain_id',
+      'auction_house',
+      'auction_id',
+      'amount',
+      'bid_nonce',
+      'claim_handle',
+      'asset_recipient',
+    ])
+    expect(fixture.boundaries).toEqual({
+      feltPrime: '0x800000000000011000000000000000000000000000000000000000000000001',
+      contractAddressBound: '0x800000000000000000000000000000000000000000000000000000000000000',
+      u64Max: '18446744073709551615',
+      u128Max: '340282366920938463463374607431768211455',
+    })
+    expect(fixture.credentialModel).toEqual({
+      private: ['bid_nonce', 'claim_secret'],
+      derivedPublic: ['claim_handle', 'bid_commitment'],
+      publicAtReveal: ['amount', 'bid_nonce', 'claim_handle', 'asset_recipient'],
+      supersededFieldsForbidden: ['claim_signing_key', 'claim_public_key', 'claim_signature'],
+    })
   })
 
-  it.each([
-    ['chainId', vector.chainId + 1n],
-    ['auctionHouse', vector.auctionHouse + 1n],
-    ['auctionId', vector.auctionId + 1n],
-    ['amount', vector.amount + 1n],
-    ['bidSecret', vector.bidSecret + 1n],
-    ['claimHandle', vector.claimHandle + 1n],
-    ['assetRecipient', vector.assetRecipient + 1n],
-  ] as const)('domain-separates a changed %s', (field, value) => {
-    expect(computeBidCommitment({ ...vector, [field]: value })).not.toBe(computeBidCommitment(vector))
+  it.each(fixture.vectors)('matches the $name TypeScript/Cairo Poseidon vector', (vector) => {
+    expect(computeClaimHandle(BigInt(vector.claimSecret))).toBe(BigInt(vector.claimHandle))
+    expect(computeBidCommitment(input(vector))).toBe(BigInt(vector.commitment))
   })
 
-  it('rejects zero secrets and invalid felt or amount inputs', () => {
-    expect(() => computeClaimHandle(0n)).toThrow('Claim secret must be non-zero')
-    expect(() => computeBidCommitment({ ...vector, bidSecret: 0n })).toThrow('Bid secret must be non-zero')
-    expect(() => computeBidCommitment({ ...vector, claimHandle: 0n })).toThrow('Claim handle must be non-zero')
-    expect(() => computeBidCommitment({ ...vector, amount: 0n })).toThrow('Bid amount must be between 1 and u128 max')
-    expect(() => computeBidCommitment({ ...vector, amount: 1n << 128n })).toThrow(
-      'Bid amount must be between 1 and u128 max',
-    )
-    expect(() => computeBidCommitment({ ...vector, assetRecipient: -1n })).toThrow(
-      'assetRecipient must be a Starknet field element',
-    )
+  it.each(['chainId', 'auctionHouse', 'auctionId', 'amount', 'bidNonce', 'claimHandle', 'assetRecipient'] as const)(
+    'binds %s into the bid commitment',
+    (field) => {
+      expect(computeBidCommitment({ ...reference, [field]: reference[field] + 1n })).not.toBe(
+        computeBidCommitment(reference),
+      )
+    },
+  )
+
+  it.each(fixture.invalid.claimSecret)('rejects invalid claim secret %s', (value) => {
+    expect(() => computeClaimHandle(BigInt(value))).toThrow()
   })
+
+  it.each(Object.entries(fixture.invalid).filter(([field]) => field !== 'claimSecret'))(
+    'rejects invalid %s boundaries',
+    (field, values) => {
+      for (const value of values) {
+        expect(() => computeBidCommitment({ ...reference, [field]: BigInt(value) })).toThrow()
+      }
+    },
+  )
 })

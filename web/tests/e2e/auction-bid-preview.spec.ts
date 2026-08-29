@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const route = '/auctions/design-preview'
-
-test('renders the desktop auction bid preview without runtime errors', async ({ page }) => {
+test('renders the live-chain home entry point without runtime errors', async ({ page }) => {
   const errors: string[] = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
@@ -10,39 +8,34 @@ test('renders the desktop auction bid preview without runtime errors', async ({ 
   page.on('pageerror', (error) => errors.push(error.message))
 
   await page.setViewportSize({ width: 1280, height: 900 })
-  const response = await page.goto(route)
+  const response = await page.goto('/')
 
   expect(response?.status()).toBe(200)
-  await expect(page.getByRole('heading', { level: 1, name: 'A genuinely sealed NFT auction' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Bidding unavailable in design preview' })).toBeDisabled()
-  await expect(page.getByText('0x0254a6b2997ef52e9f830ce1f543f6b29768295e8d17e2267d672c552cfe0d91')).toBeVisible()
-
-  const bidCard = page.getByTestId('bid-preview-card')
-  await expect(bidCard).toHaveCSS('position', 'sticky')
-  const initialBidBox = await bidCard.boundingBox()
-  await page.evaluate(() => window.scrollTo(0, 1200))
-  await expect.poll(async () => (await bidCard.boundingBox())?.y ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(40)
-  expect(initialBidBox?.y ?? 0).toBeGreaterThan(40)
-  await expect(page.locator('.cipherbid-auction-art')).toHaveCSS('background-image', /radial-gradient/)
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Private bids. Guaranteed onchain delivery.' }),
+  ).toBeVisible()
+  await expect(page.getByRole('heading', { level: 2, name: 'Open an auction' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Create an auction' })).toHaveAttribute('href', '/create')
+  await expect(async () => {
+    await page.getByLabel('Auction ID').fill('7')
+    expect(await page.getByRole('link', { name: 'Open auction' }).getAttribute('href')).toBe('/auctions/7')
+  }).toPass()
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
   expect(errors).toEqual([])
 })
 
-test('stacks the lot, bid card, and facts at a true mobile viewport', async ({ page }) => {
+test('stacks the live-chain entry point at a true mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(route)
+  await page.goto('/')
 
   expect(await page.evaluate(() => window.innerWidth)).toBe(390)
-  const lot = await page.getByTestId('auction-lot').boundingBox()
-  const bid = await page.getByTestId('bid-preview-card').boundingBox()
-  const facts = await page.getByRole('region', { name: 'Auction facts' }).boundingBox()
+  const heading = await page.getByRole('heading', { level: 1 }).boundingBox()
+  const auctionPanel = await page.locator('#open-auction').boundingBox()
+  expect(heading).not.toBeNull()
+  expect(auctionPanel).not.toBeNull()
+  expect(heading!.y).toBeLessThan(auctionPanel!.y)
+  await expect(page.getByRole('link', { name: 'Open auction' })).toHaveCSS('min-height', '48px')
 
-  expect(lot).not.toBeNull()
-  expect(bid).not.toBeNull()
-  expect(facts).not.toBeNull()
-  await expect(page.getByTestId('bid-preview-card')).toHaveCSS('position', 'static')
-  expect(lot!.y).toBeLessThan(bid!.y)
-  expect(bid!.y).toBeLessThan(facts!.y)
   const overflow = await page.evaluate(() => {
     const viewportWidth = document.documentElement.clientWidth
     return [...document.querySelectorAll<HTMLElement>('body *')]
@@ -62,7 +55,7 @@ test('stacks the lot, bid card, and facts at a true mobile viewport', async ({ p
 
 test('removes decorative transitions in reduced-motion mode', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto(route)
+  await page.goto('/')
 
   const movingElements = await page.evaluate(() =>
     [...document.querySelectorAll<HTMLElement>('.cipherbid-auction-page *')]
@@ -79,7 +72,7 @@ test('removes decorative transitions in reduced-motion mode', async ({ page }) =
   expect(movingElements).toEqual([])
 })
 
-test('keeps keyboard order logical and route ids inert', async ({ page }) => {
+test('rejects hostile route IDs as inert text', async ({ page }) => {
   const payload = 'design-preview<script>alert(1)</script>'
   const dialogs: string[] = []
   page.on('dialog', async (dialog) => {
@@ -87,15 +80,14 @@ test('keeps keyboard order logical and route ids inert', async ({ page }) => {
     await dialog.dismiss()
   })
 
-  await page.goto(`/auctions/${encodeURIComponent(payload)}`)
-  await expect(page.locator('main code')).toHaveText(payload)
+  const response = await page.goto(`/auctions/${encodeURIComponent(payload)}`)
+  expect(response?.status()).toBe(200)
+  await expect(page.getByRole('heading', { level: 1, name: 'Live auction unavailable' })).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('Auction ID must be a positive u64 decimal value.')
+  await expect(page.locator('main')).toContainText(encodeURIComponent(payload))
   await expect(page.locator('main script')).toHaveCount(0)
   expect(dialogs).toEqual([])
 
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'CipherBid' })).toBeFocused()
-  await page.keyboard.press('Tab')
-  await expect(page.getByRole('link', { name: 'How privacy works' })).toBeFocused()
-  await page.keyboard.press('Tab')
-  await expect(page.getByRole('link', { name: 'Auctions' })).toBeFocused()
 })
