@@ -4,11 +4,12 @@ This directory contains public, secret-free specifications and verified readback
 
 ## Verified mainnet evidence
 
-| Artifact                                                       | Status                                          | Scope                                                                                                                                                        |
-| -------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`mainnet/deployment.md`](mainnet/deployment.md)               | Verified                                        | Mainnet declarations, deployed addresses, successful receipts, class hashes, immutable AuctionHouse config, DemoERC721 ownership, and bounded fee accounting |
-| [`mainnet/deployment.json`](mainnet/deployment.json)           | Verified                                        | Machine-readable public deployment manifest consumed by frontend and auction-plan tooling                                                                    |
-| [`mainnet/release-candidate.md`](mainnet/release-candidate.md) | Superseded pre-write freeze plus current status | Approved accounts, protocol addresses, demo economics, pool-fee assumptions, and release stop conditions                                                     |
+| Artifact                                                           | Status                                          | Scope                                                                                                                                                        |
+| ------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`mainnet/deployment.md`](mainnet/deployment.md)                   | Verified                                        | Mainnet declarations, deployed addresses, successful receipts, class hashes, immutable AuctionHouse config, DemoERC721 ownership, and bounded fee accounting |
+| [`mainnet/deployment.json`](mainnet/deployment.json)               | Verified                                        | Machine-readable public deployment manifest consumed by frontend and auction-plan tooling                                                                    |
+| [`mainnet/release-candidate.md`](mainnet/release-candidate.md)     | Superseded pre-write freeze plus current status | Approved accounts, protocol addresses, demo economics, pool-fee assumptions, and release stop conditions                                                     |
+| [`submission/pages-deployment.md`](submission/pages-deployment.md) | Verified                                        | Durable GitHub Pages settings, exact deployed `main` SHA, successful hosted workflow/deployment, HTTP routes, and clean-browser runtime checks               |
 
 The mainnet private lifecycle is **not yet verified**. Do not create `mainnet/transactions.md`, `mainnet/auction-lifecycle.md`, or add hashes to `strk20.json` until the corresponding pool-touching transactions succeed and independent receipt/state readback passes.
 
@@ -22,7 +23,7 @@ The script is not demo-video evidence. Its hard gate forbids recording or public
 
 ## Durable frontend publication
 
-The reviewed deployment target is `https://sourcesenseitherealone.github.io/cipherbid/`, with live auction reads at `/auction?id=<positive-u64>`. The pinned GitHub Pages workflow and static export are implementation controls, not hosted evidence by themselves. A public deployment record is created under `submission/` only after a successful `main` workflow, Pages API readback, HTTP checks, and clean-browser verification. Until then, `strk20.json.demo_url` remains empty.
+The durable frontend is verified at `https://sourcesenseitherealone.github.io/cipherbid/`, with live auction reads at `/auction?id=<positive-u64>`. The public deployment record binds the successful hosted workflow to the exact `main` SHA and browser readback. `strk20.json.demo_url` remains empty until the final paired lifecycle verifies the real auction route.
 
 ## Canonical lifecycle and security controls
 
