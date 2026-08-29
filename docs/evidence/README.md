@@ -12,6 +12,14 @@ This directory contains public, secret-free specifications and verified readback
 
 The mainnet private lifecycle is **not yet verified**. Do not create `mainnet/transactions.md`, `mainnet/auction-lifecycle.md`, or add hashes to `strk20.json` until the corresponding pool-touching transactions succeed and independent receipt/state readback passes.
 
+## Prepared recording control
+
+| Artifact                                           | Status                      | Scope                                                                                                                                        |
+| -------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`mainnet/demo-script.md`](mainnet/demo-script.md) | Prepared; recording blocked | Maximum-three-minute narration, capture rules, and hard evidence gates bound to the deployed mainnet contracts and canonical `2/3 STRK` case |
+
+The script is not demo-video evidence. Its hard gate forbids recording or publication until the complete real lifecycle, claims, and Atomic Delivery Receipt are independently verified.
+
 ## Canonical lifecycle and security controls
 
 | Artifact                                                                     | Scope                                                                                  |
