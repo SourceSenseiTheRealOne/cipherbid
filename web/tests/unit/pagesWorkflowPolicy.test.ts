@@ -31,8 +31,6 @@ jobs:
         uses: ${setupNode}
         with:
           node-version: 24.13.1
-          cache: pnpm
-          cache-dependency-path: web/pnpm-lock.yaml
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
@@ -123,5 +121,14 @@ describe('GitHub Pages workflow policy', () => {
     expectRejected(validWorkflow.replace('pnpm build', 'pnpm build --env-file .env.production'))
     expectRejected(validWorkflow.replace('path: web/out', 'path: web/.next'))
     expectRejected(validWorkflow.replace('branches: [main]', 'branches: [development]'))
+  })
+
+  it('rejects setup-node pnpm caching before Corepack provisions pnpm', () => {
+    expectRejected(
+      validWorkflow.replace(
+        'node-version: 24.13.1',
+        'node-version: 24.13.1\n          cache: pnpm\n          cache-dependency-path: web/pnpm-lock.yaml',
+      ),
+    )
   })
 })
