@@ -105,4 +105,45 @@ describe('AuctionActions', () => {
     expect(await screen.findByText('recovery import failed')).toBeInTheDocument()
     expect(screen.queryByText('seller recovery imported')).not.toBeInTheDocument()
   }, 10_000)
+
+  it('rehydrates only the verified mainnet lifecycle receipts after a clean refresh', () => {
+    const verifiedModel: AuctionLiveViewModel = {
+      ...model,
+      network: 'mainnet',
+      chainId: MAINNET_CHAIN_ID,
+      auctionId: '1788040057342',
+      nftOwner: '0x57791bafe2653e8a62509261aeba6a9d09f1fe09f039c9ff0c09c00c24b1f1a',
+      state: {
+        ...model.state,
+        settled: true,
+        sold: true,
+        winnerIndex: 1,
+        winnerRecipient: '0x57791bafe2653e8a62509261aeba6a9d09f1fe09f039c9ff0c09c00c24b1f1a',
+        clearingPrice: '2000000000000000000',
+        sellerEntitlement: '2000000000000000000',
+      },
+    }
+
+    const { rerender } = render(<AuctionActions model={verifiedModel} connection={null} />)
+
+    expect(screen.getByText('Delivery verified')).toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(8)
+    expect(
+      screen.getByRole('link', {
+        name: /Settlement 0x883f852f91052cc25dee8e30a7ce04996db7ccaca015d4bb2d5e2826602cbf/i,
+      }),
+    ).toHaveAttribute(
+      'href',
+      'https://starkscan.co/tx/0x883f852f91052cc25dee8e30a7ce04996db7ccaca015d4bb2d5e2826602cbf',
+    )
+    expect(
+      screen.getByRole('link', {
+        name: /Loser refund 0x7bbe0489702cdc6466b7aa4c262d7d1f34dcabace16e47c5b02cafef7fff15e/i,
+      }),
+    ).toBeInTheDocument()
+
+    rerender(<AuctionActions model={{ ...verifiedModel, auctionId: '1788040057343' }} connection={null} />)
+    expect(screen.queryAllByRole('link')).toHaveLength(0)
+    expect(screen.getByText('No verified transaction receipts yet.')).toBeInTheDocument()
+  })
 })

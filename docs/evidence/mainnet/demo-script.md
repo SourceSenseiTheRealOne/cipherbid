@@ -1,7 +1,7 @@
 # CipherBid mainnet demo script
 
 **Target duration:** 2:45–2:55
-**Recording status:** Not ready. Record only after the complete mainnet lifecycle and every receipt/state readback pass.
+**Recording status:** Lifecycle verified; record only after the persistent Atomic Delivery Receipt is deployed and clean-browser verified.
 
 ## Hard recording gate
 
@@ -11,10 +11,10 @@ Do not record or publish this demo unless all of the following exist as independ
 - DemoERC721 `0x05c7080c583304469e853e472d46a20448ff82bf9ee4c87a8efabc35f8177e1f`, token `99`, held by the AuctionHouse before settlement;
 - two successful pool-touching private ingresses from separate Ready X accounts;
 - public bid count `2` without pre-reveal bid amounts;
-- successful `2 STRK` and `3 STRK` reveals from encrypted recovery;
+- successful `2 STRK` and `4 STRK` reveals from encrypted recovery;
 - successful settlement with Bidder B winning at `2 STRK`;
 - token `99` owned by Bidder B's chosen recipient after settlement;
-- successful applicable refund/surplus/proceeds claims and value-conservation readback;
+- successful refund and surplus claims, explicit fee-based seller deferral, and value-conservation readback;
 - explorer links and Atomic Delivery Receipt rendered from those real records.
 
 If any item is missing, stop. Do not use mock hashes, edited balances, rehearsed wallet popups, or prefilled result cards.
@@ -48,7 +48,7 @@ If any item is missing, stop. Do not use mock hashes, edited balances, rehearsed
 
 **Narration:**
 
-> A variable amount leaving a privacy pool would reveal the bid. CipherBid instead locks the same four-STRK cap for everyone. Observers can verify every bid is funded without learning whether it is two or three STRK before reveal.
+> A variable amount leaving a privacy pool would reveal the bid. CipherBid instead locks the same four-STRK cap for everyone. Observers can verify every bid is funded without learning whether it is two or four STRK before reveal.
 
 **Visible evidence:**
 
@@ -78,7 +78,7 @@ If any item is missing, stop. Do not use mock hashes, edited balances, rehearsed
 
 **Narration:**
 
-> Bidder A privately commits two STRK. Bidder B, from a separate Ready X account, privately commits three. Ready X owns note discovery, proving, signing, and submission; CipherBid never receives a viewing key.
+> Bidder A privately commits two STRK. Bidder B, from a separate Ready X account, privately commits four. Ready X owns note discovery, proving, signing, and submission; CipherBid never receives a viewing key.
 
 **Visible evidence:**
 
@@ -107,13 +107,13 @@ If any item is missing, stop. Do not use mock hashes, edited balances, rehearsed
 
 **Narration:**
 
-> After bidding closes, each bidder imports the encrypted recovery bound to this chain, contract, and auction. The valid reveals publish two and three STRK exactly once.
+> After bidding closes, each bidder imports the encrypted recovery bound to this chain, contract, and auction. The valid reveals publish two and four STRK exactly once.
 
 **Visible evidence:**
 
 - network/deployment-bound import success
 - Bidder A reveal: `2 STRK`
-- Bidder B reveal: `3 STRK`
+- Bidder B reveal: `4 STRK`
 - accepted reveal receipts
 
 ## 2:10–2:35 — Vickrey settlement and atomic delivery

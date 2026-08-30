@@ -13,6 +13,7 @@ const settlement = {
   winnerRecipient: '0x888',
   clearingPrice: '3000000000000000000',
   sellerEntitlement: '3000000000000000000',
+  sellerClaimConsumed: false,
   custodyValid: true,
 }
 
@@ -35,6 +36,8 @@ describe('AtomicDeliveryReceipt', () => {
       'https://sepolia.starkscan.co/tx/0xabc',
     )
     expect(screen.getByRole('link', { name: /Seller proceeds 0xdef/i })).toBeInTheDocument()
+    expect(screen.getByText('Seller entitlement')).toBeInTheDocument()
+    expect(screen.getByText('3 STRK remains claimable')).toBeInTheDocument()
   })
 
   it('never invents transaction hashes while settlement is pending', () => {
