@@ -353,6 +353,11 @@ body.cipherbid-root ::selection {
 }
 
 /* Compatibility layer for immutable live transaction components. */
+.cipherbid-auction-page [class*='lg:col-span-7'],
+.cipherbid-auction-page [class*='lg:col-span-5'] {
+  min-width: 0;
+}
+
 .cipherbid-root [class*='text-[#a8b1ff]'],
 .cipherbid-root [class*='text-[#d7dcff]'],
 .cipherbid-root [class*='text-[#aee5c1]'],
