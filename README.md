@@ -1,5 +1,8 @@
 # CipherBid
 
+[![CipherBid CI](https://github.com/SourceSenseiTheRealOne/cipherbid/actions/workflows/ci.yml/badge.svg)](https://github.com/SourceSenseiTheRealOne/cipherbid/actions/workflows/ci.yml)
+[![Deploy Pages](https://github.com/SourceSenseiTheRealOne/cipherbid/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/SourceSenseiTheRealOne/cipherbid/actions/workflows/deploy-pages.yml)
+
 **Private bids, guaranteed onchain delivery.**
 
 CipherBid is an open-source Vickrey auction house for ERC-721 assets on Starknet. Every bidder escrows the same public STRK collateral cap through STRK20 while committing to a private bid amount. After the bidding window closes, bidders reveal their commitments, the highest valid bidder wins, and the NFT is delivered atomically at the greater of the reserve or second-highest valid bid.

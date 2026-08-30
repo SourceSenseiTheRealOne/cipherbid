@@ -20,6 +20,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "ci:verify": "tsx scripts/verify-ci-workflow.ts",
     "pages:verify": "tsx scripts/verify-pages-workflow.ts"
   },
   "dependencies": {
