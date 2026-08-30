@@ -12,6 +12,8 @@ describe('CipherBid home', () => {
     expect(screen.getByRole('link', { name: 'Create an auction' })).toHaveAttribute('href', '/create')
     expect(screen.getByLabelText('Auction ID')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Open auction' })).toHaveAttribute('href', '/auction?id=1')
+    expect(screen.getByRole('region', { name: 'Live auction reader' })).toBeInTheDocument()
+    expect(screen.getByTestId('home-proof-strip').querySelectorAll('div')).toHaveLength(4)
     expect(screen.queryByText(/feasibility gate/i)).not.toBeInTheDocument()
   })
 })
