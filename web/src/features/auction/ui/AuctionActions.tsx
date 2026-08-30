@@ -8,6 +8,7 @@ import type { AuctionLiveViewModel } from '@/features/auction/ui/AuctionLivePage
 import { formatTokenAmount, parseTokenAmount } from '@/features/auction/auctionMath'
 import { AtomicDeliveryReceipt, type VerifiedTransactionReceipt } from '@/features/auction/ui/AtomicDeliveryReceipt'
 import type { DeploymentManifest } from '@/config/deployment'
+import { verifiedReceiptsForAuction } from '@/config/verifiedMainnetLifecycle'
 import { readAuctionSnapshot, type ChainReader } from '@/features/auction/auctionReader'
 import {
   bindAcceptedIndex,
@@ -97,6 +98,14 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
   const [status, setStatus] = useState<string>('')
   const currentPhase = phase(model)
   const enabled = connection !== null && connection.supportsStrk20
+  const displayedReceipts = useMemo(() => {
+    const seen = new Set<string>()
+    return [...verifiedReceiptsForAuction(model.network, model.auctionId), ...receipts].filter((receipt) => {
+      if (seen.has(receipt.transactionHash)) return false
+      seen.add(receipt.transactionHash)
+      return true
+    })
+  }, [model.auctionId, model.network, receipts])
 
   useEffect(() => orchestrator.subscribe((state) => setStatus(state.status.replaceAll('_', ' '))), [orchestrator])
 
@@ -446,9 +455,10 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
             winnerRecipient: model.state.winnerRecipient,
             clearingPrice: model.state.clearingPrice,
             sellerEntitlement: model.state.sellerEntitlement,
+            sellerClaimConsumed: model.state.sellerClaimConsumed,
             custodyValid: model.custodyValid,
           }}
-          receipts={receipts}
+          receipts={displayedReceipts}
         />
       </div>
     </section>

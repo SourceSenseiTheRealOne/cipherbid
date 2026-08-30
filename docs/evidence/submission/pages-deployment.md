@@ -8,7 +8,7 @@ The durable no-login frontend is verified at:
 
 - [`https://sourcesenseitherealone.github.io/cipherbid/`](https://sourcesenseitherealone.github.io/cipherbid/)
 
-This proves the mainnet-configured application is publicly hosted. It does **not** prove that a CipherBid auction, private bid, reveal, settlement, claim, video, or qualifying STRK20 lifecycle transaction has occurred.
+This initial deployment record proves the mainnet-configured application was publicly hosted at capture time. It does **not by itself** prove a CipherBid lifecycle. The later [`transaction ledger`](../mainnet/transactions.md) and [`auction lifecycle`](../mainnet/auction-lifecycle.md) independently establish those subsequent facts.
 
 ## Source and deployment identity
 
@@ -57,4 +57,4 @@ The auction route's unavailable state is expected: auction ID `1` has not been c
 
 The Pages bundle contains public network/deployment configuration only. Ready X remains responsible for private-note discovery, viewing keys, proof generation, signing, and submission. No signer, recovery payload, bid nonce, claim secret, private note, proof witness, wallet session, or generated runtime evidence is included.
 
-`strk20.json.demo_url` remains empty until the final paired test creates and verifies the real auction route. Its transaction and video fields also remain empty until their independent lifecycle/publication gates pass.
+The later paired test verified the real settled auction route and four qualifying pool-touching transactions, which are now represented in `strk20.json`. The video field remains empty until public playback and duration checks pass.

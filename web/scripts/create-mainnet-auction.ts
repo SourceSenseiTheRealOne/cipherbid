@@ -16,6 +16,7 @@ import {
 } from '@/config/mainnetDeploymentPlan'
 import { MAINNET_CHAIN_ID, MAINNET_STRK20_POOL, STRK_TOKEN, type DeploymentManifest } from '@/config/deployment'
 import { MAINNET_DEPLOYER } from '@/config/mainnetRelease'
+import { buildLocalTsxInvocation } from '@/config/localTsxInvocation'
 import { generateSellerCredential } from '@/features/credentials/credentials'
 import { createVerifiedRecoveryBundle } from '@/features/credentials/recoveryBundle'
 import { readAuctionSnapshot, type ChainReader } from '@/features/auction/auctionReader'
@@ -126,10 +127,15 @@ function callValues(value: readonly string[] | Readonly<{ result: readonly strin
 }
 
 function runMainnetPreflight(): void {
-  const executable = process.platform === 'win32' ? 'npx.cmd' : 'npx'
-  const result = spawnSync(executable, ['--yes', 'pnpm@10.18.1', 'exec', 'tsx', 'scripts/preflight-mainnet.ts'], {
+  const invocation = buildLocalTsxInvocation({
+    nodeExecutable: process.execPath,
+    cwd: process.cwd(),
+    args: ['scripts/preflight-mainnet.ts'],
+  })
+  const result = spawnSync(invocation.executable, invocation.args, {
     cwd: process.cwd(),
     encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: true,
   })
   process.stdout.write(result.stdout ?? '')
