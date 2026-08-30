@@ -34,6 +34,14 @@ describe('CipherBid Taste visual system', () => {
     expect(layout).toContain('className="cipherbid-root"')
   })
 
+  it('allows live auction grid columns to shrink around scrollable evidence', () => {
+    const css = source('src/app/globals.css')
+
+    expect(css).toMatch(
+      /\.cipherbid-auction-page \[class\*='lg:col-span-7'\],\s*\.cipherbid-auction-page \[class\*='lg:col-span-5'\] \{\s*min-width: 0;/,
+    )
+  })
+
   it('removes the old purple design literals from the redesigned surface', () => {
     for (const relativePath of sourceFiles.filter((value) => value !== 'src/app/globals.css')) {
       expect(source(relativePath), relativePath).not.toMatch(/#6654d9|#7170ff|#a8b1ff/i)
