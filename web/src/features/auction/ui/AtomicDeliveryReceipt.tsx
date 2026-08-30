@@ -35,15 +35,14 @@ export function AtomicDeliveryReceipt({
   const strk = (value: string) => `${formatTokenAmount(BigInt(value), 18)} STRK`
 
   return (
-    <section
-      aria-labelledby="atomic-receipt-title"
-      className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-6"
-    >
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Public execution truth</p>
-      <h2 id="atomic-receipt-title" className="mt-2 text-2xl font-semibold">
+    <section aria-labelledby="atomic-receipt-title" className="cb-panel p-5 sm:p-6">
+      <p className="cb-kicker">Public execution truth</p>
+      <h2 id="atomic-receipt-title" className="cb-display mt-2 text-3xl">
         Atomic Delivery Receipt
       </h2>
-      <p className={`mt-4 text-sm font-semibold ${deliveryVerified ? 'text-[#aee5c1]' : 'text-[#d7dcff]'}`}>
+      <p
+        className={`mt-4 text-sm font-semibold ${deliveryVerified ? 'text-[var(--cb-accent-strong)]' : 'text-[var(--cb-text-soft)]'}`}
+      >
         {deliveryVerified
           ? 'Delivery verified'
           : settlement.settled
@@ -94,7 +93,7 @@ export function AtomicDeliveryReceipt({
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`${receipt.label} ${receipt.transactionHash}`}
-                className="flex min-h-11 flex-wrap items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.025] px-3 text-sm hover:border-[#a8b1ff]/40"
+                className="cb-control flex min-h-11 flex-wrap items-center justify-between gap-2 px-3 text-sm"
               >
                 <span className="font-semibold">{receipt.label}</span>
                 <span className="font-mono text-xs text-[#9ba3af]">
