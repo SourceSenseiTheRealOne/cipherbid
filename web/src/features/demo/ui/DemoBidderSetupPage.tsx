@@ -75,20 +75,20 @@ export function DemoBidderSetupPanel({
   const buttonLabel = bidder ? `Shield ${config.shieldDisplay} STRK for ${bidder}` : 'Connect Bidder A or Bidder B'
 
   return (
-    <section aria-labelledby="demo-shield-title" className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-6">
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Private funding setup</p>
-      <h2 id="demo-shield-title" className="mt-2 text-2xl font-semibold">
+    <section aria-labelledby="demo-shield-title" className="cb-panel p-5 sm:p-6">
+      <p className="cb-kicker">Private funding setup</p>
+      <h2 id="demo-shield-title" className="cb-display mt-2 text-3xl">
         Prepare a demo bidder
       </h2>
-      <p className="mt-3 text-sm leading-6 text-[#9ba3af]">
+      <p className="cb-copy mt-3 text-sm">
         Ready X owns registration, note discovery, proving, and submission. CipherBid requests one public{' '}
         {config.shieldDisplay} STRK deposit and never receives a viewing key.
       </p>
 
       {bidder ? (
-        <div className="mt-5 rounded-xl border border-[#3bc478]/20 bg-[#3bc478]/10 p-4">
-          <p className="font-semibold text-[#aee5c1]">{bidder} connected</p>
-          <p className="mt-1 break-all font-mono text-xs text-[#dbe0e8]">{connection?.address}</p>
+        <div className="mt-5 border border-[var(--cb-accent)]/20 bg-[var(--cb-accent-soft)] p-4">
+          <p className="font-semibold text-[var(--cb-accent-strong)]">{bidder} connected</p>
+          <p className="mt-1 break-all font-mono text-xs text-[var(--cb-text-soft)]">{connection?.address}</p>
         </div>
       ) : null}
       {wrongAccount ? (
@@ -106,7 +106,7 @@ export function DemoBidderSetupPanel({
             type="button"
             disabled={!bidder || pending}
             onClick={() => void submitActivation()}
-            className="min-h-12 rounded-xl border border-white/10 bg-white/[0.04] px-4 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
+            className="cb-secondary disabled:cursor-not-allowed disabled:opacity-45"
           >
             {bidder ? `Activate ${bidder}` : 'Activate bidder'}
           </button>
@@ -115,12 +115,12 @@ export function DemoBidderSetupPanel({
           type="button"
           disabled={!bidder || pending}
           onClick={() => void submitShield()}
-          className="min-h-12 rounded-xl bg-[#6654d9] px-4 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
+          className="cb-primary disabled:cursor-not-allowed disabled:opacity-45"
         >
           {pending ? 'Waiting for Ready X…' : buttonLabel}
         </button>
       </div>
-      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
+      <p role="status" className="mt-4 min-h-6 text-sm text-[var(--cb-accent-strong)]">
         {status}
       </p>
       {error ? (
@@ -136,12 +136,12 @@ export function DemoBidderSetupPanel({
           href={`${config.explorerTransactionBase}/${result.transactionHash}`}
           target="_blank"
           rel="noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center break-all font-mono text-xs text-[#d7dcff] underline decoration-[#a8b1ff]/50 underline-offset-4"
+          className="mt-2 inline-flex min-h-11 items-center break-all font-mono text-xs text-[var(--cb-accent-strong)] underline decoration-[var(--cb-accent)]/50 underline-offset-4"
         >
           {result.transactionHash}
         </a>
       ) : null}
-      <p className="mt-4 text-xs leading-5 text-[#858b98]">
+      <p className="mt-4 text-xs leading-5 text-[var(--cb-faint)]">
         The pool currently charges its own private-operation fee. Keep the remaining public STRK for account fees and
         later claims.
       </p>
@@ -155,29 +155,27 @@ export function DemoBidderSetupPage({ deployment }: Readonly<{ deployment: Deplo
   const config = demoBidderConfig(deployment.network)
 
   return (
-    <main className="min-h-screen bg-[#08090a] px-5 py-10 text-[#f7f8f8] sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
-          <Link href="/" className="text-lg font-semibold tracking-[-0.04em]">
+    <main className="cipherbid-auction-page px-5 sm:px-8 lg:px-10">
+      <div className="cb-shell max-w-5xl">
+        <header className="cb-nav">
+          <Link href="/" className="cb-wordmark">
             CipherBid
           </Link>
-          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-[#9ba3af] hover:text-white">
+          <Link href="/" className="cb-nav-link">
             Back to auctions
           </Link>
         </header>
-        <section className="py-10 sm:py-14" aria-labelledby="demo-setup-title">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[#a8b1ff]">
-            {config.networkLabel} demo preparation
-          </p>
-          <h1 id="demo-setup-title" className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">
+        <section className="cb-route-intro" aria-labelledby="demo-setup-title">
+          <p className="cb-kicker">{config.networkLabel} demo preparation</p>
+          <h1 id="demo-setup-title" className="cb-display">
             Shield both demo bidders before the timer starts
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-[#9ba3af]">
+          <p className="cb-copy mt-5 max-w-2xl text-base">
             Connect Bidder A, shield once, disconnect, switch Ready X to Bidder B, and repeat. The auction CLI will
             refuse to start until both deposits are at least ten blocks old.
           </p>
         </section>
-        <div className="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+        <div className="cb-workbench">
           <WalletConnectPanel
             provider={provider}
             expectedChainId={deployment.chainId}

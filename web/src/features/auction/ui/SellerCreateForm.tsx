@@ -121,19 +121,13 @@ export function SellerCreateForm({ deployment, connection, onCreated }: SellerCr
     }
   }
 
-  const fieldClass =
-    'min-h-12 w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 outline-none focus:border-[#a8b1ff] disabled:cursor-not-allowed disabled:opacity-50'
+  const fieldClass = 'cb-control w-full px-4 outline-none disabled:cursor-not-allowed disabled:opacity-50'
 
   return (
-    <form
-      onSubmit={(event) => void submit(event)}
-      className="rounded-2xl border border-white/10 bg-[#111217] p-5 sm:p-7"
-    >
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#a8b1ff]">Seller workflow</p>
-      <h2 className="mt-2 text-2xl font-semibold">Create auction</h2>
-      {!enabled ? (
-        <p className="mt-4 text-sm text-[#9ba3af]">Connect a compatible wallet to create an auction.</p>
-      ) : null}
+    <form onSubmit={(event) => void submit(event)} className="cb-panel p-5 sm:p-7">
+      <p className="cb-kicker">Seller workflow</p>
+      <h2 className="cb-display mt-2 text-3xl">Create auction</h2>
+      {!enabled ? <p className="cb-copy mt-4 text-sm">Connect a compatible wallet to create an auction.</p> : null}
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {[
           ['Auction ID', auctionId, setAuctionId, 'numeric'],
@@ -176,24 +170,24 @@ export function SellerCreateForm({ deployment, connection, onCreated }: SellerCr
           />
         </label>
       </div>
-      <p className="mt-5 rounded-xl border border-[#7170ff]/20 bg-[#7170ff]/10 p-4 text-sm leading-6 text-[#d7dcff]">
+      <p className="mt-5 border-l-2 border-[var(--cb-accent)] bg-[var(--cb-accent-soft)] p-4 text-sm leading-6 text-[var(--cb-text-soft)]">
         Encrypted recovery is downloaded and import-verified before the wallet receives the NFT approval and auction
         creation request.
       </p>
       <button
         type="submit"
         disabled={!enabled}
-        className="mt-5 min-h-12 w-full rounded-xl bg-[#6654d9] px-5 font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+        className="cb-primary mt-5 w-full disabled:cursor-not-allowed disabled:opacity-45"
       >
         Create auction with NFT custody
       </button>
-      <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
+      <p role="status" className="mt-4 min-h-6 text-sm text-[var(--cb-accent-strong)]">
         {status}
       </p>
       {createdAuctionId !== null ? (
         <a
           href={buildAuctionHref(createdAuctionId.toString())}
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-[#aee5c1] underline underline-offset-4"
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--cb-accent-strong)] underline underline-offset-4"
         >
           Open auction #{createdAuctionId.toString()}
         </a>
