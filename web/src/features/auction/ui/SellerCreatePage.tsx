@@ -18,31 +18,28 @@ export function SellerCreatePage({
   )
 
   return (
-    <main className="cipherbid-auction-page min-h-screen bg-[#08090a] px-5 py-10 text-[#f7f8f8] sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
-          <Link href="/" className="text-lg font-semibold tracking-[-0.04em]">
+    <main className="cipherbid-auction-page px-5 sm:px-8 lg:px-10">
+      <div className="cb-shell max-w-5xl">
+        <header className="cb-nav">
+          <Link href="/" className="cb-wordmark">
             CipherBid
           </Link>
-          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-[#9ba3af] hover:text-white">
+          <Link href="/" className="cb-nav-link">
             Back to auctions
           </Link>
         </header>
-        <section className="py-10 sm:py-14" aria-labelledby="create-auction-title">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-[#a8b1ff]">Guaranteed onchain delivery</p>
-          <h1
-            id="create-auction-title"
-            className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.055em] sm:text-6xl"
-          >
+        <section className="cb-route-intro" aria-labelledby="create-auction-title">
+          <p className="cb-kicker">Guaranteed onchain delivery</p>
+          <h1 id="create-auction-title" className="cb-display">
             Create a private-bid NFT auction
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-[#9ba3af]">
+          <p className="cb-copy mt-5 max-w-2xl text-base">
             The NFT moves into CipherBid custody atomically with immutable reserve, cap, deadlines, and seller claim
             handle.
           </p>
         </section>
         {deployment ? (
-          <div className="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+          <div className="cb-workbench">
             <WalletConnectPanel
               provider={provider}
               expectedChainId={deployment.chainId}
@@ -53,7 +50,7 @@ export function SellerCreatePage({
             <SellerCreateForm deployment={deployment} connection={connection} />
           </div>
         ) : (
-          <p role="alert" className="rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-amber-100">
+          <p role="alert" className="cb-panel border-amber-300/20 p-4 text-amber-100">
             {error ?? 'Auction deployment is not configured.'}
           </p>
         )}
