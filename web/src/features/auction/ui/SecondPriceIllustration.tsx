@@ -2,12 +2,12 @@ export function SecondPriceIllustration() {
   return (
     <section
       aria-labelledby="clearing-chart-title"
-      className="cipherbid-panel rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
+      className="cb-panel cipherbid-panel p-5 sm:p-7 lg:col-span-7 lg:col-start-1"
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#6654d9]">Clearing mechanism</p>
-          <h2 id="clearing-chart-title" className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
+          <p className="cb-kicker">Clearing mechanism</p>
+          <h2 id="clearing-chart-title" className="cb-display mt-2 text-3xl">
             Second-price clearing, illustrated
           </h2>
         </div>
@@ -31,8 +31,8 @@ export function SecondPriceIllustration() {
           </desc>
           <defs>
             <linearGradient id="cipherbid-winning-bid" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#ad9cff" />
-              <stop offset="100%" stopColor="#6654d9" />
+              <stop offset="0%" stopColor="#c8f66d" />
+              <stop offset="100%" stopColor="#86ad36" />
             </linearGradient>
             <linearGradient id="cipherbid-other-bids" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0%" stopColor="#8491a4" />
@@ -58,8 +58,8 @@ export function SecondPriceIllustration() {
             </text>
           </g>
 
-          <line x1="74" x2="640" y1="132" y2="132" stroke="#8de0bb" strokeDasharray="6 6" strokeWidth="2" />
-          <rect x="492" y="110" width="122" height="30" rx="15" fill="#204d3d" />
+          <line x1="74" x2="640" y1="132" y2="132" stroke="#b7e854" strokeDasharray="6 6" strokeWidth="2" />
+          <rect x="492" y="110" width="122" height="30" rx="2" fill="#27331a" />
           <text
             x="553"
             y="130"
@@ -71,13 +71,13 @@ export function SecondPriceIllustration() {
             second price
           </text>
 
-          <rect x="104" y="68" width="54" height="164" rx="8" fill="url(#cipherbid-winning-bid)" />
-          <rect x="178" y="94" width="54" height="138" rx="8" fill="url(#cipherbid-other-bids)" />
-          <rect x="252" y="119" width="54" height="113" rx="8" fill="url(#cipherbid-other-bids)" />
-          <rect x="326" y="147" width="54" height="85" rx="8" fill="url(#cipherbid-other-bids)" opacity="0.9" />
-          <rect x="400" y="172" width="54" height="60" rx="8" fill="url(#cipherbid-other-bids)" opacity="0.72" />
-          <rect x="474" y="194" width="54" height="38" rx="8" fill="url(#cipherbid-other-bids)" opacity="0.55" />
-          <rect x="548" y="211" width="54" height="21" rx="8" fill="url(#cipherbid-other-bids)" opacity="0.38" />
+          <rect x="104" y="68" width="54" height="164" rx="2" fill="url(#cipherbid-winning-bid)" />
+          <rect x="178" y="94" width="54" height="138" rx="2" fill="url(#cipherbid-other-bids)" />
+          <rect x="252" y="119" width="54" height="113" rx="2" fill="url(#cipherbid-other-bids)" />
+          <rect x="326" y="147" width="54" height="85" rx="2" fill="url(#cipherbid-other-bids)" opacity="0.9" />
+          <rect x="400" y="172" width="54" height="60" rx="2" fill="url(#cipherbid-other-bids)" opacity="0.72" />
+          <rect x="474" y="194" width="54" height="38" rx="2" fill="url(#cipherbid-other-bids)" opacity="0.55" />
+          <rect x="548" y="211" width="54" height="21" rx="2" fill="url(#cipherbid-other-bids)" opacity="0.38" />
 
           <text
             x="131"
@@ -95,7 +95,7 @@ export function SecondPriceIllustration() {
 
       <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
         <div className="flex items-center gap-2 text-black/70">
-          <span className="h-3 w-3 rounded-sm bg-[#7c68e2]" aria-hidden="true" />
+          <span className="h-3 w-3 rounded-sm bg-[var(--cb-accent)]" aria-hidden="true" />
           <span>Winning bid</span>
         </div>
         <div className="flex items-center gap-2 text-black/70">
