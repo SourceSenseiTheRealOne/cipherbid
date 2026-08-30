@@ -93,10 +93,10 @@ export function AtomicDeliveryReceipt({
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`${receipt.label} ${receipt.transactionHash}`}
-                className="cb-control flex min-h-11 flex-wrap items-center justify-between gap-2 px-3 text-sm"
+                className="cb-control flex min-h-11 min-w-0 flex-wrap items-center justify-between gap-2 overflow-hidden px-3 text-sm"
               >
-                <span className="font-semibold">{receipt.label}</span>
-                <span className="font-mono text-xs text-[#9ba3af]">
+                <span className="shrink-0 font-semibold">{receipt.label}</span>
+                <span className="w-full min-w-0 break-all font-mono text-xs text-[#9ba3af] sm:w-auto sm:text-right">
                   {receipt.transactionHash} · block {receipt.blockNumber}
                 </span>
               </a>

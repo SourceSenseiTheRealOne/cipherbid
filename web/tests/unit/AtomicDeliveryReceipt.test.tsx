@@ -46,4 +46,20 @@ describe('AtomicDeliveryReceipt', () => {
     expect(screen.getByText('No verified transaction receipts yet.')).toBeInTheDocument()
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
+
+  it('wraps a full transaction hash inside its receipt card', () => {
+    const transactionHash = `0x${'f'.repeat(64)}`
+    render(
+      <AtomicDeliveryReceipt
+        settlement={settlement}
+        receipts={[{ label: 'Settlement', transactionHash, finalityStatus: 'ACCEPTED_ON_L2', blockNumber: 77 }]}
+      />,
+    )
+
+    expect(screen.getByRole('link', { name: `Settlement ${transactionHash}` })).toHaveClass(
+      'min-w-0',
+      'overflow-hidden',
+    )
+    expect(screen.getByText(`${transactionHash} · block 77`)).toHaveClass('min-w-0', 'break-all')
+  })
 })
