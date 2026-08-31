@@ -56,6 +56,18 @@ const VERIFIED_MAINNET_RECEIPTS: readonly PublishedReceipt[] = Object.freeze([
     finalityStatus: 'ACCEPTED_ON_L2',
     blockNumber: 14_067_030,
   }),
+  Object.freeze({
+    label: 'Seller authorization',
+    transactionHash: '0x51e1bb6d0fd7474f7213c744714eb7d2256701b12050763c5ed73ac92ebf933',
+    finalityStatus: 'ACCEPTED_ON_L2',
+    blockNumber: 14_141_273,
+  }),
+  Object.freeze({
+    label: 'Seller proceeds',
+    transactionHash: '0x24d92390b2f0ca629fe49e4c4355aaa2fe1fbf143bd4ba1e37b80e4575528e',
+    finalityStatus: 'ACCEPTED_ON_L2',
+    blockNumber: 14_141_287,
+  }),
 ])
 
 export function verifiedReceiptsForAuction(
