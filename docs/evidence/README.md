@@ -9,19 +9,20 @@ This directory contains public, secret-free specifications and verified readback
 | [`mainnet/deployment.md`](mainnet/deployment.md)                   | Verified                                        | Mainnet declarations, deployed addresses, successful receipts, class hashes, immutable AuctionHouse config, DemoERC721 ownership, and bounded fee accounting |
 | [`mainnet/deployment.json`](mainnet/deployment.json)               | Verified                                        | Machine-readable public deployment manifest consumed by frontend and auction-plan tooling                                                                    |
 | [`mainnet/release-candidate.md`](mainnet/release-candidate.md)     | Superseded pre-write freeze plus current status | Approved accounts, protocol addresses, demo economics, pool-fee assumptions, and release stop conditions                                                     |
-| [`mainnet/transactions.md`](mainnet/transactions.md)               | Verified                                        | Eight successful lifecycle receipts; four qualifying pool-touching CipherBid transactions with event and trace checks                                        |
-| [`mainnet/auction-lifecycle.md`](mainnet/auction-lifecycle.md)     | Verified                                        | Actual 2/4 STRK reveals, Vickrey settlement, NFT delivery, bidder claims, value conservation, and seller-fee deferral                                        |
+| [`mainnet/transactions.md`](mainnet/transactions.md)               | Verified                                        | Ten canonical lifecycle receipts; five qualifying pool-touching CipherBid transactions with event and trace checks                                           |
+| [`mainnet/auction-lifecycle.md`](mainnet/auction-lifecycle.md)     | Verified                                        | Actual 2/4 STRK reveals, Vickrey settlement, NFT delivery, all claims, and zero residual value                                                               |
 | [`submission/pages-deployment.md`](submission/pages-deployment.md) | Verified                                        | Durable GitHub Pages settings, exact deployed `main` SHA, successful hosted workflow/deployment, HTTP routes, and clean-browser runtime checks               |
 
-The mainnet private lifecycle is verified through both bidder claims. Seller proceeds remain exactly accounted and claimable but were intentionally deferred because the live `6 STRK` pool fee exceeds the `2 STRK` entitlement.
+The mainnet lifecycle is verified through both bidder claims and the seller-proceeds claim. Final actual and accounted AuctionHouse STRK balances are zero.
 
 ## Prepared recording control
 
-| Artifact                                           | Status                      | Scope                                                                                                                                     |
-| -------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| [`mainnet/demo-script.md`](mainnet/demo-script.md) | Prepared; recording blocked | Maximum-three-minute narration, capture rules, and hard evidence gates bound to the deployed mainnet contracts and actual `2/4 STRK` case |
+| Artifact                                                           | Status          | Scope                                                                                                       |
+| ------------------------------------------------------------------ | --------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`mainnet/demo-script.md`](mainnet/demo-script.md)                 | Superseded      | Earlier maximum-three-minute narration and capture controls for the actual `2/4 STRK` case                  |
+| [`../demo-presentation-script.md`](../demo-presentation-script.md) | Ready to record | Plain-language live-page walkthrough updated for the completed seller claim and final zero-balance readback |
 
-The script is not demo-video evidence. Its hard gate forbids recording or publication until the complete real lifecycle, claims, and Atomic Delivery Receipt are independently verified.
+The updated presentation script is ready to record. A new file becomes public video evidence only after Pages deployment and clean playback/duration readback.
 
 ## Durable frontend publication
 

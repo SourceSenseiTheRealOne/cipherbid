@@ -358,6 +358,13 @@ body.cipherbid-root ::selection {
   min-width: 0;
 }
 
+.cipherbid-auction-page dd > code {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
 .cipherbid-root [class*='text-[#a8b1ff]'],
 .cipherbid-root [class*='text-[#d7dcff]'],
 .cipherbid-root [class*='text-[#aee5c1]'],

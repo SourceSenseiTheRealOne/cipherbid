@@ -57,4 +57,4 @@ The auction route's unavailable state is expected: auction ID `1` has not been c
 
 The Pages bundle contains public network/deployment configuration only. Ready X remains responsible for private-note discovery, viewing keys, proof generation, signing, and submission. No signer, recovery payload, bid nonce, claim secret, private note, proof witness, wallet session, or generated runtime evidence is included.
 
-The later paired test verified the real settled auction route and four qualifying pool-touching transactions, which are now represented in `strk20.json`. The video field remains empty until public playback and duration checks pass.
+The completed lifecycle verifies five qualifying pool-touching transactions, now represented in `strk20.json`. The video field remains empty until the updated recording passes public playback and duration checks.
