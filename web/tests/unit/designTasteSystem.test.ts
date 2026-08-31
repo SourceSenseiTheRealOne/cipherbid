@@ -42,6 +42,14 @@ describe('CipherBid Taste visual system', () => {
     )
   })
 
+  it('wraps long onchain owner addresses inside their fact card', () => {
+    const css = source('src/app/globals.css')
+
+    expect(css).toMatch(
+      /\.cipherbid-auction-page dd > code \{[^}]*overflow-wrap: anywhere;[^}]*word-break: break-all;/s,
+    )
+  })
+
   it('removes the old purple design literals from the redesigned surface', () => {
     for (const relativePath of sourceFiles.filter((value) => value !== 'src/app/globals.css')) {
       expect(source(relativePath), relativePath).not.toMatch(/#6654d9|#7170ff|#a8b1ff/i)

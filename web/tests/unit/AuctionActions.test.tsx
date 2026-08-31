@@ -127,7 +127,7 @@ describe('AuctionActions', () => {
     const { rerender } = render(<AuctionActions model={verifiedModel} connection={null} />)
 
     expect(screen.getByText('Delivery verified')).toBeInTheDocument()
-    expect(screen.getAllByRole('link')).toHaveLength(8)
+    expect(screen.getAllByRole('link')).toHaveLength(10)
     expect(
       screen.getByRole('link', {
         name: /Settlement 0x883f852f91052cc25dee8e30a7ce04996db7ccaca015d4bb2d5e2826602cbf/i,

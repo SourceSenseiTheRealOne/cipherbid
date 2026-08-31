@@ -1,7 +1,7 @@
 # CipherBid mainnet demo script
 
-**Target duration:** 2:45–2:55
-**Recording status:** Lifecycle verified; record only after the persistent Atomic Delivery Receipt is deployed and clean-browser verified.
+**Target duration:** 2:40 maximum
+**Recording status:** Superseded for the final claim-complete recording by [`../../demo-presentation-script.md`](../../demo-presentation-script.md).
 
 ## Hard recording gate
 
@@ -137,14 +137,14 @@ If any item is missing, stop. Do not use mock hashes, edited balances, rehearsed
 
 **Narration:**
 
-> The loser receives four STRK back, the winner can claim the two-STRK surplus, and the seller receives two STRK where current pool fees make the claim economical. Every applicable claim is one-time and read back from chain state.
+> The loser received four STRK back, the winner claimed the two-STRK surplus, and the seller claimed the two-STRK clearing price. Every claim is one-time and read back from chain state.
 
 **Visible evidence:**
 
 - loser refund: `4 STRK`
 - winner surplus: `2 STRK`
-- seller proceeds: `2 STRK`, or an explicit fee-based deferral if uneconomical
-- no unexpected collateral remains
+- seller proceeds: `2 STRK`, claimed
+- AuctionHouse actual and accounted balances: `0 STRK`
 
 ## 2:50–2:58 — Close
 

@@ -1,8 +1,8 @@
 # CipherBid verified mainnet auction lifecycle
 
-**Status:** Verified through bidder claims; seller proceeds intentionally remain claimable
+**Status:** Fully verified through seller proceeds claim
 
-**Verification time:** `2026-08-29T22:18:12Z`
+**Verification time:** `2026-08-31T09:00:38Z`
 
 **Live route:** [`https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342`](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342)
 
@@ -59,7 +59,7 @@ The settlement event and ERC-721 owner readback prove price calculation and NFT 
 | ----------------------- | -------: | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | Bidder A loser refund   | `4 STRK` | Claimed through STRK20 in [`0x7bbe0489…fff15e`](https://starkscan.co/tx/0x7bbe0489702cdc6466b7aa4c262d7d1f34dcabace16e47c5b02cafef7fff15e) |
 | Bidder B winner surplus | `2 STRK` | Claimed through STRK20 in [`0x4a76360a…ff540d`](https://starkscan.co/tx/0x4a76360a895ce3f984ee7ab704be0e5c2c220c5584ad05704bb338f2fff540d) |
-| Seller entitlement      | `2 STRK` | Unclaimed and still accounted; intentionally deferred                                                                                      |
+| Seller entitlement      | `2 STRK` | Claimed through STRK20 in [`0x24d92390…5528e`](https://starkscan.co/tx/0x24d92390b2f0ca629fe49e4c4355aaa2fe1fbf143bd4ba1e37b80e4575528e)   |
 
 ```text
 Initial equal-cap collateral: 4 + 4 = 8 STRK
@@ -72,13 +72,13 @@ Total allocation:                   8 STRK
 Final readback:
 
 ```text
-AuctionHouse actual STRK balance:    2 STRK
-AuctionHouse accounted balance:      2 STRK
-Outstanding seller entitlement:      2 STRK
+AuctionHouse actual STRK balance:    0 STRK
+AuctionHouse accounted balance:      0 STRK
+Outstanding seller entitlement:      0 STRK
 Unexplained difference:               0 STRK
 ```
 
-The live pool fee was `6 STRK` per private operation. Claiming the seller's `2 STRK` would produce a `-4 STRK` result before execution gas, so the seller claim was not submitted. This is an explicit economic deferral, not missing collateral; the exact entitlement remains claimable and both actual and accounted balances agree.
+The live pool fee was `6 STRK` per private operation. The seller explicitly completed the `2 STRK` claim despite the `-4 STRK` economic result before public authorization gas. The successful claim emitted `SellerProceedsClaimed`, touched the canonical pool in the execution trace, consumed the seller claim, and reduced both actual and accounted AuctionHouse balances to zero.
 
 ## Privacy and custody boundary
 
