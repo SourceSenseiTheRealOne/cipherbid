@@ -1,6 +1,6 @@
 # CipherBid verified mainnet transactions
 
-**Verification time:** `2026-08-29T22:18:12Z`
+**Verification time:** `2026-08-31T09:00:38Z`
 
 **Network:** Starknet mainnet (`0x534e5f4d41494e`)
 
@@ -18,10 +18,10 @@ Each row was independently checked against the public RPC by exact hash. Publica
 2. finality `ACCEPTED_ON_L2` or stronger;
 3. exactly one lifecycle-specific event emitted by the verified AuctionHouse;
 4. execution trace contains the AuctionHouse;
-5. private bids and bidder claims also contain the canonical STRK20 pool in the execution trace;
+5. private bids and all private claims also contain the canonical STRK20 pool in the execution trace;
 6. post-state agrees with the decoded transition.
 
-The eight hashes are unique. Starkscan also resolves the four qualifying pool-touching transaction URLs without authentication. Recovery payloads, passwords, claim secrets, bid nonces, viewing keys, notes, proof witnesses, wallet sessions, and raw wallet output are excluded.
+The ten canonical lifecycle hashes are unique. The five qualifying private transactions touch the canonical live STRK20 pool. Recovery payloads, passwords, claim secrets, bid nonces, viewing keys, notes, proof witnesses, wallet sessions, and raw wallet output are excluded.
 
 ## Lifecycle ledger
 
@@ -35,10 +35,14 @@ The eight hashes are unique. Starkscan also resolves the four qualifying pool-to
 | Vickrey settlement and atomic NFT delivery | [`0x883f852f…02cbf`](https://starkscan.co/tx/0x883f852f91052cc25dee8e30a7ce04996db7ccaca015d4bb2d5e2826602cbf)   | `14066773` / `2026-08-29T22:05:57Z` | `AuctionSettled`                                 | No          | Sold; winner index `1`; clearing price `2 STRK`; token `99` owner is Bidder B            |
 | Winner-surplus private claim               | [`0x4a76360a…ff540d`](https://starkscan.co/tx/0x4a76360a895ce3f984ee7ab704be0e5c2c220c5584ad05704bb338f2fff540d) | `14066957` / `2026-08-29T22:11:01Z` | `WinnerSurplusClaimed`                           | **Yes**     | `2 STRK` credited through the open-note claim route                                      |
 | Loser-refund private claim                 | [`0x7bbe0489…fff15e`](https://starkscan.co/tx/0x7bbe0489702cdc6466b7aa4c262d7d1f34dcabace16e47c5b02cafef7fff15e) | `14067030` / `2026-08-29T22:13:01Z` | `LoserRefundClaimed`                             | **Yes**     | `4 STRK` credited through the open-note claim route                                      |
+| Seller open-note authorization             | [`0x51e1bb6d…bf933`](https://starkscan.co/tx/0x51e1bb6d0fd7474f7213c744714eb7d2256701b12050763c5ed73ac92ebf933)  | `14141273` / `2026-08-31T09:00:11Z` | `SellerProceedsAuthorized`                       | No          | Final authorized note matches the subsequent private claim                               |
+| Seller-proceeds private claim              | [`0x24d92390…5528e`](https://starkscan.co/tx/0x24d92390b2f0ca629fe49e4c4355aaa2fe1fbf143bd4ba1e37b80e4575528e)   | `14141287` / `2026-08-31T09:00:38Z` | `SellerProceedsClaimed`                          | **Yes**     | `2 STRK` credited; seller claim consumed; actual and accounted house balances are zero   |
 
 ## Qualifying `strk20.json` transactions
 
-The two bid ingresses and two bidder claims satisfy the strict publication gate: each succeeded on mainnet, touched the canonical live STRK20 pool, emitted its expected event from the listed CipherBid AuctionHouse, and produced the expected readback. Creation, reveals, and settlement support the lifecycle but are not listed as STRK20 transactions because their traces do not touch the pool.
+The two bid ingresses and three private claims satisfy the strict publication gate: each succeeded on mainnet, touched the canonical live STRK20 pool, emitted its expected event from the listed CipherBid AuctionHouse, and produced the expected readback. Creation, reveals, settlement, and seller authorization support the lifecycle but are not listed in `strk20.json` because their traces do not touch the pool.
+
+Several seller-authorization retries succeeded while Ready X lacked enough mature private funds for the pool fee. They only replaced the authorized note and did not claim value. The canonical ledger lists the final effective authorization immediately before the successful private claim.
 
 ## Truthful deviation from the frozen plan
 
