@@ -12,17 +12,18 @@ This directory contains public, secret-free specifications and verified readback
 | [`mainnet/transactions.md`](mainnet/transactions.md)               | Verified                                        | Ten canonical lifecycle receipts; five qualifying pool-touching CipherBid transactions with event and trace checks                                           |
 | [`mainnet/auction-lifecycle.md`](mainnet/auction-lifecycle.md)     | Verified                                        | Actual 2/4 STRK reveals, Vickrey settlement, NFT delivery, all claims, and zero residual value                                                               |
 | [`submission/pages-deployment.md`](submission/pages-deployment.md) | Verified                                        | Durable GitHub Pages settings, exact deployed `main` SHA, successful hosted workflow/deployment, HTTP routes, and clean-browser runtime checks               |
+| [`submission/demo-video.md`](submission/demo-video.md)             | Verified                                        | Public YouTube identity, playback, duration, transcript alignment, and privacy-boundary checks                                                               |
 
 The mainnet lifecycle is verified through both bidder claims and the seller-proceeds claim. Final actual and accounted AuctionHouse STRK balances are zero.
 
 ## Prepared recording control
 
-| Artifact                                                           | Status          | Scope                                                                                                       |
-| ------------------------------------------------------------------ | --------------- | ----------------------------------------------------------------------------------------------------------- |
-| [`mainnet/demo-script.md`](mainnet/demo-script.md)                 | Superseded      | Earlier maximum-three-minute narration and capture controls for the actual `2/4 STRK` case                  |
-| [`../demo-presentation-script.md`](../demo-presentation-script.md) | Ready to record | Plain-language live-page walkthrough updated for the completed seller claim and final zero-balance readback |
+| Artifact                                                           | Status     | Scope                                                                                                          |
+| ------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| [`mainnet/demo-script.md`](mainnet/demo-script.md)                 | Superseded | Earlier maximum-three-minute narration and capture controls for the actual `2/4 STRK` case                     |
+| [`../demo-presentation-script.md`](../demo-presentation-script.md) | Published  | Plain-language live-page walkthrough for the completed seller claim, atomic delivery, and token-launch roadmap |
 
-The updated presentation script is ready to record. A new file becomes public video evidence only after Pages deployment and clean playback/duration readback.
+The final video is published at `https://youtu.be/pYZk6KXko7o`; unauthenticated playback and duration were read back before manifest publication.
 
 ## Durable frontend publication
 

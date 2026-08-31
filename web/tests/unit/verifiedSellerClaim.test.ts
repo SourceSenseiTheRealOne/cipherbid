@@ -9,11 +9,13 @@ describe('verified seller claim publication', () => {
   it('publishes the qualifying seller claim once in the STRK20 manifest', () => {
     const manifest = JSON.parse(readFileSync(path.resolve(process.cwd(), '..', 'strk20.json'), 'utf8')) as {
       transactions: string[]
+      demo_video: string
     }
 
     expect(manifest.transactions).toHaveLength(5)
     expect(new Set(manifest.transactions).size).toBe(5)
     expect(manifest.transactions.at(-1)).toBe(sellerClaimHash)
+    expect(manifest.demo_video).toBe('https://youtu.be/pYZk6KXko7o')
   })
 
   it('ends the canonical receipt ledger with seller authorization and private claim', () => {

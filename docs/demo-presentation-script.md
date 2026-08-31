@@ -4,6 +4,8 @@
 
 **Live page:** https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342
 
+**Published video:** https://youtu.be/pYZk6KXko7o
+
 ## Before recording
 
 1. Open the live auction in a clean browser window.
