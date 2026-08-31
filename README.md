@@ -7,7 +7,7 @@
 
 CipherBid is a Vickrey NFT auction on Starknet where every accepted bidder locks the same STRK collateral cap through STRK20. The actual bid stays sealed until reveal. Settlement sends the NFT to the winner at the greater of the reserve or second-highest valid bid, and every refund, surplus, and seller payment returns through private STRK20 claims.
 
-[Open the live mainnet auction](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) · [Read the transaction ledger](docs/evidence/mainnet/transactions.md) · [Use the presentation script](docs/demo-presentation-script.md)
+[Open the live mainnet auction](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) · [Watch the final demo](https://youtu.be/pYZk6KXko7o) · [Read the transaction ledger](docs/evidence/mainnet/transactions.md) · [Use the presentation script](docs/demo-presentation-script.md)
 
 ## The 30-second version
 
@@ -56,7 +56,7 @@ The production frontend is live at [`https://sourcesenseitherealone.github.io/ci
 
 The exportable live-auction route is `/auction?id=<positive-u64>`. It validates one auction ID, reads public Starknet state in the browser, verifies the deployed class/configuration and NFT custody, then renders wallet controls. Ready X still owns private-note discovery, proving, signing, and submission.
 
-The [record-ready presentation script](docs/demo-presentation-script.md) follows this exact page and keeps the explanation under three minutes. `strk20.json.demo_video` stays empty until the updated recording is published and independently checked.
+The final [2:24 public demo video](https://youtu.be/pYZk6KXko7o) follows this page through equal collateral, the `2/4 STRK` result, private claims, and atomic delivery. The [presentation script](docs/demo-presentation-script.md) remains available for the complete talk track and judge Q&A.
 
 ## Verified mainnet demo
 
@@ -254,6 +254,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Mainnet deployment](docs/evidence/mainnet/deployment.md)
 - [Verified mainnet transaction ledger](docs/evidence/mainnet/transactions.md)
 - [Verified mainnet auction lifecycle](docs/evidence/mainnet/auction-lifecycle.md)
+- [Final public demo video evidence](docs/evidence/submission/demo-video.md)
 - [Live demo presentation script](docs/demo-presentation-script.md)
 - [Mainnet release candidate](docs/evidence/mainnet/release-candidate.md)
 - [Canonical demo matrix](docs/evidence/task-0-demo-matrix.md)
@@ -262,7 +263,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Hackathon requirements matrix](docs/evidence/hackathon-requirements-matrix.md)
 - [Sepolia rehearsal](docs/evidence/sepolia/demo-runbook.md)
 
-`strk20.json` contains two verified contracts, five successful pool-touching CipherBid transactions, and the clean-browser-verified auction URL. The video field remains empty until the updated recording is public and checked.
+`strk20.json` contains two verified contracts, five successful pool-touching CipherBid transactions, the clean-browser-verified auction URL, and the public 2:24 YouTube demo.
 
 ## Scope
 
