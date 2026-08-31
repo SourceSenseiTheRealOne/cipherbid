@@ -5,11 +5,32 @@
 
 **Private bids, guaranteed onchain delivery.**
 
-CipherBid is an open-source Vickrey auction house for ERC-721 assets on Starknet. Every bidder escrows the same public STRK collateral cap through STRK20 while committing to a private bid amount. After the bidding window closes, bidders reveal their commitments, the highest valid bidder wins, and the NFT is delivered atomically at the greater of the reserve or second-highest valid bid.
+CipherBid is a Vickrey NFT auction on Starknet where every accepted bidder locks the same STRK collateral cap through STRK20. The actual bid stays sealed until reveal. Settlement sends the NFT to the winner at the greater of the reserve or second-highest valid bid, and every refund, surplus, and seller payment returns through private STRK20 claims.
 
-> **Verified mainnet demo:** auction [`1788040057342`](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) completed the two-wallet private-bid lifecycle, atomic settlement, and both bidder claims. Bidder B entered `4 STRK`, not the frozen plan's `3 STRK`; this README and the public evidence preserve the actual chain value.
+[Open the live mainnet auction](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) · [Read the transaction ledger](docs/evidence/mainnet/transactions.md) · [Use the presentation script](docs/demo-presentation-script.md)
 
-## Why equal collateral?
+## The 30-second version
+
+Many auction demos hide a bid with a hash but do not prove the bidder can pay. Escrowing each bidder's exact amount fixes funding but leaks the bid through the public token transfer.
+
+CipherBid locks the same public `4 STRK` cap for both bidders. Observers see funded bids with equal collateral, but not whether the sealed bid is `2 STRK` or `4 STRK`. After reveal, the contract calculates the Vickrey price, transfers the escrowed NFT in the same settlement transaction, and accounts for every remaining STRK claim.
+
+Atomic settlement means all-or-nothing delivery. Winner selection, second-price accounting, and the NFT transfer succeed together or the transaction reverts. There is no accepted state where CipherBid records a winner but leaves the NFT with the seller.
+
+> **Verified mainnet result:** auction [`1788040057342`](https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342) completed two private equal-cap bids, two reveals, second-price settlement, atomic NFT delivery, bidder claims, and the final seller claim. Five published CipherBid transactions touched the canonical STRK20 pool.
+
+## Why this is more than a minimal commit/reveal demo
+
+| Minimal commit/reveal demo                        | CipherBid                                                                                    |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| A hash can be submitted without funded collateral | Every accepted bid moves the same real STRK cap through the live STRK20 pool                 |
+| Exact escrow can leak the bid before reveal       | Equal collateral hides which value at or below the cap was committed                         |
+| Delivery can remain a separate manual step        | The NFT enters custody at creation and moves to the winner inside settlement                 |
+| Refunds often use public transfers                | Loser refund, winner surplus, and seller proceeds use STRK20 open-note claims                |
+| Recovery is left outside the demo                 | Password-encrypted credentials bind to network, contract, auction, role, and claim handle    |
+| Success is usually shown with local tests         | Mainnet receipts, CipherBid events, pool traces, NFT ownership, and zero residual accounting |
+
+## Why equal collateral matters
 
 A STRK20 `privacy_invoke` withdraws tokens from the privacy pool to the helper through a public ERC-20 edge. Escrowing each bidder's variable bid would reveal that amount before the reveal phase. CipherBid therefore locks the same cap for every accepted bidder. The public transfer proves every bid is funded without disclosing whether the sealed bid is `2 STRK`, `4 STRK`, or another value at or below the cap.
 
@@ -35,43 +56,65 @@ The production frontend is live at [`https://sourcesenseitherealone.github.io/ci
 
 The exportable live-auction route is `/auction?id=<positive-u64>`. It validates one auction ID, reads public Starknet state in the browser, verifies the deployed class/configuration and NFT custody, then renders wallet controls. Ready X still owns private-note discovery, proving, signing, and submission.
 
+The [record-ready presentation script](docs/demo-presentation-script.md) follows this exact page and keeps the explanation under three minutes. `strk20.json.demo_video` stays empty until the updated recording is published and independently checked.
+
 ## Verified mainnet demo
 
 The bounded mainnet demo uses one seller, two separate Ready X accounts, and one read-only observer:
 
-| Term                    |      Value |
-| ----------------------- | ---------: |
-| Reserve                 |   `1 STRK` |
-| Equal collateral cap    |   `4 STRK` |
-| Bidder A sealed bid     |   `2 STRK` |
-| Bidder B sealed bid     |   `4 STRK` |
-| Verified winner         |   Bidder B |
-| Verified clearing price |   `2 STRK` |
-| Loser refund            |   `4 STRK` |
-| Winner surplus          |   `2 STRK` |
-| Seller proceeds         |   `2 STRK` |
-| Bidding window          | 10 minutes |
-| Reveal window           |  5 minutes |
+| Term                    |             Value |
+| ----------------------- | ----------------: |
+| Reserve                 |          `1 STRK` |
+| Equal collateral cap    |          `4 STRK` |
+| Bidder A sealed bid     |          `2 STRK` |
+| Bidder B sealed bid     |          `4 STRK` |
+| Verified winner         |          Bidder B |
+| Verified clearing price |          `2 STRK` |
+| Loser refund            |          `4 STRK` |
+| Winner surplus          |          `2 STRK` |
+| Seller proceeds         | `2 STRK`, claimed |
+| Final house balance     |          `0 STRK` |
+| Bidding window          |        10 minutes |
+| Reveal window           |         5 minutes |
 
 Both bidders shielded `24 STRK` and passed the ten-block maturity gate before the timed auction started. Public readiness verified registration, deposit amount, and maturity only. Ready X remained authoritative for unspent private-note balance.
 
 ## Architecture
 
-```text
-Seller / public Starknet account
-  ├─ approves DemoERC721 token 99
-  └─ creates auction atomically ─────────────┐
-                                             ▼
-Ready X bidder wallet                CipherBid AuctionHouse
-  ├─ owns viewing key and notes        ├─ escrows the NFT
-  ├─ discovers mature STRK notes       ├─ accepts equal 4 STRK collateral
-  ├─ creates proof                     ├─ stores Poseidon commitments
-  └─ submits Wallet API action ───────►├─ verifies reveals
-                                       ├─ computes Vickrey clearing price
-STRK20 pool                           ├─ transfers NFT atomically to winner
-  ├─ screens public deposits           └─ authorizes refunds/surplus/proceeds
-  ├─ verifies private proof
-  └─ invokes AuctionHouse
+```mermaid
+flowchart LR
+  UI["CipherBid web app<br/>public reads and action descriptors"]
+  Wallet["Ready X<br/>keys, notes, proving, signing"]
+  RPC["Starknet RPC<br/>state and receipt readback"]
+  Pool["STRK20 pool<br/>private ingress and claims"]
+  House["AuctionHouse<br/>NFT custody and Vickrey accounting"]
+  NFT["ERC-721<br/>token 99"]
+  Recovery["Encrypted recovery bundle<br/>held by the user"]
+
+  UI -->|read public state| RPC
+  RPC --> House
+  UI -->|Wallet API request| Wallet
+  Wallet -->|private action| Pool
+  Pool -->|privacy_invoke| House
+  Wallet -->|standard lifecycle call| House
+  House -->|custody and settlement| NFT
+  UI -.->|encrypt and export| Recovery
+  Recovery -.->|import for reveal or claim| UI
+```
+
+CipherBid never receives the wallet's viewing key, private notes, proof witness, or signer key. Ready X owns those operations. The web app constructs bounded public descriptors, keeps active auction credentials in memory, encrypts recovery exports, and verifies every submitted transition through public RPC readback.
+
+## Mainnet user flow
+
+```mermaid
+flowchart TD
+  A["Seller escrows NFT and creates auction"] --> B["Bidder A and Bidder B each lock the same 4 STRK cap"]
+  B --> C["Bids remain sealed until the reveal window"]
+  C --> D["Bidder A reveals 2 STRK; Bidder B reveals 4 STRK"]
+  D --> E["AuctionHouse selects Bidder B and clears at 2 STRK"]
+  E --> F["Settlement transfers token 99 to Bidder B"]
+  F --> G["Loser refund, winner surplus, and seller proceeds return through STRK20"]
+  G --> H["Final AuctionHouse STRK balance: 0"]
 ```
 
 ### Commitment binding
@@ -205,6 +248,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Mainnet deployment](docs/evidence/mainnet/deployment.md)
 - [Verified mainnet transaction ledger](docs/evidence/mainnet/transactions.md)
 - [Verified mainnet auction lifecycle](docs/evidence/mainnet/auction-lifecycle.md)
+- [Live demo presentation script](docs/demo-presentation-script.md)
 - [Mainnet release candidate](docs/evidence/mainnet/release-candidate.md)
 - [Canonical demo matrix](docs/evidence/task-0-demo-matrix.md)
 - [Lifecycle specification](docs/evidence/task-2-3-lifecycle-specification.md)
@@ -212,7 +256,7 @@ Do not add `--execute` until the printed plan, signer, network, public bidder re
 - [Hackathon requirements matrix](docs/evidence/hackathon-requirements-matrix.md)
 - [Sepolia rehearsal](docs/evidence/sepolia/demo-runbook.md)
 
-`strk20.json` contains the two verified contracts, four successful pool-touching CipherBid lifecycle transactions, and the clean-browser-verified live auction URL. `demo_video` remains intentionally empty until the maximum-three-minute video is publicly playable and independently checked.
+`strk20.json` contains two verified contracts, five successful pool-touching CipherBid transactions, and the clean-browser-verified auction URL. The video field remains empty until the updated recording is public and checked.
 
 ## Scope
 
