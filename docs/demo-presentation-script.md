@@ -20,7 +20,7 @@
 
 **Say:**
 
-> CipherBid is a private-bid Vickrey auction for NFTs on Starknet. It solves two trust problems at once. A hidden bid is useless if the winner cannot pay, and a winning bid is unsafe if NFT delivery still depends on the seller acting later.
+> CipherBid is a private-bid Vickrey auction for NFTs on Starknet. It proves bidders can pay without revealing their bids early, and it removes the need to trust the seller for delivery.
 
 ### 0:18-0:42 - The equal-collateral idea
 
@@ -48,11 +48,11 @@
 
 **Say:**
 
-> The seller placed NFT token 99 into AuctionHouse custody when the auction was created. This removes the need to trust the seller after bidding starts.
+> The seller escrows token 99 when creating the auction, so delivery does not depend on a later seller action.
 
-> Settlement is atomic, which means all or nothing. The contract selects the winner, records the two-STRK clearing price, and transfers the NFT to Bidder B in one transaction. If the NFT transfer fails, the entire settlement reverts. CipherBid cannot record a successful winner while leaving the NFT with the seller.
+> Settlement is all or nothing: winner selection, the two-STRK clearing price, and NFT transfer succeed together or everything reverts.
 
-> The page then reads the NFT owner back from Starknet before it says delivery is verified. It does not trust browser state or a wallet success message.
+> The page reads the final NFT owner from Starknet before showing Delivery verified.
 
 ### 1:36-2:04 - Private claims and conservation
 
@@ -60,9 +60,9 @@
 
 **Say:**
 
-> The remaining value returned through STRK20 open-note claims. Bidder A received the 4 STRK loser refund. Bidder B received the 2 STRK winner surplus. The seller claimed the 2 STRK clearing price.
+> STRK20 open-note claims returned 4 STRK to Bidder A, 2 STRK surplus to Bidder B, and 2 STRK to the seller.
 
-> The seller claim is the fifth qualifying CipherBid transaction that touches the live STRK20 pool. After the claim, the AuctionHouse has zero actual STRK, zero accounted STRK, and no unexplained difference.
+> The seller claim is our fifth qualifying pool transaction. Final actual and accounted AuctionHouse balances are both zero.
 
 ### 2:04-2:28 - What stays private
 
@@ -74,7 +74,15 @@
 
 > The privacy claim is precise: bid amounts are sealed until reveal. Deposits, timing, equal collateral, and the final revealed bids are public by design.
 
-### 2:28-2:40 - Close with the differentiator
+### 2:28-2:45 - What comes next
+
+**On screen:** Return to the auction overview and keep the completed result visible.
+
+**Say:**
+
+> The next direction is token-launch auctions. The same funded sealed-demand model can extend from one NFT to multi-unit token allocations with an onchain clearing price. That needs a new allocation contract, so it is roadmap work, not a feature we are claiming today.
+
+### 2:45-2:55 - Close with the differentiator
 
 **On screen:** Return to the auction title and `SOLD` status.
 
@@ -95,6 +103,10 @@ The winner pays the second-highest valid bid or the reserve, whichever is greate
 ### What does atomic delivery mean?
 
 The AuctionHouse already holds the NFT. Winner selection, clearing-price accounting, and NFT transfer happen inside one settlement transaction. If delivery fails, settlement reverts instead of leaving a recorded winner without the asset.
+
+### How could this support token launches?
+
+The roadmap extends equal funded commitments to multi-unit token allocations and a uniform clearing price. That requires a new allocation and settlement contract; the current verified deployment remains a one-unit ERC-721 auction.
 
 ### What does STRK20 do here?
 

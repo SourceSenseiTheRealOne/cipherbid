@@ -117,6 +117,12 @@ flowchart TD
   G --> H["Final AuctionHouse STRK balance: 0"]
 ```
 
+## Roadmap: token launch auctions
+
+The next research direction is to extend CipherBid from one-unit NFT sales to multi-unit token launches. Participants would submit funded sealed demand, reveal after the bidding window, and settle allocations at an onchain clearing price.
+
+That extension needs a new allocation and settlement contract, including multi-unit accounting and claim rules. It is roadmap work, not functionality claimed by the current verified ERC-721 deployment.
+
 ### Commitment binding
 
 A bid commitment binds the domain tag, Starknet chain ID, AuctionHouse address, auction ID, bid amount, random nonce, claim handle, and NFT recipient. Recovery material is also bound to network, chain ID, deployment, and auction ID before reveal or claim.
