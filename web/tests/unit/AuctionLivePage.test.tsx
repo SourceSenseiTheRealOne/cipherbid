@@ -17,6 +17,7 @@ const model: AuctionLiveViewModel = {
   tokenId: '99',
   reservePrice: '2000000000000000000',
   cap: '5000000000000000000',
+  poolFee: '6000000000000000000',
   biddingDeadline: '100',
   revealDeadline: '200',
   bidderLimit: 2,
