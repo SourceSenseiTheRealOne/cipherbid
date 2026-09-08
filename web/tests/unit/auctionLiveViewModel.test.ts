@@ -43,6 +43,7 @@ const snapshot = {
   ],
   nftOwner: '0x333',
   custodyValid: true,
+  poolFee: 6_000_000_000_000_000_000n,
 } satisfies Awaited<ReturnType<typeof readAuctionSnapshot>>
 
 describe('auction live view model', () => {
@@ -62,6 +63,7 @@ describe('auction live view model', () => {
       tokenId: '99',
       reservePrice: '1000000000000000000',
       cap: '4000000000000000000',
+      poolFee: '6000000000000000000',
       biddingDeadline: '100',
       revealDeadline: '200',
       bidderLimit: 2,

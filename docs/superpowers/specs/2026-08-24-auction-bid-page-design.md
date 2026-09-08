@@ -2,9 +2,11 @@
 
 **Date:** 2026-08-24
 
+**Status:** Superseded for interactive behavior by the 2026-08-25 direct Wallet API submission plan; its original visual/accessibility constraints remain reusable.
+
 **Route:** `/auctions/[auctionId]`
 
-**Scope:** Presentational design only; no auction reads, wallet actions, bid secrets, transaction preparation, or submission
+**Scope:** Historical presentational baseline. The current submission plan adds verified chain reads, Starter-Kit wallet connection, and real bid/reveal/claim controls through a separately tested implementation slice.
 
 ## Objective
 

@@ -1,32 +1,34 @@
-# Decision 0002: Keep auction credentials in a user-operated local vault
+# Decision 0002: Use a direct Wallet API route for the sprint demo
 
-**Status:** Accepted
+**Status:** Accepted sprint authority; supersedes the local-vault MVP decision
 
 ## Decision
 
-CipherBid adopts `cipherbid-vault`, a user-operated local CLI, as the sole owner of the vault-profile execution-account key, vault viewing key, vault-private notes, auction bid nonce, encrypted credential record, and offline claim private key.
+For the sprint demo, CipherBid uses the selected STRK20 starter-kit Wallet API integration in the browser: get-starknet v6 discovery, `WalletAccountV6.connect`, Wallet API capability detection at `>= 0.10.3`, `strk20PrepareInvoke`, `strk20InvokeTransaction`, bounded receipt polling, and readback-confirmed state transitions.
 
-The web app remains a public-data-only reader. It may display public descriptors and read-back receipts, but it never submits auction actions. It must not receive the sealed bid amount, bid nonce, claim private key, vault master key, execution-account key, viewing key, private notes, or recovery plaintext.
+The privacy-capable wallet remains the sole owner of its wallet private key, viewing key, notes, proving, signing, and transaction submission. The CipherBid UI collects a bid amount, generates app-specific bidder and seller claim credentials in memory, builds the reviewed auction actions, and asks the connected wallet to sign/submit them. Reveal and every monetary claim use the matching in-memory credential or a user-imported encrypted recovery bundle.
 
-The vault uses the maintained Privacy SDK for its own dedicated account to submit STRK20 equal-cap ingress, and that account also sends direct public reveal/claim calls. It never imports the user's normal wallet key or viewing key. Users fund the vault profile independently of the CipherBid website.
+The UI must require a password-protected encrypted recovery download and successful local import verification before bidder submission and before seller auction creation. It may hold bid amount, bid nonce, bidder claim secret, or seller claim secret only for the active interaction; it must never persist plaintext to browser storage, cookies, URLs, logs, analytics, crash reports, clipboard, Git, or any server.
 
-## Rationale
+## Rationale and accepted tradeoff
 
-The installed Wallet API 0.10.3 supports STRK20 action preparation and invocation, but no reviewed capability owns a dapp-specific bid/recovery credential end to end. Browser-side generation or encrypted storage would violate CipherBid's hard browser boundary, and browser-built actions can be modified before a wallet prompt. The Privacy SDK route would place a viewing key and a signing key into a browser runtime, which is unsuitable; it is acceptable only in the separately distributed, user-operated vault.
+Demo-day requirements require a bidder to connect a supported wallet and place the bid from the CipherBid UI. The Wallet API keeps wallet keys, viewing keys, notes, proving, and submission in the wallet while providing the STRK20 integration route already extracted from the starter kit.
 
-A user-operated companion makes the new trust assumption explicit, local, and auditable without introducing a CipherBid cloud custodian or backend.
+The browser must necessarily receive the user-entered bid amount and app-specific bid/claim credentials long enough to construct the commitment and recovery bundle. This is a deliberate, documented relaxation of the former hard browser boundary. A compromised browser can alter a dapp-built action before the wallet prompt; CipherBid mitigates but cannot eliminate that risk with independent UI summaries, exact target/cap/commitment checks, explicit wallet confirmation, no plaintext persistence, required recovery export, and contract-side validation.
 
 ## Consequences
 
-- Bid creation remains disabled until the vault and an authenticated onchain claim path exist.
-- The auction protocol will replace `claimSecret` with an offline claim key and onchain public-key claim authorization.
-- The vault is Windows-first in the MVP and must use maintained OS-protection and encrypted-backup libraries rather than custom cryptography.
-- No localhost daemon, native browser bridge, cloud backup, telemetry, or automatic clipboard export is allowed.
-- Public reveal/claim submissions from the dedicated execution account may be linkable to each other. Product copy must disclose this limitation.
-- The vault profile is local user custody with account-key compromise, offline-claim-bundle recovery, funding, and rotation responsibilities; it is not a lightweight browser helper.
+- Bid creation and seller auction creation are enabled only after successful wallet/network checks and the required encrypted recovery export/import round trip.
+- The auction protocol uses `claim_handle = Poseidon("CIPHERBID_CLAIM_V1", claim_secret)` and requires the matching one-time secret for bidder and seller monetary claims.
+- The app never asks for, receives, persists, or exports a wallet private key, seed phrase, viewing key, private note, or wallet session material.
+- No localhost daemon, browser extension bridge, native-messaging integration, cloud backup, server credential storage, telemetry of private payloads, or automatic clipboard export is allowed.
+- Seller creation and direct reveal activity link to the connected wallet account and must be disclosed. Bid ingress and monetary claims rely on STRK20 relayed submission, while timing and public amounts remain observable.
+- A separate local-vault route remains a post-sprint hardening option; it is not a second sensitive transaction path in this sprint.
 
-## Reference
+## Required proof before mainnet
 
-The detailed protocol, storage boundary, user flows, contract revision, threats, and acceptance criteria are in:
-
-`docs/superpowers/specs/2026-08-24-cipherbid-vault-custody-design.md`
+1. Supported-wallet discovery and `WalletAccountV6` connection work in a clean browser.
+2. Capability detection uses `supportedWalletApi()` and never probes private balances merely to feature-detect.
+3. Every STRK20 path constructs the exact reviewed action sequence, preserves literal protocol placeholders, prepares before submit, and distinguishes rejected/submitted/confirmed/reverted/timeout states.
+4. Tests prove no plaintext bid/claim credential enters persistent browser storage, logs, analytics, URLs, errors, or public receipts.
+5. A real Sepolia then mainnet two-bidder lifecycle—including NFT custody and all monetary claims—is read back from chain before public claims are made.

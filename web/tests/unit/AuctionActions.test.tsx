@@ -22,6 +22,7 @@ const model: AuctionLiveViewModel = {
   tokenId: '99',
   reservePrice: '2000000000000000000',
   cap: '5000000000000000000',
+  poolFee: '6000000000000000000',
   biddingDeadline: `${Math.floor(Date.now() / 1000) + 3600}`,
   revealDeadline: `${Math.floor(Date.now() / 1000) + 7200}`,
   bidderLimit: 2,
@@ -105,6 +106,78 @@ describe('AuctionActions', () => {
     expect(await screen.findByText('recovery import failed')).toBeInTheDocument()
     expect(screen.queryByText('seller recovery imported')).not.toBeInTheDocument()
   }, 10_000)
+
+  it('explains every seller-claim prerequisite and enables only the exact seller recovery', async () => {
+    const user = userEvent.setup()
+    const password = 'correct horse battery staple'
+    const seller = createSellerCredential({
+      network: 'mainnet',
+      chainId: BigInt(MAINNET_CHAIN_ID),
+      auctionHouse: BigInt(model.auctionHouse),
+      auctionId: BigInt(model.auctionId),
+      claimSecret: 0x123456789abcdefn,
+    })
+    const settledModel: AuctionLiveViewModel = {
+      ...model,
+      network: 'mainnet',
+      chainId: MAINNET_CHAIN_ID,
+      sellerClaimHandle: `0x${seller.claimHandle.toString(16)}`,
+      state: {
+        ...model.state,
+        settled: true,
+        sold: true,
+        sellerEntitlement: '2000000000000000000',
+      },
+    }
+    const sellerConnection = { ...connection, chainId: MAINNET_CHAIN_ID }
+    const bundle = await createVerifiedRecoveryBundle([seller], password)
+    const recoveryFile = new File([bundle.serialized], 'seller.recovery.json', { type: 'application/json' })
+    Object.defineProperty(recoveryFile, 'text', { value: async () => bundle.serialized })
+
+    const { rerender } = render(<AuctionActions model={settledModel} connection={null} />)
+    expect(screen.getByText(/Connect the exact onchain seller account/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Claim seller proceeds privately/i })).toBeDisabled()
+
+    rerender(<AuctionActions model={settledModel} connection={{ ...sellerConnection, address: '0x778' }} />)
+    expect(screen.getByText(/Connected account is not this auction's seller/i)).toBeInTheDocument()
+
+    rerender(<AuctionActions model={settledModel} connection={sellerConnection} />)
+    expect(screen.getByText(/Enter the recovery password, then import the seller recovery bundle/i)).toBeInTheDocument()
+    expect(screen.getByText(/6 STRK pool fee exceeds the 2 STRK proceeds/i)).toBeInTheDocument()
+    expect(screen.getByText(/two wallet prompts/i)).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('Recovery password'), password)
+    await user.upload(screen.getByLabelText('Import encrypted recovery bundle'), recoveryFile)
+
+    expect(await screen.findByText('seller recovery imported')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Claim seller proceeds privately/i })).toBeEnabled()
+  }, 15_000)
+
+  it('rejects a seller recovery whose claim handle does not match the onchain auction', async () => {
+    const user = userEvent.setup()
+    const password = 'correct horse battery staple'
+    const settledModel: AuctionLiveViewModel = {
+      ...model,
+      state: { ...model.state, settled: true, sold: true, sellerEntitlement: '2000000000000000000' },
+    }
+    const wrongSeller = createSellerCredential({
+      network: model.network,
+      chainId: BigInt(model.chainId),
+      auctionHouse: BigInt(model.auctionHouse),
+      auctionId: BigInt(model.auctionId),
+      claimSecret: 0x999n,
+    })
+    const bundle = await createVerifiedRecoveryBundle([wrongSeller], password)
+    const recoveryFile = new File([bundle.serialized], 'wrong-seller.recovery.json', { type: 'application/json' })
+    Object.defineProperty(recoveryFile, 'text', { value: async () => bundle.serialized })
+
+    render(<AuctionActions model={settledModel} connection={connection} />)
+    await user.type(screen.getByLabelText('Recovery password'), password)
+    await user.upload(screen.getByLabelText('Import encrypted recovery bundle'), recoveryFile)
+
+    expect(await screen.findByText('recovery import failed')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Claim seller proceeds privately/i })).toBeDisabled()
+  }, 15_000)
 
   it('rehydrates only the verified mainnet lifecycle receipts after a clean refresh', () => {
     const verifiedModel: AuctionLiveViewModel = {
