@@ -89,9 +89,10 @@ function sameFelt(left: string, right: string): boolean {
 }
 
 export async function readAndValidateDeployment(reader: ChainReader, manifest: DeploymentManifest) {
-  const [classHashRaw, houseResult] = await Promise.all([
+  const [classHashRaw, houseResult, feeResult] = await Promise.all([
     reader.getClassHashAt(manifest.auctionHouse),
     call(reader, { contractAddress: manifest.auctionHouse, entrypoint: 'get_house_config' }),
+    call(reader, { contractAddress: manifest.strk20Pool, entrypoint: 'get_fee_amount' }),
   ])
   const classHash = normalizeHex(classHashRaw, 'Auction house class hash')
   if (!sameFelt(classHash, manifest.auctionHouseClassHash))
@@ -104,12 +105,16 @@ export async function readAndValidateDeployment(reader: ChainReader, manifest: D
   if (!sameFelt(pool, manifest.strk20Pool)) throw new Error('Configured STRK20 pool does not match manifest')
   if (!sameFelt(paymentToken, manifest.paymentToken))
     throw new Error('Configured payment token does not match manifest')
+  expectLength(feeResult, 1, 'get_fee_amount')
+  const poolFee = felt(feeResult[0], 'Pool fee')
+  if (poolFee === 0n) throw new Error('Configured STRK20 pool fee is zero')
 
   return Object.freeze({
     pool: manifest.strk20Pool,
     paymentToken: manifest.paymentToken,
     maxBidders,
     classHash: manifest.auctionHouseClassHash,
+    poolFee,
   })
 }
 
@@ -202,5 +207,5 @@ export async function readAuctionSnapshot(reader: ChainReader, manifest: Deploym
   const custodyValid = sameFelt(nftOwner, expectedOwner)
   if (!custodyValid) throw new Error('NFT custody does not match auction lifecycle state')
 
-  return Object.freeze({ config, state, bids: Object.freeze(bids), nftOwner, custodyValid })
+  return Object.freeze({ config, state, bids: Object.freeze(bids), nftOwner, custodyValid, poolFee: deployment.poolFee })
 }
