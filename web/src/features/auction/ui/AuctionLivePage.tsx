@@ -31,6 +31,7 @@ export type AuctionLiveViewModel = Readonly<{
   tokenId: string
   reservePrice: string
   cap: string
+  poolFee: string
   biddingDeadline: string
   revealDeadline: string
   bidderLimit: number

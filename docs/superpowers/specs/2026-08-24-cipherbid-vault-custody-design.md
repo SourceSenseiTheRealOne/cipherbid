@@ -1,15 +1,18 @@
 # CipherBid Vault — Bid-Credential Custody Design
 
-**Status:** Approved architecture; documentation-only slice.
-**Scope:** Resolve custody for the Vickrey bid nonce and claim authority. This does not implement a vault binary, modify Cairo, enable bidding, or submit a transaction.
+**Status:** Superseded for the sprint demo by `context/decisions/0002-cipherbid-vault-custody.md` on 2026-08-25; retained as a post-sprint hardening alternative.
+**Scope:** Historical local-vault custody proposal. It does not authorize a second sensitive transaction route during the direct Wallet API sprint implementation.
 
-## Decision
+> [!CAUTION]
+> **Historical and non-normative. Do not implement any requirement below for the sprint product.** In particular, `cipherbid-vault`, claim signing/public keys, claim signatures, dedicated execution accounts, DPAPI profiles, and CLI-only recovery are superseded. The current authority is `docs/evidence/winning-product-scope.md`, Decision 0002, and the reviewed claim-secret fixtures.
 
-CipherBid will use a **user-operated local CLI**, `cipherbid-vault`, to own and use all auction-specific secret material outside the browser application. The web dapp stays a public-data-only reader and status surface.
+## Historical decision (superseded)
 
-The vault is an explicitly user-operated **dedicated privacy-account companion**. It owns a separate Starknet execution account, a separate STRK20 viewing key, and private notes sent to that account. It retains the auction bid nonce only in the active profile so it can reveal. Each bid has a separate claim signing key retained only in a mandatory encrypted offline claim bundle. The vault creates, protects, recovers, and uses these values locally to submit bid ingress, reveal, and claim operations itself. It never imports the user's normal wallet key or viewing key. The browser does not submit auction actions through the Wallet API.
+The superseded proposal would have used a **user-operated local CLI**, `cipherbid-vault`, to own and use all auction-specific secret material outside the browser application, leaving the web dapp as a public-data-only reader and status surface.
 
-## Why this boundary
+That historical vault was specified as an explicitly user-operated **dedicated privacy-account companion**. It would have owned a separate Starknet execution account, a separate STRK20 viewing key, and private notes sent to that account. It retained the auction bid nonce only in the active profile so it could reveal. Each bid used a separate claim signing key retained only in a mandatory encrypted offline claim bundle. The vault would have created, protected, recovered, and used these values locally to submit bid ingress, reveal, and claim operations itself. It never imported the user's normal wallet key or viewing key. Under that superseded route, the browser did not submit auction actions through the Wallet API.
+
+## Historical rationale
 
 The installed Wallet API surface (`@starknet-io/types-js` 0.10.3) provides `wallet_strk20PrepareInvoke` and `wallet_strk20InvokeTransaction` over dapp-provided action arrays. It has no reviewed method to create, retain, or later use an app-specific bid nonce or claim credential. Any browser-built action can also be altered by a compromised website before the wallet prompt, so a public envelope cannot safely authorize equal-cap collateral ingress by itself.
 
@@ -17,14 +20,14 @@ Using the low-level Privacy SDK in the browser would require the app to manage a
 
 ## Actors and trust boundaries
 
-| Actor | May hold | Must never hold |
-| --- | --- | --- |
-| CipherBid web app | public auction descriptor, public receipt/status, transaction hashes | bid amount, bid nonce, claim private key, vault master key, any viewing key, recovery plaintext |
-| User's normal privacy wallet | its own signing key, viewing key, and notes | CipherBid vault key material or vault-private notes |
-| CipherBid Vault CLI | vault execution-account key, vault viewing key, vault-private notes, bid amount, bid nonce, asset recipient, public claim key, encrypted records; offline claim private key only in an ephemeral claim process after local bundle decryption | user wallet private key, user wallet viewing key, browser session data |
-| Offline claim bundle | claim private key and encrypted profile/credential recovery material | browser session data, CipherBid servers, telemetry systems |
-| CipherBid auction contract | commitment, claim public key/handle, public lifecycle state, reveal data, used-claim state | unrevealed bid amount, bid nonce before reveal, claim private key |
-| RPC / optional future relay | public signed transaction and public reveal/claim calldata | vault records, wallet viewing key, pre-reveal bid nonce |
+| Actor                        | May hold                                                                                                                                                                                                                                     | Must never hold                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| CipherBid web app            | public auction descriptor, public receipt/status, transaction hashes                                                                                                                                                                         | bid amount, bid nonce, claim private key, vault master key, any viewing key, recovery plaintext |
+| User's normal privacy wallet | its own signing key, viewing key, and notes                                                                                                                                                                                                  | CipherBid vault key material or vault-private notes                                             |
+| CipherBid Vault CLI          | vault execution-account key, vault viewing key, vault-private notes, bid amount, bid nonce, asset recipient, public claim key, encrypted records; offline claim private key only in an ephemeral claim process after local bundle decryption | user wallet private key, user wallet viewing key, browser session data                          |
+| Offline claim bundle         | claim private key and encrypted profile/credential recovery material                                                                                                                                                                         | browser session data, CipherBid servers, telemetry systems                                      |
+| CipherBid auction contract   | commitment, claim public key/handle, public lifecycle state, reveal data, used-claim state                                                                                                                                                   | unrevealed bid amount, bid nonce before reveal, claim private key                               |
+| RPC / optional future relay  | public signed transaction and public reveal/claim calldata                                                                                                                                                                                   | vault records, wallet viewing key, pre-reveal bid nonce                                         |
 
 The vault's dedicated account is distinct from the user's normal wallet. It signs STRK20 actions with the Privacy SDK and public reveal/claim calls. Its address is public whenever it performs a direct public lifecycle call and may correlate activity; CipherBid must disclose that limitation. Private notes held by the vault are user-controlled local custody, not browser or CipherBid-server custody.
 
@@ -160,15 +163,15 @@ TypeScript, Cairo, and vault implementation must freeze cross-language vectors f
 
 ## Threat model and limits
 
-| Threat | Required mitigation | Residual risk |
-| --- | --- | --- |
+| Threat                                             | Required mitigation                                                                                                             | Residual risk                                                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Compromised website or malicious browser extension | no vault server/API and no browser-submitted auction action; vault independently verifies descriptor and submits ingress itself | attacker can still trick the user into choosing a different public descriptor; vault confirmation must make target clear |
-| Malicious RPC | check chain ID, deployment class hash, full auction config; use two RPCs in high-assurance mode | correlated RPC failure can still mislead the vault |
-| Lost device/profile | mandatory encrypted offline claim bundle includes the vault profile and credentials | loss of both device/profile and claim bundle loses control of vault notes and ability to reveal/claim |
-| Current-user malware | OS-bound storage, signed binary, least privilege | malware running as the unlocked current user is out of scope |
-| Execution-account correlation | use a dedicated profile; disclose direct ingress/reveal/claim account visibility in product UX | calls from the same account may be linkable |
-| Insufficient gas or private balance | mandatory funding plan, summed lifecycle-fee reserve, live pool-fee readback, maturity/deadline checks, and pre-submit rechecks | fee spikes, RPC failure, proving failure, and network outage can still prevent timely submission |
-| Secret leakage | allowlist diagnostics; redaction tests; no secret-bearing browser transport | user can deliberately expose secrets through unsafe manual handling |
+| Malicious RPC                                      | check chain ID, deployment class hash, full auction config; use two RPCs in high-assurance mode                                 | correlated RPC failure can still mislead the vault                                                                       |
+| Lost device/profile                                | mandatory encrypted offline claim bundle includes the vault profile and credentials                                             | loss of both device/profile and claim bundle loses control of vault notes and ability to reveal/claim                    |
+| Current-user malware                               | OS-bound storage, signed binary, least privilege                                                                                | malware running as the unlocked current user is out of scope                                                             |
+| Execution-account correlation                      | use a dedicated profile; disclose direct ingress/reveal/claim account visibility in product UX                                  | calls from the same account may be linkable                                                                              |
+| Insufficient gas or private balance                | mandatory funding plan, summed lifecycle-fee reserve, live pool-fee readback, maturity/deadline checks, and pre-submit rechecks | fee spikes, RPC failure, proving failure, and network outage can still prevent timely submission                         |
+| Secret leakage                                     | allowlist diagnostics; redaction tests; no secret-bearing browser transport                                                     | user can deliberately expose secrets through unsafe manual handling                                                      |
 
 ## Acceptance criteria before enabling real bidding
 

@@ -25,6 +25,7 @@ function model(auctionId: string): AuctionLiveViewModel {
     tokenId: '99',
     reservePrice: '1000000000000000000',
     cap: '4000000000000000000',
+    poolFee: '6000000000000000000',
     biddingDeadline: '4102444800',
     revealDeadline: '4102445100',
     bidderLimit: 2,
