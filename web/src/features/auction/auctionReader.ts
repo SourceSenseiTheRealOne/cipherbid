@@ -207,5 +207,12 @@ export async function readAuctionSnapshot(reader: ChainReader, manifest: Deploym
   const custodyValid = sameFelt(nftOwner, expectedOwner)
   if (!custodyValid) throw new Error('NFT custody does not match auction lifecycle state')
 
-  return Object.freeze({ config, state, bids: Object.freeze(bids), nftOwner, custodyValid, poolFee: deployment.poolFee })
+  return Object.freeze({
+    config,
+    state,
+    bids: Object.freeze(bids),
+    nftOwner,
+    custodyValid,
+    poolFee: deployment.poolFee,
+  })
 }

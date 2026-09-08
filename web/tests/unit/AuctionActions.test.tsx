@@ -138,9 +138,7 @@ describe('AuctionActions', () => {
     expect(screen.getByText(/Connect the exact onchain seller account/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Claim seller proceeds privately/i })).toBeDisabled()
 
-    rerender(
-      <AuctionActions model={settledModel} connection={{ ...sellerConnection, address: '0x778' }} />,
-    )
+    rerender(<AuctionActions model={settledModel} connection={{ ...sellerConnection, address: '0x778' }} />)
     expect(screen.getByText(/Connected account is not this auction's seller/i)).toBeInTheDocument()
 
     rerender(<AuctionActions model={settledModel} connection={sellerConnection} />)

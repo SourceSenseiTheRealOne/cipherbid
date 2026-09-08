@@ -19,9 +19,7 @@ describe('final STRK20 submission manifest', () => {
     expect(new Set(manifest.transactions).size).toBe(5)
     expect(manifest.transactions.every((value) => /^0x[0-9a-f]+$/.test(value))).toBe(true)
     expect(manifest.contracts).toHaveLength(2)
-    expect(manifest.demo_url).toBe(
-      'https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342',
-    )
+    expect(manifest.demo_url).toBe('https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342')
     expect(manifest.demo_video).toBe(videoUrl)
     expect(existsSync(videoPath)).toBe(true)
     expect(statSync(videoPath).size).toBeGreaterThan(1_000_000)

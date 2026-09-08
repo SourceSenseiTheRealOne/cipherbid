@@ -13,7 +13,7 @@ const manifest: DeploymentManifest = {
 }
 
 function reader(overrides: Partial<Record<string, readonly string[]>> = {}): ChainReader {
-  const results: Record<string, readonly string[]> = {
+  const results: Partial<Record<string, readonly string[]>> = {
     '0x123:get_house_config': [manifest.strk20Pool, manifest.paymentToken, '0x20'],
     [`${manifest.strk20Pool}:get_fee_amount`]: ['0x53444835ec580000'],
     '0x123:get_auction_config': ['0x7', '0x777', '0xabc', '0x999', '0x63', '0x0', '0x2', '0x5', '0x64', '0xc8', '0x2'],
