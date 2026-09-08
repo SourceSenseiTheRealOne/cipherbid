@@ -24,6 +24,7 @@ export function toAuctionLiveViewModel(manifest: DeploymentManifest, snapshot: A
     tokenId: snapshot.config.tokenId.toString(),
     reservePrice: snapshot.config.reservePrice.toString(),
     cap: snapshot.config.cap.toString(),
+    poolFee: snapshot.poolFee.toString(),
     biddingDeadline: snapshot.config.biddingDeadline.toString(),
     revealDeadline: snapshot.config.revealDeadline.toString(),
     bidderLimit: snapshot.config.bidderLimit,

@@ -8,7 +8,7 @@ Build a secure, evidence-backed STRK20-funded Vickrey auction house for escrowed
 - Behavioral changes follow strict RED -> GREEN -> REFACTOR.
 - Use CodeGraph before investigation/edits and after source path changes. Never commit `.codegraph/`.
 - Preserve the approved privacy language: equal public cap collateral; actual bid sealed until reveal; no claim that a variable note amount remains encrypted after leaving the pool.
-- The app never receives, persists, exports, or logs wallet private keys, viewing keys, bid secrets, claim secrets, or recovery plaintext.
+- Wallet private keys, viewing keys, private notes, and session material never enter the app. For the approved sprint Wallet API demo, bid/claim credentials may exist only in active browser memory and a mandatory password-encrypted downloaded recovery bundle; plaintext is never persisted, exported, logged, or sent to a server.
 - `privacy_invoke` accepts only the configured STRK20 pool and accounts for collateral from observed balance delta.
 - Mainnet writes require fresh human approval with exact budget, addresses, and expected state.
 - `strk20.json` contains only real read-back-verified successful mainnet hashes/addresses.

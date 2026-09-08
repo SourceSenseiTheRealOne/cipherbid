@@ -1,10 +1,10 @@
 # CipherBid Premium Protocol Console Design
 
-**Status:** Approved by user on 2026-08-24
+**Status:** Superseded for interactive behavior by the 2026-08-25 direct Wallet API submission plan; the visual direction remains reusable.
 
 ## Goal
 
-Refresh the visual-only auction detail route into a premium dark protocol-console experience while preserving CipherBid's public-data-only boundary and every truthful privacy disclosure.
+Refresh the auction detail route into a premium dark protocol-console experience while preserving truthful privacy disclosures. The current submission plan adds separately tested Wallet API interaction and live readback behavior.
 
 ## Visual direction
 

@@ -39,6 +39,14 @@ function isHex(value: string): value is `0x${string}` {
   return /^0x[0-9a-fA-F]+$/.test(value)
 }
 
+function sameFelt(left: string, right: string): boolean {
+  try {
+    return BigInt(left) === BigInt(right)
+  } catch {
+    return false
+  }
+}
+
 function phase(model: AuctionLiveViewModel): 'bidding' | 'reveal' | 'settle' | 'settled' {
   if (model.state.settled) return 'settled'
   const now = BigInt(Math.floor(Date.now() / 1000))
@@ -98,6 +106,28 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
   const [status, setStatus] = useState<string>('')
   const currentPhase = phase(model)
   const enabled = connection !== null && connection.supportsStrk20
+  const sellerConnected = connection !== null && sameFelt(connection.address, model.seller)
+  const sellerEntitlement = BigInt(model.state.sellerEntitlement)
+  const poolFee = BigInt(model.poolFee)
+  const sellerClaimReady =
+    enabled &&
+    currentPhase === 'settled' &&
+    model.state.sold &&
+    !model.state.sellerClaimConsumed &&
+    sellerEntitlement > 0n &&
+    sellerConnected &&
+    sellerCredential !== null
+  const sellerClaimGuidance = (() => {
+    if (model.state.sellerClaimConsumed) return 'Seller proceeds are already claimed.'
+    if (currentPhase !== 'settled' || !model.state.sold || sellerEntitlement === 0n) {
+      return 'Seller proceeds unlock only after a successful settlement.'
+    }
+    if (!connection) return 'Connect the exact onchain seller account to continue.'
+    if (!connection.supportsStrk20) return 'Connect a Ready wallet with STRK20 Wallet API 0.10.3 or newer.'
+    if (!sellerConnected) return "Connected account is not this auction's seller. Reconnect the onchain seller account."
+    if (!sellerCredential) return 'Enter the recovery password, then import the seller recovery bundle.'
+    return 'Ready. Approve two wallet prompts: first authorize the prepared open note, then submit the private claim.'
+  })()
   const displayedReceipts = useMemo(() => {
     const seen = new Set<string>()
     return [...verifiedReceiptsForAuction(model.network, model.auctionId), ...receipts].filter((receipt) => {
@@ -210,6 +240,7 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
       )
       if (!matching) throw new Error('No matching credential')
       if (matching.role === 'seller') {
+        if (matching.claimHandle !== BigInt(model.sellerClaimHandle)) throw new Error('Seller claim handle mismatch')
         setSellerCredential(matching)
       } else {
         const index = model.bids.findIndex((bid) => BigInt(bid.commitment) === matching.commitment)
@@ -423,17 +454,23 @@ export function AuctionActions({ model, connection, onRefresh }: AuctionActionsP
         </button>
         <button
           type="button"
-          disabled={
-            !enabled ||
-            currentPhase !== 'settled' ||
-            !sellerCredential ||
-            BigInt(connection?.address ?? '0x0') !== BigInt(model.seller)
-          }
+          aria-describedby="seller-claim-guidance seller-claim-economics"
+          disabled={!sellerClaimReady}
           onClick={() => void sellerClaim()}
           className="min-h-12 rounded-xl border border-[#3bc478]/20 bg-[#3bc478]/10 px-4 font-semibold text-[#aee5c1] disabled:cursor-not-allowed disabled:opacity-45 sm:col-span-2"
         >
           Claim seller proceeds privately
         </button>
+      </div>
+      <div className="mt-4 rounded-xl border border-white/[0.08] bg-white/[0.025] p-4 text-xs leading-5 text-[#9ba3af]">
+        <p id="seller-claim-guidance">{sellerClaimGuidance}</p>
+        <p id="seller-claim-economics" className="mt-2 text-amber-100">
+          {poolFee > sellerEntitlement
+            ? `${formatTokenAmount(poolFee, 18)} STRK pool fee exceeds the ${formatTokenAmount(sellerEntitlement, 18)} STRK proceeds. Completing the claim spends more private STRK than it recovers.`
+            : `Current pool fee: ${formatTokenAmount(poolFee, 18)} STRK. Seller proceeds: ${formatTokenAmount(sellerEntitlement, 18)} STRK.`}
+        </p>
+        <p className="mt-2">Claim completion uses two wallet prompts: open-note authorization, then private claim.</p>
+        <p className="mt-2">Ready X remains authoritative for spendable private balance; CipherBid never probes it.</p>
       </div>
       <p role="status" className="mt-4 min-h-6 text-sm text-[#a8b1ff]">
         {status}
