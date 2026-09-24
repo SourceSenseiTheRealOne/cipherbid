@@ -3,6 +3,15 @@ import { describe, expect, it } from 'vitest'
 import Home from '@/app/page'
 
 describe('CipherBid home', () => {
+  it('links directly to the verified mainnet auction', () => {
+    render(<Home />)
+
+    expect(screen.getByRole('link', { name: 'Open live auction' })).toHaveAttribute(
+      'href',
+      'https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342',
+    )
+  })
+
   it('presents the shipped product routes without mock auction data', () => {
     render(<Home />)
 
