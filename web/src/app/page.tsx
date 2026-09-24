@@ -39,7 +39,10 @@ export default function Home() {
               <Link href="/create" className="cb-primary">
                 Create an auction
               </Link>
-              <a href="#open-auction" className="cb-secondary">
+              <a
+                href="https://sourcesenseitherealone.github.io/cipherbid/auction/?id=1788040057342"
+                className="cb-secondary"
+              >
                 Open live auction
               </a>
             </div>

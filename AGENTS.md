@@ -21,5 +21,5 @@ Features target `development`; promotion is `development -> staging -> main` thr
 ## Required gates
 
 - Web: format check, lint, strict TypeScript, unit/integration tests, Playwright, production build.
-- Cairo: `scarb fmt --check`, `scarb build`, `snforge test` in WSL `Ubuntu-24.04`.
+- Cairo: `scarb fmt --check`, `scarb build`, `snforge test` in WSL `Ubuntu`.
 - Security: dependency, secret, static analysis, value-conservation invariants, independent contract review.

@@ -54,6 +54,8 @@ Sepolia evidence is rehearsal evidence only. It does not establish mainnet priva
 
 ## Submission controls
 
+The [organizer hub readback](submission/hub-status.md) resolves the earlier indexing-pending status. The hub marks CipherBid finished with demo, video and mainnet requirements satisfied; this does not establish an award.
+
 | Artifact                                                               | Scope                                                              |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | [`hackathon-requirements-matrix.md`](hackathon-requirements-matrix.md) | Official requirement-to-evidence mapping and truthfulness controls |
